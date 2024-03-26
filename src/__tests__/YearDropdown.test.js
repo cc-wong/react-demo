@@ -22,7 +22,4 @@ test('<YearDropdown /> rendered', () => {
         expect(options.at(i)).toHaveAttribute("value", year);
         expect(screen.getByRole("option", { name: year })).toBeInTheDocument();
     }
-
-
-    // console.log(Array(20))
 });

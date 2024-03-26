@@ -11,3 +11,8 @@ test('Heading is present.', () => {
   const heading = screen.getByRole('heading', { level: 1 });
   expect(heading).toHaveTextContent("Grand Sumo Tournament Schedule");
 });
+
+test('Schedule table is present.', () => {
+  render(<App />);
+  expect(screen.getByRole('table')).toHaveAttribute("name", "schedule");
+});

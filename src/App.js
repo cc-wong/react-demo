@@ -9,13 +9,15 @@ import ScheduleTable from './components/ScheduleTable';
  * @returns the page components
  */
 function App() {
+  var mockApiData = require('./data/getSumoHonbashoSchedule.json');
+
   return (
     <div className="App">
       <h1>Grand Sumo Tournament Schedule</h1>
       <form>
         <YearDropdown />
       </form>
-      <ScheduleTable />
+      <ScheduleTable data={mockApiData.result} />
     </div>
   );
 }

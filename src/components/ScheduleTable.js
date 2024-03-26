@@ -1,5 +1,7 @@
 import "./ScheduleTable.css";
 
+import moment from "moment";
+
 /**
  * Builds the results table listing the tournament schedule for the chosen year.
  * The table includes the following columns:
@@ -8,10 +10,12 @@ import "./ScheduleTable.css";
  * - Schedule: the schedule of the tournament as `MMMM D to MMMM D`,
  *   eg. January 8 to January 22
  * 
+ * @param {Array} data the schedule records returned from the API call
+ * 
  * @returns the table component with name `schedule`
  */
-export default function ScheduleTable() {
-    const records = getDummyRecords();
+export default function ScheduleTable(props) {
+    var records = props.data === undefined || props.data === null ? [] : props.data;
     return (
         <table name="schedule" className="ScheduleTable">
             <thead>
@@ -37,66 +41,48 @@ export default function ScheduleTable() {
 }
 
 /**
+ * Mapping for the tournament name.
+ */
+const bashoNameMap = {
+    HATSU: "Hatsu",
+    HARU: "Haru",
+    NATSU: "Natsu",
+    NAGOYA: "Nagoya",
+    AKI: "Aki",
+    KYUSHU: "Kyushu"
+};
+
+/**
  * Prints the name of the tournament.
  * 
- * @param record denotes the schedule of a tournament
+ * @param {{basho: string; month: number; month_name: string; dates: string[]}} record
+ *          denotes the schedule of a tournament
  * @returns the tournament's full name 
  */
 function printBasho(record) {
-    return record.basho;
+    return bashoNameMap[record.basho];
 }
 
 /**
  * Prints the month of the tournament.
  * 
- * @param record denotes the schedule of a tournament
+ * @param {{basho: string; month: number; month_name: string; dates: string[]}} record
+ *          denotes the schedule of a tournament
  * @returns the name of the month of the tournament
  */
 function printMonth(record) {
-    return record.month;
+    return record.month_name;
 }
 
 /**
  * Prints the dates of the tournament.
  * 
- * @param record denotes the schedule of a tournament
- * @returns the dates as `MMMM D to MMMM D`, eg. January 8 to January 22
+ * @param {{basho: string; month: number; month_name: string; dates: string[15]}} record
+ *          denotes the schedule of a tournament
+ * @returns {string} the dates as `MMMM D to MMMM D`, eg. January 8 to January 22
  */
 function printScheduleDates(record) {
-    return record.dates;
+    var day1 = moment(record.dates.at(0)).format("MMMM D");
+    var day15 = moment(record.dates.at(14)).format("MMMM D");
+    return day1 + ' to ' + day15;
 }
-
-function getDummyRecords() {
-    return [
-        {
-            basho: "Hatsu",
-            month: "January",
-            dates: "January 14 to January 28"
-        },
-        {
-            basho: "Haru",
-            month: "March",
-            dates: "March 10 to March 24"
-        },
-        {
-            basho: "Natsu",
-            month: "May",
-            dates: "May 12 to May 26"
-        },
-        {
-            basho: "Nagoya",
-            month: "July",
-            dates: "July 14 to July 28"
-        },
-        {
-            basho: "Aki",
-            month: "September",
-            dates: "September 8 to September 22"
-        },
-        {
-            basho: "Kyushu",
-            month: "November",
-            dates: "November 10 to November 24"
-        },
-    ];
-}  

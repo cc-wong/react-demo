@@ -1,8 +1,13 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, cleanup } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
+// afterEach function runs after each test suite is executed
+afterEach(() => {
+  cleanup();
+});
+
+test('Heading is present.', () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+  const heading = screen.getByRole('heading', { level: 1 });
+  expect(heading).toHaveTextContent("Grand Sumo Tournament Schedule");
 });

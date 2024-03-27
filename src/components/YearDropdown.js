@@ -1,8 +1,15 @@
 /**
+ * The dropdown box will have values
+ * from the current year to this number of years from the current year.
+ */
+const maxNumOfYearsFromCurrentYear = 20;
+
+/**
  * Builds a dropdown box with items denoting the years from the current year
  * to 20 years after the current year.
  * 
- * @param {{selectedYear: number}} props the argument(s) to pass to this component
+ * @param {{selectedYear: number; onChangeEvent: ((event: any) => void)}} props
+ *          the argument(s) to pass to this component
  * @returns the dropdown box component with a label saying "Year"
  */
 export default function YearDropdown(props) {
@@ -10,7 +17,7 @@ export default function YearDropdown(props) {
     var selectedYear = props.selectedYear;
 
     var options = [];
-    for (var year = thisYear; year <= thisYear + 20; year++) {
+    for (var year = thisYear; year <= thisYear + maxNumOfYearsFromCurrentYear; year++) {
         options.push(
             <option key={'year' + year.toString()} value={year}>{year}</option>
         );

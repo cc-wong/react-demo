@@ -1,4 +1,4 @@
-import { render, screen, cleanup } from '@testing-library/react';
+import { render, screen, cleanup, fireEvent } from '@testing-library/react';
 import SearchScreen from '../components/SearchScreen';
 
 
@@ -14,4 +14,14 @@ test('<SearchScreen /> rendered', () => {
     var currentYear = (new Date()).getFullYear();
     expect(screen.getByRole('option', { name: currentYear }).selected).toBe(true);
     expect(screen.getByRole('table')).toHaveAttribute("name", "schedule");
+});
+
+test('Assert year dropdown onChange event.', () => {
+    render(<SearchScreen />);
+    const yearDropdown = screen.getByRole('combobox');
+
+    var changedYear = (new Date()).getFullYear() + 3;
+    fireEvent.change(yearDropdown, {
+        target: { value: changedYear.toString() }
+    });
 });

@@ -1,4 +1,4 @@
-import { render, screen, cleanup } from '@testing-library/react';
+import { render, screen, cleanup, fireEvent } from '@testing-library/react';
 import YearDropdown from '../components/YearDropdown';
 
 // afterEach function runs after each test suite is executed
@@ -11,7 +11,7 @@ test('<YearDropdown /> rendered', () => {
     const selectedYear = thisYear + 3;
 
     render(<YearDropdown selectedYear={selectedYear} />);
-    const dropdown = screen.getByLabelText("Year");
+    const dropdown = getDropdown();
     expect(dropdown).toHaveAttribute("id", "year");
     expect(dropdown).toHaveAttribute("name", "year");
 
@@ -30,3 +30,29 @@ test('<YearDropdown /> rendered', () => {
         }
     });
 });
+
+/**
+ * Mock onChange event for the dropdown box.
+ */
+const mockOnChangeEvent = jest.fn();
+
+test('Assert onChange event called on value change.', () => {
+    var thisYear = (new Date()).getFullYear();
+    var changedYear = thisYear + 5;
+
+    render(<YearDropdown selectedYear={thisYear} onChangeEvent={mockOnChangeEvent} />);
+    const dropdown = getDropdown();
+    fireEvent.change(dropdown, {
+        target: { value: changedYear.toString() }
+    });
+    expect(mockOnChangeEvent.mock.calls).toHaveLength(1);
+});
+
+/**
+ * Returns the dropdown object from the screen.
+ * 
+ * @returns the dropdown object
+ */
+function getDropdown() {
+    return screen.getByLabelText("Year");
+}

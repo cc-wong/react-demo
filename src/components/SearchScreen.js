@@ -1,6 +1,6 @@
 import './SearchScreen.css';
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 import YearDropdown from "./YearDropdown";
 import ScheduleTable from "./ScheduleTable";
@@ -18,25 +18,26 @@ import ScheduleTable from "./ScheduleTable";
  * @returns a wrapper component including the dropdown and table
  */
 export default function SearchScreen() {
-    // TODO: Get year from form, or use current year.
-    var year = (new Date()).getFullYear();
+    var currentYear = (new Date()).getFullYear();
+    const [year, setYear] = useState(currentYear);
+    const [apiData, setApiData] = useState(getData(year));
 
-    // Get data from API call.
-    var apiData = getData();
-
-    // const handleSubmit = () => { yearForm.current.submit() }
-
-    // const submitAction = (e) => {
-    //     e.preventDefault();
-
-    //     alert(`Selected year = ${document.getElementById('year').value}`);
-    // }
+    /**
+     * Event handling for changing the value of the year dropdown.
+     * 
+     * @param {*} event the event
+     */
+    function handleChangeYear(event) {
+        var year = event.target.value;
+        setYear(year);
+        setApiData(getData(year));
+    }
 
     var yearForm = useRef();
     return (
         <div className='SearchScreen'>
             <form ref={yearForm} name='pickYear'>
-                <YearDropdown selectedYear={year} />
+                <YearDropdown selectedYear={year} onChangeEvent={handleChangeYear} />
             </form>
             <ScheduleTable data={apiData.result} />
         </div>
@@ -46,8 +47,12 @@ export default function SearchScreen() {
 /**
  * Gets the data for display.
  * 
+ * @param {number} year the year to query
  * @returns {{result: BashoJson[]}} the data in JSON format
  */
-function getData() {
-    return require('./getSumoHonbashoSchedule.json');
+function getData(year) {
+    if (year % 2 === 0) {
+        return require('./getSumoHonbashoSchedule-even.json');
+    }
+    return require('./getSumoHonbashoSchedule-odd.json');
 }

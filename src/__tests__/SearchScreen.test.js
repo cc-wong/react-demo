@@ -1,0 +1,17 @@
+import { render, screen, cleanup } from '@testing-library/react';
+import SearchScreen from '../components/SearchScreen';
+
+
+// afterEach function runs after each test suite is executed
+afterEach(() => {
+    cleanup();
+});
+
+test('<SearchScreen /> rendered', () => {
+    render(<SearchScreen />);
+    expect(screen.getByRole('combobox')).toHaveAttribute("name", "year");
+
+    var currentYear = (new Date()).getFullYear();
+    expect(screen.getByRole('option', { name: currentYear }).selected).toBe(true);
+    expect(screen.getByRole('table')).toHaveAttribute("name", "schedule");
+});

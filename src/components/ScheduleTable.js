@@ -3,14 +3,21 @@ import "./ScheduleTable.css";
 import moment from "moment";
 
 /**
+ * Denotes the schedule of a tournament in the API call JSON data.
+ * 
+ * @typedef {{basho: string; dates: string[]; month: number; month_name: string;}} BashoJson
+ */
+
+/**
  * Builds the results table listing the tournament schedule for the chosen year.
+ * 
  * The table includes the following columns:
  * - Tournament: the name of the tournament, eg. Hatsu
  * - Month: the name of the month the tournament is held in
  * - Schedule: the schedule of the tournament as `MMMM D to MMMM D`,
  *   eg. January 8 to January 22
  * 
- * @param {Array} data the schedule records returned from the API call
+ * @param {{data: BashoJson[]}} props input arguments to this component
  * 
  * @returns the table component with name `schedule`
  */
@@ -55,8 +62,7 @@ const bashoNameMap = {
 /**
  * Prints the name of the tournament.
  * 
- * @param {{basho: string; month: number; month_name: string; dates: string[]}} record
- *          denotes the schedule of a tournament
+ * @param {BashoJson} record denotes the schedule of a tournament
  * @returns the tournament's full name 
  */
 function printBasho(record) {
@@ -66,8 +72,7 @@ function printBasho(record) {
 /**
  * Prints the month of the tournament.
  * 
- * @param {{basho: string; month: number; month_name: string; dates: string[]}} record
- *          denotes the schedule of a tournament
+ * @param {BashoJson} record denotes the schedule of a tournament
  * @returns the name of the month of the tournament
  */
 function printMonth(record) {
@@ -77,8 +82,7 @@ function printMonth(record) {
 /**
  * Prints the dates of the tournament.
  * 
- * @param {{basho: string; month: number; month_name: string; dates: string[15]}} record
- *          denotes the schedule of a tournament
+ * @param {BashoJson} record denotes the schedule of a tournament
  * @returns {string} the dates as `MMMM D to MMMM D`, eg. January 8 to January 22
  */
 function printScheduleDates(record) {

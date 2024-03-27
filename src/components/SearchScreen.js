@@ -1,3 +1,5 @@
+import './SearchScreen.css';
+
 import { useRef } from "react";
 
 import YearDropdown from "./YearDropdown";
@@ -32,12 +34,12 @@ export default function SearchScreen() {
 
     var yearForm = useRef();
     return (
-        <>
+        <div className='SearchScreen'>
             <form ref={yearForm} name='pickYear'>
                 <YearDropdown selectedYear={year} />
             </form>
             <ScheduleTable data={apiData.result} />
-        </>
+        </div>
     );
 }
 

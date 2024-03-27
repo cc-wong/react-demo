@@ -10,9 +10,3 @@
   font-family: georgia, times, serif;
   text-align: center;
 }
-.App label, select, option {
-  font-size: 16px;
-}
-.App label {
-  font-weight: bold;
-}

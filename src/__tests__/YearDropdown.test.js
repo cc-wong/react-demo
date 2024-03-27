@@ -7,19 +7,26 @@ afterEach(() => {
 })
 
 test('<YearDropdown /> rendered', () => {
-    render(<YearDropdown />);
+    const thisYear = (new Date()).getFullYear();
+    const selectedYear = thisYear + 3;
+
+    render(<YearDropdown selectedYear={selectedYear} />);
     const dropdown = screen.getByLabelText("Year");
     expect(dropdown).toHaveAttribute("id", "year");
     expect(dropdown).toHaveAttribute("name", "year");
 
-    const thisYear = (new Date()).getFullYear();
     const options = screen.getAllByRole('option');
-
-    const numOfOptions = 21;
-    expect(options.length).toBe(numOfOptions);
-    for (var i = 0; i < numOfOptions; i++) {
-        const year = (thisYear + i).toString();
-        expect(options.at(i)).toHaveAttribute("value", year);
-        expect(screen.getByRole("option", { name: year })).toBeInTheDocument();
-    }
+    expect(options.length).toBe(20 + 1);
+    options.map((option, i) => {
+        var year = thisYear + i;
+        expect(option).toHaveAttribute("value", year.toString());
+        expect(option).toHaveTextContent(year.toString());
+        try {
+            expect(option.selected).toBe(year === selectedYear);
+        } catch (e) {
+            throw new Error(
+                `Option "${year}" should ${year === selectedYear ? '' : "not "}be selected!`
+            );
+        }
+    });
 });

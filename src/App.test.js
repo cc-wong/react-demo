@@ -12,6 +12,14 @@ test('Heading is present.', () => {
   expect(heading).toHaveTextContent("Grand Sumo Tournament Schedule");
 });
 
+test('Year dropdown is present.', () => {
+  render(<App />);
+  expect(screen.getByRole('combobox')).toHaveAttribute("name", "year");
+
+  var currentYear = (new Date()).getFullYear();
+  expect(screen.getByRole('option', { name: currentYear }).selected).toBe(true);
+});
+
 test('Schedule table is present.', () => {
   render(<App />);
   expect(screen.getByRole('table')).toHaveAttribute("name", "schedule");

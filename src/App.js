@@ -16,15 +16,19 @@ import ScheduleTable from './components/ScheduleTable';
  * 
  */
 function App() {
-  var mockApiData = getData();
+  // TODO: Get year from form, or use current year.
+  var year = (new Date()).getFullYear();
+
+  // Get data from API call.
+  var apiData = getData();
 
   return (
     <div className="App">
       <h1>Grand Sumo Tournament Schedule</h1>
-      <form>
-        <YearDropdown />
+      <form id="pickYear" name="pickYear" method='GET'>
+        <YearDropdown selectedYear={year} />
       </form>
-      <ScheduleTable data={mockApiData.result} />
+      <ScheduleTable data={apiData.result} />
     </div>
   );
 }

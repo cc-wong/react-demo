@@ -7,10 +7,12 @@ import ScheduleTable from "./ScheduleTable";
 import { getCurrentYear } from './DateUtils';
 
 /**
- * Denotes the schedule of a tournament in the API call JSON data.
+ * The base URL for the API call.
  * 
- * @typedef {{basho: string; dates: string[]; month: number; month_name: string;}} BashoJson
+ * Hard-coding is temporary. To be configurable later.
  */
+const apiBaseUrl = "http://localhost:5000";
+// const apiBaseUrl = "https://python-webservice-demo.onrender.com";
 
 /**
  * Populates the search screen which includes a dropdown for the year
@@ -23,32 +25,23 @@ export default function SearchScreen() {
     const [apiData, setApiData] = useState({ result: [] });
 
     useEffect(() => {
-        var data = getData(year);
-        setApiData(data);
+        const url = `${apiBaseUrl}/getSumoHonbashoSchedule?year=${year}`;
+        console.debug(`API URL: ${url}`);
+        fetch(url)
+            .then((response) => {
+                // console.debug(response.status+": "+response.ok);
+                return response.json();
+            })
+            .then(setApiData);
     }, [year]);
 
     return (
         <div className='SearchScreen'>
             <form name='pickYear'>
                 <YearDropdown selectedYear={year}
-                    onChangeEvent={((event) => {
-                        setYear(event.target.value);
-                    })} />
+                    onChangeEvent={((event) => setYear(event.target.value))} />
             </form>
             <ScheduleTable data={apiData.result} />
         </div>
     );
-}
-
-/**
- * Gets the data for display.
- * 
- * @param {number} year the year to query
- * @returns {{result: BashoJson[]}} the data in JSON format
- */
-function getData(year) {
-    if (year % 2 === 0) {
-        return require('./getSumoHonbashoSchedule-even.json');
-    }
-    return require('./getSumoHonbashoSchedule-odd.json');
 }

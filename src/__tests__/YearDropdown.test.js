@@ -1,14 +1,15 @@
 import { render, screen, cleanup, fireEvent } from '@testing-library/react';
 import YearDropdown from '../components/YearDropdown';
 
-// afterEach function runs after each test suite is executed
+beforeEach(() => {
+    jest.useFakeTimers().setSystemTime(new Date('2022-03-28'));
+});
 afterEach(() => {
     cleanup();
 })
 
 test('<YearDropdown /> rendered', () => {
-    const thisYear = (new Date()).getFullYear();
-    const selectedYear = thisYear + 3;
+    const selectedYear = 2027;
 
     render(<YearDropdown selectedYear={selectedYear} />);
     const dropdown = getDropdown();
@@ -18,7 +19,7 @@ test('<YearDropdown /> rendered', () => {
     const options = screen.getAllByRole('option');
     expect(options.length).toBe(20 + 1);
     options.map((option, i) => {
-        var year = thisYear + i;
+        var year = 2022 + i;
         expect(option).toHaveAttribute("value", year.toString());
         expect(option).toHaveTextContent(year.toString());
         try {
@@ -37,13 +38,10 @@ test('<YearDropdown /> rendered', () => {
 const mockOnChangeEvent = jest.fn();
 
 test('Assert onChange event called on value change.', () => {
-    var thisYear = (new Date()).getFullYear();
-    var changedYear = thisYear + 5;
-
-    render(<YearDropdown selectedYear={thisYear} onChangeEvent={mockOnChangeEvent} />);
+    render(<YearDropdown onChangeEvent={mockOnChangeEvent} />);
     const dropdown = getDropdown();
     fireEvent.change(dropdown, {
-        target: { value: changedYear.toString() }
+        target: { value: '2029' }
     });
     expect(mockOnChangeEvent.mock.calls).toHaveLength(1);
 });

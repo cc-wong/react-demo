@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import YearDropdown from "./YearDropdown";
 import ScheduleTable from "./ScheduleTable";
+import { getCurrentYear } from './DateUtils';
 
 /**
  * Denotes the schedule of a tournament in the API call JSON data.
@@ -18,7 +19,7 @@ import ScheduleTable from "./ScheduleTable";
  * @returns a wrapper component including the dropdown and table
  */
 export default function SearchScreen() {
-    const [year, setYear] = useState((new Date()).getFullYear());
+    const [year, setYear] = useState(getCurrentYear);
     const [apiData, setApiData] = useState({ result: [] });
 
     useEffect(() => {
@@ -31,8 +32,7 @@ export default function SearchScreen() {
             <form name='pickYear'>
                 <YearDropdown selectedYear={year}
                     onChangeEvent={((event) => {
-                        var year = event.target.value;
-                        setYear(year);
+                        setYear(event.target.value);
                     })} />
             </form>
             <ScheduleTable data={apiData.result} />

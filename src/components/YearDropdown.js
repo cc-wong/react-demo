@@ -1,3 +1,5 @@
+import { getCurrentYear } from "./DateUtils";
+
 /**
  * The dropdown box will have values
  * from the current year to this number of years from the current year.
@@ -13,7 +15,7 @@ const maxNumOfYearsFromCurrentYear = 20;
  * @returns the dropdown box component with a label saying "Year"
  */
 export default function YearDropdown(props) {
-    var thisYear = (new Date()).getFullYear();
+    var thisYear = getCurrentYear();
     var selectedYear = props.selectedYear;
 
     var options = [];

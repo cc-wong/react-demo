@@ -24,4 +24,5 @@ test('Assert year dropdown onChange event.', () => {
     fireEvent.change(yearDropdown, {
         target: { value: changedYear.toString() }
     });
+    expect(screen.getByRole('option', { name: changedYear }).selected).toBe(true);
 });

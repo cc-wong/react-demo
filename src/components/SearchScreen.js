@@ -1,6 +1,6 @@
 import './SearchScreen.css';
 
-import { useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import YearDropdown from "./YearDropdown";
 import ScheduleTable from "./ScheduleTable";
@@ -18,26 +18,22 @@ import ScheduleTable from "./ScheduleTable";
  * @returns a wrapper component including the dropdown and table
  */
 export default function SearchScreen() {
-    var currentYear = (new Date()).getFullYear();
-    const [year, setYear] = useState(currentYear);
-    const [apiData, setApiData] = useState(getData(year));
+    const [year, setYear] = useState((new Date()).getFullYear());
+    const [apiData, setApiData] = useState({ result: [] });
 
-    /**
-     * Event handling for changing the value of the year dropdown.
-     * 
-     * @param {*} event the event
-     */
-    function handleChangeYear(event) {
-        var year = event.target.value;
-        setYear(year);
-        setApiData(getData(year));
-    }
+    useEffect(() => {
+        var data = getData(year);
+        setApiData(data);
+    }, [year]);
 
-    var yearForm = useRef();
     return (
         <div className='SearchScreen'>
-            <form ref={yearForm} name='pickYear'>
-                <YearDropdown selectedYear={year} onChangeEvent={handleChangeYear} />
+            <form name='pickYear'>
+                <YearDropdown selectedYear={year}
+                    onChangeEvent={((event) => {
+                        var year = event.target.value;
+                        setYear(year);
+                    })} />
             </form>
             <ScheduleTable data={apiData.result} />
         </div>

@@ -1,10 +1,11 @@
 import { getCurrentYear } from "../utils/DateUtils";
+import config from '../conf/config.json';
 
 /**
  * The dropdown box will have values
  * from the current year to this number of years from the current year.
  */
-const maxNumOfYearsFromCurrentYear = 20;
+const maxNumOfYearsFromCurrentYear = config.yearDropdown.maxYearsFromCurrent;
 
 /**
  * Builds a dropdown box with items denoting the years from the current year

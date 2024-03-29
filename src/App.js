@@ -1,6 +1,7 @@
 import './App.css';
 
 import SearchScreen from './components/SearchScreen';
+import textConfig from './conf/text-config.json';
 
 /**
  * The app's main function.
@@ -11,7 +12,7 @@ import SearchScreen from './components/SearchScreen';
 function App() {
   return (
     <div className="App">
-      <h1>Grand Sumo Tournament Schedule</h1>
+      <h1>{textConfig.title}</h1>
       <SearchScreen />
     </div>
   );

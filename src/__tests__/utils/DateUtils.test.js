@@ -1,4 +1,4 @@
-import { getCurrentYear } from "../../components/DateUtils";
+import { getCurrentYear } from "../../utils/DateUtils";
 
 describe('Unit test(s) on the date utility function(s)', () => {
 

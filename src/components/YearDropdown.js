@@ -1,4 +1,4 @@
-import { getCurrentYear } from "./DateUtils";
+import { getCurrentYear } from "../utils/DateUtils";
 
 /**
  * The dropdown box will have values

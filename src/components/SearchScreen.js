@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import YearDropdown from "./YearDropdown";
 import ScheduleTable from "./ScheduleTable";
-import { getCurrentYear } from './DateUtils';
+import { getCurrentYear } from '../utils/DateUtils';
 import { APIError } from '../types/APIError';
 
 /**

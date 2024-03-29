@@ -6,9 +6,6 @@
             "ON_RENDER": "https://python-webservice-demo.onrender.com"
         }
     },
-    "scheduleTable": {
-        "dateDisplayFormat": "MMMM D"
-    },
     "yearDropdown": {
         "maxYearsFromCurrent": 20
     }

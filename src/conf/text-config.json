@@ -20,7 +20,8 @@
             "TOURNAMENT": "Tournament",
             "MONTH": "Month",
             "SCHEDULE": "Schedule"
-        }
+        },
+        "dateDisplayFormat": "MMMM D"
     },
     "yearDropdown": {
         "label": "Year"

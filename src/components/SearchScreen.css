@@ -4,9 +4,19 @@
     flex-direction: column;
     align-items: center;
 }
+.SearchScreen form {
+    padding: 8px;
+}
 .SearchScreen label, select, option {
     font-size: 16px;
 }
 .SearchScreen label {
     font-weight: bold;
+}
+.SearchScreen .errorMessage {
+    width: 70%;
+    padding: 15px;
+    font-size: calc(12px + 1vmin);
+    background-color: rgb(250, 218, 223);
+    border: 1px solid darkred;
 }

@@ -29,7 +29,7 @@ export default function YearDropdown(props) {
             <label htmlFor="year">Year</label>
             &nbsp;&nbsp;
             <select id="year" name="year"
-                aria-required="true" aria-label="Year"
+                aria-required="true" aria-label="year"
                 defaultValue={selectedYear}
                 onChange={props.onChangeEvent}
             >

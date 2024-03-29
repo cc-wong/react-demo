@@ -9,4 +9,5 @@
 .App h1 {
   font-family: georgia, times, serif;
   text-align: center;
+  padding: 1px;
 }

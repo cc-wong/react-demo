@@ -23,23 +23,39 @@ const apiBaseUrl = "http://localhost:5000";
 export default function SearchScreen() {
     const [year, setYear] = useState(getCurrentYear);
     const [apiData, setApiData] = useState({ result: [] });
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const url = `${apiBaseUrl}/getSumoHonbashoSchedule?year=${year}`;
         console.debug(`API URL: ${url}`);
         fetch(url)
             .then((response) => {
-                // console.debug(response.status+": "+response.ok);
+                console.debug(`Status code: ${response.status}, ok: ${response.ok}`);
+                if (!response.ok) {
+                    console.error(response);
+                    throw new Error(`Cannot retrieve data (status code: ${response.status}).`);
+                }
                 return response.json();
             })
-            .then(setApiData);
+            .then(setApiData)
+            .catch((error) => {
+                console.error("Error caught: " + error);
+                setError('' + error);
+            });
     }, [year]);
 
+    var div =
+        (error && <div className='errorMessage' id='errorMessage'>ERROR<br />{error}</div>)
+        || <></>;
     return (
         <div className='SearchScreen'>
+            {div}
             <form name='pickYear'>
                 <YearDropdown selectedYear={year}
-                    onChangeEvent={((event) => setYear(event.target.value))} />
+                    onChangeEvent={((event) => {
+                        setYear(event.target.value);
+                        setError(null);
+                    })} />
             </form>
             <ScheduleTable data={apiData.result} />
         </div>

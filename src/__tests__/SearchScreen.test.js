@@ -1,4 +1,6 @@
-import { render, screen, cleanup, fireEvent, waitFor } from '@testing-library/react';
+import {
+    render, screen, cleanup, fireEvent, waitFor, queryByAttribute
+} from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 
 import SearchScreen from '../components/SearchScreen';
@@ -53,6 +55,7 @@ test('<SearchScreen /> rendered', async () => {
     });
     await waitFor(() => {
         assertScreen(2025, 2);
+        assertErrorMessageNotExist();
     });
 });
 
@@ -121,35 +124,120 @@ test('Assert year dropdown onChange event.', async () => {
             }
         ]
     });
-    render(<SearchScreen />);
-    const yearDropdown = screen.getByRole('combobox');
-
-    fireEvent.change(yearDropdown, {
-        target: { value: '2028' }
+    await act(async () => {
+        render(<SearchScreen />);
     });
+    fireChangeYearDropdownValueEvent(2028);
 
     await act(async () => {
         assertApiCall(2, 2028);
     });
     await waitFor(() => {
         assertScreen(2028, 6);
+        assertErrorMessageNotExist();
+    });
+});
+
+test('Assert bad request for API call.', async () => {
+    mockApiCall({
+        ok: false,
+        status: 400,
+        json: () => ("Bad request.")
+    });
+    render(<SearchScreen />);
+
+    await act(async () => {
+        assertApiCall(1, 2025);
+    });
+    await waitFor(() => {
+        assertErrorMessage(/ERROR.*Error\: Cannot retrieve data \(status code\: 400\)\./);
+        assertScreen(2025, 0);
+    });
+});
+
+test('Assert error thrown on API call.', async () => {
+    jest.spyOn(global, 'fetch')
+        .mockRejectedValueOnce(new TypeError("NetworkError when attempting to fetch resource."));
+    render(<SearchScreen />);
+
+    await act(async () => {
+        assertApiCall(1, 2025);
+    });
+    await waitFor(() => {
+        assertErrorMessage(/ERROR.*TypeError\: NetworkError when attempting to fetch resource\./);
+        assertScreen(2025, 0);
+    });
+});
+
+test('Assert API call with non-200 status code followed by one with status code 200.', async () => {
+    mockApiCall({
+        ok: false,
+        status: 400,
+        json: () => ("Bad request.")
+    });
+    mockSuccessfulApiCall({
+        result: [{
+            "basho": "HATSU",
+            "dates": [
+                "2025-01-12", "2025-01-13", "2025-01-14", "2025-01-15", "2025-01-16",
+                "2025-01-17", "2025-01-18", "2025-01-19", "2025-01-20", "2025-01-21",
+                "2025-01-22", "2025-01-23", "2025-01-24", "2025-01-25", "2025-01-26"
+            ],
+            "month": 1,
+            "month_name": "January"
+        }]
+    });
+    await act(async () => {
+        render(<SearchScreen />);
+    });
+    fireChangeYearDropdownValueEvent(2030);
+
+    await act(async () => {
+        assertApiCall(2, 2030);
+    });
+    await waitFor(() => {
+        assertScreen(2030, 1);
+        assertErrorMessageNotExist();
     });
 });
 
 /**
- * Mocks successful call(s) to the API.
+ * Fires an event for changing the value of the Year dropdown.
  * 
- * @param  {...any} responseJson the response(s) JSON data returned in order
+ * @param {number} year the new dropdown value
+ */
+const fireChangeYearDropdownValueEvent = (year) => {
+    fireEvent.change(screen.getByRole('combobox', { name: 'year' }), {
+        target: { value: year }
+    });
+}
+
+/**
+ * Mocks successful call(s) to the API with status code 200.
+ * 
+ * @param  {...any} responseJson the response JSON data returned in order
  */
 const mockSuccessfulApiCall = (...responseJson) => {
     responseJson.forEach((json) => {
-        jest.spyOn(global, 'fetch').mockImplementationOnce((url, config) => {
-            return Promise.resolve({
-                ok: true,
-                status: 200,
-                json: () => (json),
-            })
+        mockApiCall({
+            ok: true,
+            status: 200,
+            json: () => (json),
         })
+    });
+
+}
+
+/**
+ * Mocks an API call that returns a response.
+ * 
+ * The response statuts status code may or may not be 200.
+ * 
+ * @param {*} response the response from the API call
+ */
+const mockApiCall = (response) => {
+    jest.spyOn(global, 'fetch').mockImplementationOnce(() => {
+        return Promise.resolve(response)
     });
 }
 
@@ -175,4 +263,22 @@ const assertApiCall = (times, year) => {
 const assertScreen = (expectedYear, recordCount) => {
     expect(screen.getByRole('option', { name: expectedYear }).selected).toBe(true);
     expect(screen.getAllByRole('row').length).toBe(recordCount + 1);
+}
+
+/**
+ * Asserts that the error message box is present in the screen.
+ * 
+ * @param {*} errorTextRegex regular expression for matching the error message text
+ */
+const assertErrorMessage = (errorTextRegex) => {
+    const errorMessageBox = document.querySelector('#errorMessage');
+    expect(errorMessageBox).toBeInTheDocument();
+    expect(errorTextRegex.test(errorMessageBox.innerHTML)).toBe(true);
+}
+
+/**
+ * Asserts that the error message box is not present in the screen.
+ */
+const assertErrorMessageNotExist = () => {
+    expect(document.querySelector('#errorMessage')).toBeNull();
 }

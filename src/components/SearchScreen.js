@@ -51,7 +51,11 @@ export default function SearchScreen() {
     }, [year]);
 
     var div =
-        (error && <div className='errorMessage' id='errorMessage'>ERROR<br />{error}</div>)
+        (error &&
+            <div className='ErrorMessageBox' id='errorMessage'>
+                <div className='ErrorMessageHeading'>ERROR</div>{error}
+            </div>
+        )
         || <></>;
     return (
         <div className='SearchScreen'>

@@ -4,12 +4,8 @@ import { act } from 'react-dom/test-utils';
 import SearchScreen from '../../components/SearchScreen';
 
 describe('Integration tests on the search screen module', () => {
-    beforeAll(() => {
-        jest.useFakeTimers().setSystemTime(new Date('2025-10-10'));
-    });
-    afterEach(() => {
-        cleanup();
-    });
+    beforeAll(() => jest.useFakeTimers().setSystemTime(new Date('2025-10-10')));
+    afterEach(() => cleanup());
 
     /**
      * About fixing the (dreaded) "not wrapped in act(...)" warning:
@@ -46,10 +42,8 @@ describe('Integration tests on the search screen module', () => {
             });
             render(<SearchScreen />);
 
-            await act(async () => {
-                assertApiCall(1, [2025]);
-            });
             await waitFor(() => {
+                assertApiCall(1, [2025]);
                 assertScreen(2025, 2);
                 assertErrorMessageNotExist();
             });
@@ -63,11 +57,9 @@ describe('Integration tests on the search screen module', () => {
             });
             render(<SearchScreen />);
 
-            await act(async () => {
-                assertApiCall(1, [2025]);
-            });
             await waitFor(() => {
-                assertErrorMessage(/ERROR.*Error\: Cannot retrieve data \(status code\: 400\)\./);
+                assertApiCall(1, [2025]);
+                assertErrorMessageBox("Error: Cannot retrieve data (status code: 400).");
                 assertScreen(2025, 0);
             });
         });
@@ -78,11 +70,9 @@ describe('Integration tests on the search screen module', () => {
                     new TypeError("NetworkError when attempting to fetch resource."));
             render(<SearchScreen />);
 
-            await act(async () => {
-                assertApiCall(1, [2025]);
-            });
             await waitFor(() => {
-                assertErrorMessage(/ERROR.*TypeError\: NetworkError when attempting to fetch resource\./);
+                assertApiCall(1, [2025]);
+                assertErrorMessageBox("TypeError: NetworkError when attempting to fetch resource.");
                 assertScreen(2025, 0);
             });
         });
@@ -154,15 +144,11 @@ describe('Integration tests on the search screen module', () => {
                     }
                 ]
             });
-            await act(async () => {
-                render(<SearchScreen />);
-            });
+            await act(async () => render(<SearchScreen />));
             fireChangeYearDropdownValueEvent(2028);
 
-            await act(async () => {
-                assertApiCall(2, [2025, 2028]);
-            });
             await waitFor(() => {
+                assertApiCall(2, [2025, 2028]);
                 assertScreen(2028, 6);
                 assertErrorMessageNotExist();
             });
@@ -186,15 +172,11 @@ describe('Integration tests on the search screen module', () => {
                     "month_name": "January"
                 }]
             });
-            await act(async () => {
-                render(<SearchScreen />);
-            });
+            await act(async () => render(<SearchScreen />));
             fireChangeYearDropdownValueEvent(2030);
 
-            await act(async () => {
-                assertApiCall(2, [2025, 2030]);
-            });
             await waitFor(() => {
+                assertApiCall(2, [2025, 2030]);
                 assertScreen(2030, 1);
                 assertErrorMessageNotExist();
             });
@@ -213,19 +195,13 @@ describe('Integration tests on the search screen module', () => {
                     "month_name": "January"
                 }]
             });
-            jest.spyOn(global, 'fetch')
-                .mockRejectedValueOnce(
-                    new TypeError("NetworkError when attempting to fetch resource."));
-            await act(async () => {
-                render(<SearchScreen />);
-            });
+            jest.spyOn(global, 'fetch').mockRejectedValueOnce(new TypeError("Load failed"));
+            await act(async () => render(<SearchScreen />));
             fireChangeYearDropdownValueEvent(2026);
 
-            await act(async () => {
-                assertApiCall(2, [2025, 2026]);
-            });
             await waitFor(() => {
-                assertErrorMessage(/ERROR.*TypeError\: NetworkError when attempting to fetch resource\./);
+                assertApiCall(2, [2025, 2026]);
+                assertErrorMessageBox("TypeError: Load failed");
                 assertScreen(2026, 0);
             });
         });
@@ -235,11 +211,10 @@ describe('Integration tests on the search screen module', () => {
          * 
          * @param {number} year the new dropdown value
          */
-        const fireChangeYearDropdownValueEvent = (year) => {
+        const fireChangeYearDropdownValueEvent = (year) =>
             fireEvent.change(screen.getByRole('combobox', { name: 'year' }), {
                 target: { value: year }
             });
-        }
     });
 
     /**
@@ -265,11 +240,8 @@ describe('Integration tests on the search screen module', () => {
      * 
      * @param {*} response the response from the API call
      */
-    const mockApiCall = (response) => {
-        jest.spyOn(global, 'fetch').mockImplementationOnce(() => {
-            return Promise.resolve(response)
-        });
-    }
+    const mockApiCall = (response) => jest.spyOn(global, 'fetch')
+        .mockImplementationOnce(() => Promise.resolve(response));
 
     const apiBaseUrl = "http://localhost:5000";
     /**
@@ -280,10 +252,8 @@ describe('Integration tests on the search screen module', () => {
      */
     const assertApiCall = (times, years) => {
         expect(global.fetch).toHaveBeenCalledTimes(times);
-        years.forEach((year) => {
-            expect(global.fetch)
-                .toHaveBeenCalledWith(`${apiBaseUrl}/getSumoHonbashoSchedule?year=${year.toString()}`);
-        });
+        years.forEach((year) => expect(global.fetch).toHaveBeenCalledWith(
+            `${apiBaseUrl}/getSumoHonbashoSchedule?year=${year.toString()}`));
     }
 
     /**
@@ -298,21 +268,28 @@ describe('Integration tests on the search screen module', () => {
     }
 
     /**
+     * Regex escape function.
+     * 
+     * @param {string} text the text to escape regex for
+     * @returns the escaped text
+     */
+    const escapeRegex = (text) => text.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
+    /**
      * Asserts that the error message box is present in the screen.
      * 
-     * @param {*} errorTextRegex regular expression for matching the error message text
+     * @param {string} message the expected error message text excluding the heading
      */
-    const assertErrorMessage = (errorTextRegex) => {
+    const assertErrorMessageBox = (message) => {
         const errorMessageBox = document.querySelector('#errorMessage');
         expect(errorMessageBox).toBeInTheDocument();
+
+        const errorTextRegex = new RegExp(`ERROR.*${escapeRegex(message)}`);
         expect(errorTextRegex.test(errorMessageBox.innerHTML)).toBe(true);
     }
 
     /**
      * Asserts that the error message box is not present in the screen.
      */
-    const assertErrorMessageNotExist = () => {
-        expect(document.querySelector('#errorMessage')).toBeNull();
-    }
+    const assertErrorMessageNotExist = () => expect(document.querySelector('#errorMessage')).toBeNull();
 
 });

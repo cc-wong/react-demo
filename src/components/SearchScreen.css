@@ -13,10 +13,16 @@
 .SearchScreen label {
     font-weight: bold;
 }
-.SearchScreen .errorMessage {
+.SearchScreen .ErrorMessageBox {
     width: 70%;
     padding: 15px;
     font-size: calc(12px + 1vmin);
     background-color: rgb(250, 218, 223);
     border: 1px solid darkred;
+}
+.SearchScreen .ErrorMessageHeading {
+    width: 100%;
+    padding-bottom: 8px;
+    font-weight: bold;
+    color: rgb(75, 0, 0);
 }

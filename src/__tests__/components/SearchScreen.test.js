@@ -59,7 +59,7 @@ describe('Integration tests on the search screen module', () => {
 
             await waitFor(() => {
                 assertApiCall(1, [2025]);
-                assertErrorMessageBox("Error: Cannot retrieve data (status code: 400).");
+                assertErrorMessageBox("Could not retrieve data (returned status code 400)");
                 assertScreen(2025, 0);
             });
         });
@@ -72,7 +72,7 @@ describe('Integration tests on the search screen module', () => {
 
             await waitFor(() => {
                 assertApiCall(1, [2025]);
-                assertErrorMessageBox("TypeError: NetworkError when attempting to fetch resource.");
+                assertErrorMessageBox("Could not retrieve data (error on making API call)");
                 assertScreen(2025, 0);
             });
         });
@@ -201,7 +201,7 @@ describe('Integration tests on the search screen module', () => {
 
             await waitFor(() => {
                 assertApiCall(2, [2025, 2026]);
-                assertErrorMessageBox("TypeError: Load failed");
+                assertErrorMessageBox("Could not retrieve data (error on making API call)");
                 assertScreen(2026, 0);
             });
         });

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import YearDropdown from "./YearDropdown";
 import ScheduleTable from "./ScheduleTable";
 import { getCurrentYear } from './DateUtils';
+import { APIError } from '../types/APIError';
 
 /**
  * The base URL for the API call.
@@ -38,28 +39,27 @@ export default function SearchScreen() {
                 console.debug(`Status code: ${response.status}, ok: ${response.ok}`);
                 if (!response.ok) {
                     console.error(response);
-                    throw new Error(`Cannot retrieve data (status code: ${response.status}).`);
+                    throw new APIError(response.status);
                 }
                 return response.json();
             })
             .then(setApiData)
             .catch((error) => {
                 console.error("Error caught: " + error);
-                setError('' + error);
+                setError(error instanceof APIError ?
+                    `Could not retrieve data (returned status code ${error.statusCode})` :
+                    'Could not retrieve data (error on making API call)');
                 setApiData(initialApiData);
             });
     }, [year]);
 
-    var div =
-        (error &&
-            <div className='ErrorMessageBox' id='errorMessage'>
-                <div className='ErrorMessageHeading'>ERROR</div>{error}
-            </div>
-        )
-        || <></>;
     return (
         <div className='SearchScreen'>
-            {div}
+            {(error &&
+                <div className='ErrorMessageBox' id='errorMessage'>
+                    <div className='ErrorMessageHeading'>ERROR</div>{error}
+                </div>
+            ) || <></>}
             <form name='pickYear'>
                 <YearDropdown selectedYear={year}
                     onChangeEvent={((event) => {

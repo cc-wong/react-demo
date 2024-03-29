@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Honbasho Schedule",
+  "name": "Grand Sumo Tournament Schedule Checker",
   "icons": [
     {
       "src": "favicon.ico",

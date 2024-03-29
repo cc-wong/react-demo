@@ -16,7 +16,9 @@ This app allows you to look up the schedules of the Grand Sumo Tournament in the
 
 URL: <http://localhost:3000/>
 
-## Deployment and startup
+## Development, startup and deployment
+
+Reference: <https://create-react-app.dev/docs/getting-started#scripts>
 
 ### Run locally
 1. Go to the project root directory at the terminal.

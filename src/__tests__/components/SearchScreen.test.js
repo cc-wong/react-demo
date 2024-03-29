@@ -1,9 +1,7 @@
-import {
-    render, screen, cleanup, fireEvent, waitFor, queryByAttribute
-} from '@testing-library/react';
+import { render, screen, cleanup, fireEvent, waitFor } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 
-import SearchScreen from '../components/SearchScreen';
+import SearchScreen from '../../components/SearchScreen';
 
 
 beforeAll(() => {

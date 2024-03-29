@@ -1,5 +1,5 @@
 import { render, screen, cleanup } from '@testing-library/react';
-import ScheduleTable from '../components/ScheduleTable';
+import ScheduleTable from '../../components/ScheduleTable';
 
 // afterEach function runs after each test suite is executed
 afterEach(() => {

@@ -1,5 +1,5 @@
 import { render, screen, cleanup } from '@testing-library/react';
-import App from './App';
+import App from '../App';
 
 // afterEach function runs after each test suite is executed
 afterEach(() => {

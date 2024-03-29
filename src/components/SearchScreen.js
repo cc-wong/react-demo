@@ -1,4 +1,5 @@
 import './SearchScreen.css';
+import config from '../conf/config.json';
 
 import { useEffect, useState } from "react";
 
@@ -8,12 +9,13 @@ import { getCurrentYear } from '../utils/DateUtils';
 import { APIError } from '../types/APIError';
 
 /**
- * The base URL for the API call.
+ * The URL for the API call.
  * 
- * Hard-coding is temporary. To be configurable later.
+ * The token `%YEAR%` will be replaced by the selected year.
+ * 
+ * TO-DO: Key for base URL lookup to be provided via environment variables.
  */
-const apiBaseUrl = "http://localhost:5000";
-// const apiBaseUrl = "https://python-webservice-demo.onrender.com";
+const apiUrl = config.api.urlFormat.replace("%API_BASE_URL%", config.api.baseUrl['LOCAL']);
 
 /**
  * The initial (default) value of the state `apiData`.
@@ -32,7 +34,7 @@ export default function SearchScreen() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const url = `${apiBaseUrl}/getSumoHonbashoSchedule?year=${year}`;
+        const url = apiUrl.replace("%YEAR%", year.toString());
         console.debug(`API URL: ${url}`);
         fetch(url)
             .then((response) => {

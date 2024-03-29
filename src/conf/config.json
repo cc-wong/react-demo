@@ -1,8 +1,10 @@
 {
-    "apiUrl": "%API_BASE_URL%/getSumoHonbashoSchedule?year=%YEAR%",
-    "apiBaseUrl": {
-        "local": "http://localhost:5000",
-        "remote": "https://python-webservice-demo.onrender.com"
+    "api": {
+        "urlFormat": "%API_BASE_URL%/getSumoHonbashoSchedule?year=%YEAR%",
+        "baseUrl": {
+            "LOCAL": "http://localhost:5000",
+            "ON_RENDER": "https://python-webservice-demo.onrender.com"
+        }
     },
     "scheduleTable": {
         "dateDisplayFormat": "MMMM D"

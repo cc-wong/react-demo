@@ -1,0 +1,28 @@
+{
+    "title": "Grand Sumo Tournament Schedule",
+    "bashoNameMap": {
+        "HATSU": "Hatsu",
+        "HARU": "Haru",
+        "NATSU": "Natsu",
+        "NAGOYA": "Nagoya",
+        "AKI": "Aki",
+        "KYUSHU": "Kyushu"
+    },
+    "error": {
+        "title": "ERROR",
+        "messages": {
+            "apiCallError": "Could not retrieve data (error on making API call)",
+            "apiFailStatusCode": "Could not retrieve data (returned status code %STATUS_CODE%)"
+        }
+    },
+    "scheduleTable": {
+        "columnNames": {
+            "TOURNAMENT": "Tournament",
+            "MONTH": "Month",
+            "SCHEDULE": "Schedule"
+        }
+    },
+    "yearDropdown": {
+        "label": "Year"
+    }
+}

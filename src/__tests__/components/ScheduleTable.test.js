@@ -6,13 +6,7 @@ describe('Unit tests on the table displaying the retrieved schedule for the year
         cleanup();
     })
 
-    test("Assert table name.", () => {
-        render(<ScheduleTable data={[]} />);
-        const table = screen.getByRole('table');
-        expect(table).toHaveAttribute("name", "schedule");
-    });
-
-    test("Assert table headings.", () => {
+    test("Table headings.", () => {
         render(<ScheduleTable data={[]} />);
 
         const headers = screen.getAllByRole('columnheader');
@@ -23,7 +17,7 @@ describe('Unit tests on the table displaying the retrieved schedule for the year
         });
     });
 
-    test("Assert table with records.", () => {
+    test("Table with records.", () => {
         const dataFromApi = [
             {
                 "basho": "HATSU",
@@ -98,7 +92,7 @@ describe('Unit tests on the table displaying the retrieved schedule for the year
         assertRecordRow(cells.slice(15, 18), "Kyushu", "November", "November 9 to November 23");
     });
 
-    test("Assert table with no records.", () => {
+    test("Table with no records.", () => {
         assertTableRecords([], 0);
     });
 

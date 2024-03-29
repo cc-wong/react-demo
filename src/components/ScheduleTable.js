@@ -24,7 +24,7 @@ import moment from "moment";
 export default function ScheduleTable(props) {
     var records = props.data === undefined || props.data === null ? [] : props.data;
     return (
-        <table name="schedule" className="ScheduleTable">
+        <table name="schedule" aria-label="schedule" className="ScheduleTable">
             <thead>
                 <tr>
                     <th>Tournament</th>

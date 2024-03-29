@@ -9,7 +9,7 @@ describe('Unit tests on the year dropdown box', () => {
         cleanup();
     })
 
-    test('<YearDropdown /> rendered', () => {
+    test('Field is rendered.', () => {
         const selectedYear = 2027;
 
         render(<YearDropdown selectedYear={selectedYear} />);
@@ -38,7 +38,7 @@ describe('Unit tests on the year dropdown box', () => {
      */
     const mockOnChangeEvent = jest.fn();
 
-    test('Assert onChange event called on value change.', () => {
+    test('onChange event called on value change.', () => {
         render(<YearDropdown onChangeEvent={mockOnChangeEvent} />);
         const dropdown = getDropdown();
         fireEvent.change(dropdown, {
@@ -49,6 +49,9 @@ describe('Unit tests on the year dropdown box', () => {
 
     /**
      * Returns the dropdown object from the screen.
+     * 
+     * This function returning the object also asserts that
+     * the "Year" label was implemented properly.
      * 
      * @returns the dropdown object
      */

@@ -1,8 +1,8 @@
 import { getCurrentYear } from "../../components/DateUtils";
 
-describe('Unit tests on the date utility functions', () => {
+describe('Unit test(s) on the date utility function(s)', () => {
 
-    test('Assert get current year', () => {
+    test('Get current year number.', () => {
         jest.useFakeTimers().setSystemTime(new Date('2023-10-10'));
         expect(getCurrentYear()).toBe(2023);
     });

@@ -1,4 +1,5 @@
 import "./ScheduleTable.css";
+import textConfig from '../conf/text-config.json';
 
 import moment from "moment";
 
@@ -27,9 +28,9 @@ export default function ScheduleTable(props) {
         <table name="schedule" aria-label="schedule" className="ScheduleTable">
             <thead>
                 <tr>
-                    <th>Tournament</th>
-                    <th>Month</th>
-                    <th>Schedule</th>
+                    <th>{textConfig.scheduleTable.columnNames.TOURNAMENT}</th>
+                    <th>{textConfig.scheduleTable.columnNames.MONTH}</th>
+                    <th>{textConfig.scheduleTable.columnNames.SCHEDULE}</th>
                 </tr>
             </thead>
             <tbody>
@@ -48,25 +49,13 @@ export default function ScheduleTable(props) {
 }
 
 /**
- * Mapping for the tournament name.
- */
-const bashoNameMap = {
-    HATSU: "Hatsu",
-    HARU: "Haru",
-    NATSU: "Natsu",
-    NAGOYA: "Nagoya",
-    AKI: "Aki",
-    KYUSHU: "Kyushu"
-};
-
-/**
  * Prints the name of the tournament.
  * 
  * @param {BashoJson} record denotes the schedule of a tournament
  * @returns the tournament's full name 
  */
 function printBasho(record) {
-    return bashoNameMap[record.basho];
+    return textConfig.bashoNameMap[record.basho];
 }
 
 /**
@@ -80,19 +69,22 @@ function printMonth(record) {
 }
 
 /**
- * The format for displaying dates at the screen.
- * 
- * Example: 22-1-2024 -> January 22
- */
-const dateDisplayFormat = "MMMM D";
-/**
  * Prints the dates of the tournament.
  * 
  * @param {BashoJson} record denotes the schedule of a tournament
  * @returns {string} the dates as `MMMM D to MMMM D`, eg. January 8 to January 22
  */
 function printScheduleDates(record) {
-    var day1 = moment(record.dates.at(0)).format(dateDisplayFormat);
-    var day15 = moment(record.dates.at(14)).format(dateDisplayFormat);
+    var day1 = formatDate(record.dates.at(0));
+    var day15 = formatDate(record.dates.at(14));
     return `${day1} to ${day15}`;
 }
+
+/**
+ * Formats a date from the API JSON data for display.
+ * 
+ * @param {string} date the date as a `YYYY-MM-DD` string
+ * @returns {string} a string representation of the date formatted as configured 
+ *          by `scheduleTable.dateDisplayFormat` in the text configurations
+ */
+const formatDate = (date) => moment(date).format(textConfig.scheduleTable.dateDisplayFormat);

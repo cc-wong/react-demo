@@ -1,5 +1,6 @@
 import './SearchScreen.css';
 import config from '../conf/config.json';
+import textConfig from '../conf/text-config.json';
 
 import { useEffect, useState } from "react";
 
@@ -49,8 +50,9 @@ export default function SearchScreen() {
             .catch((error) => {
                 console.error("Error caught: " + error);
                 setError(error instanceof APIError ?
-                    `Could not retrieve data (returned status code ${error.statusCode})` :
-                    'Could not retrieve data (error on making API call)');
+                    textConfig.error.messages.apiFailStatusCode
+                        .replace("%STATUS_CODE%", error.statusCode) :
+                    textConfig.error.messages.apiCallError);
                 setApiData(initialApiData);
             });
     }, [year]);
@@ -59,7 +61,7 @@ export default function SearchScreen() {
         <div className='SearchScreen'>
             {(error &&
                 <div className='ErrorMessageBox' id='errorMessage'>
-                    <div className='ErrorMessageHeading'>ERROR</div>{error}
+                    <div className='ErrorMessageHeading'>{textConfig.error.title}</div>{error}
                 </div>
             ) || <></>}
             <form name='pickYear'>

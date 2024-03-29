@@ -1,56 +1,59 @@
 import { render, screen, cleanup, fireEvent } from '@testing-library/react';
 import YearDropdown from '../../components/YearDropdown';
 
-beforeEach(() => {
-    jest.useFakeTimers().setSystemTime(new Date('2022-03-28'));
-});
-afterEach(() => {
-    cleanup();
-})
-
-test('<YearDropdown /> rendered', () => {
-    const selectedYear = 2027;
-
-    render(<YearDropdown selectedYear={selectedYear} />);
-    const dropdown = getDropdown();
-    expect(dropdown).toHaveAttribute("id", "year");
-    expect(dropdown).toHaveAttribute("name", "year");
-
-    const options = screen.getAllByRole('option');
-    expect(options.length).toBe(20 + 1);
-    options.map((option, i) => {
-        var year = 2022 + i;
-        expect(option).toHaveAttribute("value", year.toString());
-        expect(option).toHaveTextContent(year.toString());
-        try {
-            expect(option.selected).toBe(year === selectedYear);
-        } catch (e) {
-            throw new Error(
-                `Option "${year}" should ${year === selectedYear ? '' : "not "}be selected!`
-            );
-        }
+describe('Unit tests on the year dropdown box', () => {
+    beforeEach(() => {
+        jest.useFakeTimers().setSystemTime(new Date('2022-03-28'));
     });
-});
+    afterEach(() => {
+        cleanup();
+    })
 
-/**
- * Mock onChange event for the dropdown box.
- */
-const mockOnChangeEvent = jest.fn();
+    test('<YearDropdown /> rendered', () => {
+        const selectedYear = 2027;
 
-test('Assert onChange event called on value change.', () => {
-    render(<YearDropdown onChangeEvent={mockOnChangeEvent} />);
-    const dropdown = getDropdown();
-    fireEvent.change(dropdown, {
-        target: { value: '2029' }
+        render(<YearDropdown selectedYear={selectedYear} />);
+        const dropdown = getDropdown();
+        expect(dropdown).toHaveAttribute("id", "year");
+        expect(dropdown).toHaveAttribute("name", "year");
+
+        const options = screen.getAllByRole('option');
+        expect(options.length).toBe(20 + 1);
+        options.map((option, i) => {
+            var year = 2022 + i;
+            expect(option).toHaveAttribute("value", year.toString());
+            expect(option).toHaveTextContent(year.toString());
+            try {
+                expect(option.selected).toBe(year === selectedYear);
+            } catch (e) {
+                throw new Error(
+                    `Option "${year}" should ${year === selectedYear ? '' : "not "}be selected!`
+                );
+            }
+        });
     });
-    expect(mockOnChangeEvent.mock.calls).toHaveLength(1);
-});
 
-/**
- * Returns the dropdown object from the screen.
- * 
- * @returns the dropdown object
- */
-function getDropdown() {
-    return screen.getByLabelText("Year");
-}
+    /**
+     * Mock onChange event for the dropdown box.
+     */
+    const mockOnChangeEvent = jest.fn();
+
+    test('Assert onChange event called on value change.', () => {
+        render(<YearDropdown onChangeEvent={mockOnChangeEvent} />);
+        const dropdown = getDropdown();
+        fireEvent.change(dropdown, {
+            target: { value: '2029' }
+        });
+        expect(mockOnChangeEvent.mock.calls).toHaveLength(1);
+    });
+
+    /**
+     * Returns the dropdown object from the screen.
+     * 
+     * @returns the dropdown object
+     */
+    function getDropdown() {
+        return screen.getByLabelText("Year");
+    }
+
+});

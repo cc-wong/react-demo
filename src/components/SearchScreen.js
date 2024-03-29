@@ -15,6 +15,11 @@ const apiBaseUrl = "http://localhost:5000";
 // const apiBaseUrl = "https://python-webservice-demo.onrender.com";
 
 /**
+ * The initial (default) value of the state `apiData`.
+ */
+const initialApiData = { result: [] };
+
+/**
  * Populates the search screen which includes a dropdown for the year
  * and the results table.
  * 
@@ -22,7 +27,7 @@ const apiBaseUrl = "http://localhost:5000";
  */
 export default function SearchScreen() {
     const [year, setYear] = useState(getCurrentYear);
-    const [apiData, setApiData] = useState({ result: [] });
+    const [apiData, setApiData] = useState(initialApiData);
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -41,6 +46,7 @@ export default function SearchScreen() {
             .catch((error) => {
                 console.error("Error caught: " + error);
                 setError('' + error);
+                setApiData(initialApiData);
             });
     }, [year]);
 

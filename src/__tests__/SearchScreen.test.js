@@ -169,7 +169,7 @@ test('Assert error thrown on API call.', async () => {
     });
 });
 
-test('Assert API call with non-200 status code followed by one with status code 200.', async () => {
+test('Assert error message is cleared on successful API data retrieval.', async () => {
     mockApiCall({
         ok: false,
         status: 400,
@@ -198,6 +198,35 @@ test('Assert API call with non-200 status code followed by one with status code 
     await waitFor(() => {
         assertScreen(2030, 1);
         assertErrorMessageNotExist();
+    });
+});
+
+test('Assert results table is cleared on API call failure.', async () => {
+    mockSuccessfulApiCall({
+        result: [{
+            "basho": "HATSU",
+            "dates": [
+                "2025-01-12", "2025-01-13", "2025-01-14", "2025-01-15", "2025-01-16",
+                "2025-01-17", "2025-01-18", "2025-01-19", "2025-01-20", "2025-01-21",
+                "2025-01-22", "2025-01-23", "2025-01-24", "2025-01-25", "2025-01-26"
+            ],
+            "month": 1,
+            "month_name": "January"
+        }]
+    });
+    jest.spyOn(global, 'fetch')
+        .mockRejectedValueOnce(new TypeError("NetworkError when attempting to fetch resource."));
+    await act(async () => {
+        render(<SearchScreen />);
+    });
+    fireChangeYearDropdownValueEvent(2026);
+
+    await act(async () => {
+        assertApiCall(2, 2026);
+    });
+    await waitFor(() => {
+        assertErrorMessage(/ERROR.*TypeError\: NetworkError when attempting to fetch resource\./);
+        assertScreen(2026, 0);
     });
 });
 

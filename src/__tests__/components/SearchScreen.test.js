@@ -3,6 +3,8 @@ import { act } from 'react-dom/test-utils';
 
 import SearchScreen from '../../components/SearchScreen';
 
+import testData from './SearchScreen.test.json';
+
 describe('Integration tests on the search screen module', () => {
     beforeAll(() => jest.useFakeTimers().setSystemTime(new Date('2025-10-10')));
     afterEach(() => cleanup());
@@ -16,45 +18,18 @@ describe('Integration tests on the search screen module', () => {
 
     describe('On initial rendering', () => {
         test('Normal screen render (API call successful).', async () => {
-            mockSuccessfulApiCall({
-                result: [
-                    {
-                        "basho": "HATSU",
-                        "dates": [
-                            "2025-01-12", "2025-01-13", "2025-01-14", "2025-01-15", "2025-01-16",
-                            "2025-01-17", "2025-01-18", "2025-01-19", "2025-01-20", "2025-01-21",
-                            "2025-01-22", "2025-01-23", "2025-01-24", "2025-01-25", "2025-01-26"
-                        ],
-                        "month": 1,
-                        "month_name": "January"
-                    },
-                    {
-                        "basho": "HARU",
-                        "dates": [
-                            "2025-03-09", "2025-03-10", "2025-03-11", "2025-03-12", "2025-03-13",
-                            "2025-03-14", "2025-03-15", "2025-03-16", "2025-03-17", "2025-03-18",
-                            "2025-03-19", "2025-03-20", "2025-03-21", "2025-03-22", "2025-03-23"
-                        ],
-                        "month": 3,
-                        "month_name": "March"
-                    }
-                ]
-            });
+            mockSuccessfulApiCall(testData.sixRecords);
             render(<SearchScreen />);
 
             await waitFor(() => {
                 assertApiCall(1, [2025]);
-                assertScreen(2025, 2);
+                assertScreen(2025, 6);
                 assertErrorMessageNotExist();
             });
         });
 
         test('API call returns non-200 status code.', async () => {
-            mockApiCall({
-                ok: false,
-                status: 400,
-                json: () => ("Bad request.")
-            });
+            mockBadRequestApiCallOnce();
             render(<SearchScreen />);
 
             await waitFor(() => {
@@ -65,9 +40,7 @@ describe('Integration tests on the search screen module', () => {
         });
 
         test('Error thrown on API call.', async () => {
-            jest.spyOn(global, 'fetch')
-                .mockRejectedValueOnce(
-                    new TypeError("NetworkError when attempting to fetch resource."));
+            mockApiCallThrowErrorOnce();
             render(<SearchScreen />);
 
             await waitFor(() => {
@@ -80,130 +53,58 @@ describe('Integration tests on the search screen module', () => {
 
     describe('Year dropdown value changed', () => {
         test('Successful API data retrieval (happy path).', async () => {
-            mockSuccessfulApiCall({ result: [] }, {
-                result: [
-                    {
-                        "basho": "HATSU",
-                        "dates": [
-                            "2025-01-12", "2025-01-13", "2025-01-14", "2025-01-15", "2025-01-16",
-                            "2025-01-17", "2025-01-18", "2025-01-19", "2025-01-20", "2025-01-21",
-                            "2025-01-22", "2025-01-23", "2025-01-24", "2025-01-25", "2025-01-26"
-                        ],
-                        "month": 1,
-                        "month_name": "January"
-                    },
-                    {
-                        "basho": "HARU",
-                        "dates": [
-                            "2025-03-09", "2025-03-10", "2025-03-11", "2025-03-12", "2025-03-13",
-                            "2025-03-14", "2025-03-15", "2025-03-16", "2025-03-17", "2025-03-18",
-                            "2025-03-19", "2025-03-20", "2025-03-21", "2025-03-22", "2025-03-23"
-                        ],
-                        "month": 3,
-                        "month_name": "March"
-                    },
-                    {
-                        "basho": "NATSU",
-                        "dates": [
-                            "2025-05-11", "2025-05-12", "2025-05-13", "2025-05-14", "2025-05-15",
-                            "2025-05-16", "2025-05-17", "2025-05-18", "2025-05-19", "2025-05-20",
-                            "2025-05-21", "2025-05-22", "2025-05-23", "2025-05-24", "2025-05-25"
-                        ],
-                        "month": 5,
-                        "month_name": "May"
-                    },
-                    {
-                        "basho": "NAGOYA",
-                        "dates": [
-                            "2025-07-13", "2025-07-14", "2025-07-15", "2025-07-16", "2025-07-17",
-                            "2025-07-18", "2025-07-19", "2025-07-20", "2025-07-21", "2025-07-22",
-                            "2025-07-23", "2025-07-24", "2025-07-25", "2025-07-26", "2025-07-27"
-                        ],
-                        "month": 7,
-                        "month_name": "July"
-                    },
-                    {
-                        "basho": "AKI",
-                        "dates": [
-                            "2025-09-14", "2025-09-15", "2025-09-16", "2025-09-17", "2025-09-18",
-                            "2025-09-19", "2025-09-20", "2025-09-21", "2025-09-22", "2025-09-23",
-                            "2025-09-24", "2025-09-25", "2025-09-26", "2025-09-27", "2025-09-28"
-                        ],
-                        "month": 9,
-                        "month_name": "September"
-                    },
-                    {
-                        "basho": "KYUSHU",
-                        "dates": [
-                            "2025-11-09", "2025-11-10", "2025-11-11", "2025-11-12", "2025-11-13",
-                            "2025-11-14", "2025-11-15", "2025-11-16", "2025-11-17", "2025-11-18",
-                            "2025-11-19", "2025-11-20", "2025-11-21", "2025-11-22", "2025-11-23"
-                        ],
-                        "month": 11,
-                        "month_name": "November"
-                    }
-                ]
-            });
-            await act(async () => render(<SearchScreen />));
-            fireChangeYearDropdownValueEvent(2028);
+            mockSuccessfulApiCall(testData.oneRecord, testData.sixRecords);
 
+            await act(async () => render(<SearchScreen />));
             await waitFor(() => {
-                assertApiCall(2, [2025, 2028]);
+                assertScreen(2025, 1);
+                assertErrorMessageNotExist();
+            });
+
+            await act(async () => fireChangeYearDropdownValueEvent(2028));
+            await waitFor(() => {
                 assertScreen(2028, 6);
                 assertErrorMessageNotExist();
             });
+
+            assertApiCall(2, [2025, 2028]);
         });
 
         test('API call failed on initial rendering but successful on year value change.', async () => {
-            mockApiCall({
-                ok: false,
-                status: 400,
-                json: () => ("Bad request.")
-            });
-            mockSuccessfulApiCall({
-                result: [{
-                    "basho": "HATSU",
-                    "dates": [
-                        "2025-01-12", "2025-01-13", "2025-01-14", "2025-01-15", "2025-01-16",
-                        "2025-01-17", "2025-01-18", "2025-01-19", "2025-01-20", "2025-01-21",
-                        "2025-01-22", "2025-01-23", "2025-01-24", "2025-01-25", "2025-01-26"
-                    ],
-                    "month": 1,
-                    "month_name": "January"
-                }]
-            });
-            await act(async () => render(<SearchScreen />));
-            fireChangeYearDropdownValueEvent(2030);
+            mockBadRequestApiCallOnce();
+            mockSuccessfulApiCall(testData.sixRecords);
 
+            await act(async () => render(<SearchScreen />));
             await waitFor(() => {
-                assertApiCall(2, [2025, 2030]);
-                assertScreen(2030, 1);
+                assertErrorMessageBox("Could not retrieve data (returned status code 400)");
+                assertScreen(2025, 0);
+            });
+
+            await act(async () => fireChangeYearDropdownValueEvent(2030));
+            await waitFor(() => {
+                assertScreen(2030, 6);
                 assertErrorMessageNotExist();
             });
+
+            assertApiCall(2, [2025, 2030]);
         });
 
         test('API call failure on year value change.', async () => {
-            mockSuccessfulApiCall({
-                result: [{
-                    "basho": "HATSU",
-                    "dates": [
-                        "2025-01-12", "2025-01-13", "2025-01-14", "2025-01-15", "2025-01-16",
-                        "2025-01-17", "2025-01-18", "2025-01-19", "2025-01-20", "2025-01-21",
-                        "2025-01-22", "2025-01-23", "2025-01-24", "2025-01-25", "2025-01-26"
-                    ],
-                    "month": 1,
-                    "month_name": "January"
-                }]
-            });
-            jest.spyOn(global, 'fetch').mockRejectedValueOnce(new TypeError("Load failed"));
+            mockSuccessfulApiCall(testData.sixRecords);
+            mockApiCallThrowErrorOnce();
             await act(async () => render(<SearchScreen />));
-            fireChangeYearDropdownValueEvent(2026);
-
             await waitFor(() => {
-                assertApiCall(2, [2025, 2026]);
+                assertScreen(2025, 6);
+                assertErrorMessageNotExist();
+            });
+
+            await act(async () => fireChangeYearDropdownValueEvent(2026));
+            await waitFor(() => {
                 assertErrorMessageBox("Could not retrieve data (error on making API call)");
                 assertScreen(2026, 0);
             });
+
+            assertApiCall(2, [2025, 2026]);
         });
 
         /**
@@ -230,8 +131,22 @@ describe('Integration tests on the search screen module', () => {
                 json: () => (json),
             })
         });
-
     }
+
+    /**
+     * Mocks the API call to return a 400 bad request response once.
+     */
+    const mockBadRequestApiCallOnce = () => mockApiCall({
+        ok: false,
+        status: 400,
+        json: () => ("Bad request.")
+    });
+
+    /**
+     * Mocks the API call to throw an error once.
+     */
+    const mockApiCallThrowErrorOnce = () => jest.spyOn(global, 'fetch')
+        .mockRejectedValueOnce(new TypeError("Load failed"));
 
     /**
      * Mocks an API call that returns a response.

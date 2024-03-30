@@ -4,9 +4,7 @@ import ScheduleTable from '../../components/ScheduleTable';
 import testData from './ScheduleTable.test.json';
 
 describe('Unit tests on the table displaying the retrieved schedule for the year', () => {
-    afterEach(() => {
-        cleanup();
-    })
+    afterEach(() => cleanup());
 
     test("Table headings.", () => {
         render(<ScheduleTable data={[]} />);
@@ -32,9 +30,7 @@ describe('Unit tests on the table displaying the retrieved schedule for the year
         assertRecordRow(cells.slice(10, 12), "November (Kyushu)", "November 9 (Sunday) to November 23 (Sunday)");
     });
 
-    test("Table with no records.", () => {
-        assertTableRecords([], 0);
-    });
+    test("Table with no records.", () => assertTableRecords([], 0));
 
     /**
      * Runs a test case on populating table records.

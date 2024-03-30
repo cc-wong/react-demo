@@ -4,12 +4,9 @@ import SearchScreen from './components/SearchScreen';
 import textConfig from './conf/text-config.json';
 
 /**
- * The app's main function.
- * 
- * @returns the page components
- * 
+ * The app's main component.
  */
-function App() {
+export default function App() {
   return (
     <div className="App">
       <h1>{textConfig.title}</h1>
@@ -17,5 +14,3 @@ function App() {
     </div>
   );
 }
-
-export default App;

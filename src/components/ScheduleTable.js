@@ -52,25 +52,15 @@ export default function ScheduleTable(props) {
  * @param {BashoJson} record denotes the schedule of a tournament
  * @returns the tournament's full name 
  */
-function printBasho(record) {
-    return textConfig.bashoNameMap[record.basho];
-}
-
-/**
- * Prints the month of the tournament.
- * 
- * @param {BashoJson} record denotes the schedule of a tournament
- * @returns the name of the month of the tournament
- */
-function printMonth(record) {
-    return record.month_name;
-}
+const printBasho = (record) => textConfig.bashoNameMap[record.basho];
 
 /**
  * Prints the dates of the tournament.
  * 
  * @param {BashoJson} record denotes the schedule of a tournament
- * @returns {string} the dates as `MMMM D to MMMM D`, eg. January 8 to January 22
+ * @returns {string} [day1] to [day15];
+ *                   see text configuration `scheduleTable.dateDisplayFormat`
+ *                   for the date format
  */
 function printScheduleDates(record) {
     var day1 = formatDate(record.dates.at(0));

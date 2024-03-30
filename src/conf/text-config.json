@@ -21,7 +21,7 @@
             "MONTH": "Month",
             "SCHEDULE": "Schedule"
         },
-        "dateDisplayFormat": "MMMM D"
+        "dateDisplayFormat": "MMMM D (dddd)"
     },
     "yearDropdown": {
         "label": "Year"

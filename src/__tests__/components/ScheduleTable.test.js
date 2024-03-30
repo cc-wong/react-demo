@@ -24,12 +24,12 @@ describe('Unit tests on the table displaying the retrieved schedule for the year
 
         const cells = screen.getAllByRole('cell');
         expect(cells.length).toBe(2 * 6);
-        assertRecordRow(cells.slice(0, 2), "January (Hatsu)", "January 12 to January 26");
-        assertRecordRow(cells.slice(2, 4), "March (Haru/Spring)", "March 9 to March 23");
-        assertRecordRow(cells.slice(4, 6), "May (Natsu/Summer)", "May 11 to May 25");
-        assertRecordRow(cells.slice(6, 8), "July (Nagoya)", "July 13 to July 27");
-        assertRecordRow(cells.slice(8, 10), "September (Aki/Autumn)", "September 14 to September 28");
-        assertRecordRow(cells.slice(10, 12), "November (Kyushu)", "November 9 to November 23");
+        assertRecordRow(cells.slice(0, 2), "January (Hatsu)", "January 12 (Sunday) to January 26 (Sunday)");
+        assertRecordRow(cells.slice(2, 4), "March (Haru/Spring)", "March 9 (Sunday) to March 23 (Sunday)");
+        assertRecordRow(cells.slice(4, 6), "May (Natsu/Summer)", "May 11 (Sunday) to May 25 (Sunday)");
+        assertRecordRow(cells.slice(6, 8), "July (Nagoya)", "July 13 (Sunday) to July 27 (Sunday)");
+        assertRecordRow(cells.slice(8, 10), "September (Aki/Autumn)", "September 14 (Sunday) to September 28 (Sunday)");
+        assertRecordRow(cells.slice(10, 12), "November (Kyushu)", "November 9 (Sunday) to November 23 (Sunday)");
     });
 
     test("Table with no records.", () => {

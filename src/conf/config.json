@@ -7,6 +7,6 @@
         }
     },
     "yearDropdown": {
-        "maxYearsFromCurrent": 20
+        "maxYearsFromCurrent": 10
     }
 }

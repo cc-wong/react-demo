@@ -18,7 +18,7 @@ describe('Unit tests on the year dropdown box', () => {
         expect(dropdown).toHaveAttribute("name", "year");
 
         const options = screen.getAllByRole('option');
-        expect(options.length).toBe(20 + 1);
+        expect(options.length).toBe(10 + 1);
         options.map((option, i) => {
             var year = 2022 + i;
             expect(option).toHaveAttribute("value", year.toString());

@@ -5,17 +5,23 @@ import SearchScreen from '../../components/SearchScreen';
 
 import testData from './SearchScreen.test.json';
 
+
+beforeAll(() => jest.useFakeTimers().setSystemTime(new Date('2025-10-10')));
+const mockApiUrl = "http://my-api-host.net/getSumoHonbashoSchedule?year=";
+beforeEach(() => {
+    const environmentUtils = require('../../utils/EnvironmentUtils');
+    jest.spyOn(environmentUtils, 'getApiUrl').mockReturnValue(mockApiUrl + "%YEAR%");
+});
+afterEach(() => cleanup());
+
+/**
+ * About fixing the "not wrapped in act(...)" warning:
+ * https://github.com/testing-library/react-testing-library/issues/1051
+ * (Exact comment:
+ * https://github.com/testing-library/react-testing-library/issues/1051#issuecomment-1149569930)
+ */
+
 describe('Integration tests on the search screen module', () => {
-    beforeAll(() => jest.useFakeTimers().setSystemTime(new Date('2025-10-10')));
-    afterEach(() => cleanup());
-
-    /**
-     * About fixing the (dreaded) "not wrapped in act(...)" warning:
-     * https://github.com/testing-library/react-testing-library/issues/1051
-     * (Exact comment:
-     * https://github.com/testing-library/react-testing-library/issues/1051#issuecomment-1149569930)
-     */
-
     describe('On initial rendering', () => {
         test('Normal screen render (API call successful).', async () => {
             mockSuccessfulApiCall(testData.sixRecords);
@@ -225,7 +231,6 @@ describe('Integration tests on the search screen module', () => {
             target: { value: year }
         });
 
-    const apiBaseUrl = "http://localhost:5000";
     /**
      * Asserts the calls to the API.
      * 
@@ -234,8 +239,7 @@ describe('Integration tests on the search screen module', () => {
      */
     const assertApiCall = (times, years) => {
         expect(global.fetch).toHaveBeenCalledTimes(times);
-        years.forEach((year) => expect(global.fetch).toHaveBeenCalledWith(
-            `${apiBaseUrl}/getSumoHonbashoSchedule?year=${year.toString()}`));
+        years.forEach((year) => expect(global.fetch).toHaveBeenCalledWith(mockApiUrl + year));
     }
 
     /**
@@ -273,5 +277,4 @@ describe('Integration tests on the search screen module', () => {
      * Asserts that the error message box is not present in the screen.
      */
     const assertErrorMessageNotExist = () => expect(document.querySelector('#errorMessage')).toBeNull();
-
 });

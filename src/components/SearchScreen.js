@@ -1,5 +1,5 @@
 import './SearchScreen.css';
-import config from '../conf/config.json';
+
 import textConfig from '../conf/text-config.json';
 
 import { useEffect, useState } from "react";
@@ -7,21 +7,8 @@ import { useEffect, useState } from "react";
 import YearDropdown from "./YearDropdown";
 import ScheduleTable from "./ScheduleTable";
 import { getCurrentYear } from '../utils/DateUtils';
+import { getApiUrl } from '../utils/EnvironmentUtils';
 import { APIError } from '../types/APIError';
-
-/**
- * (Placeholder) API source.
- */
-const apiSource = 'LOCAL';
-
-/**
- * The URL for the API call.
- * 
- * The token `%YEAR%` will be replaced by the selected year.
- * 
- * TO-DO: Key for base URL lookup to be provided via environment variables.
- */
-const apiUrl = config.api.urlFormat.replace("%API_BASE_URL%", config.api.baseUrl[apiSource]);
 
 /**
  * The initial (default) value of the state `apiData`.
@@ -40,7 +27,7 @@ export default function SearchScreen() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const url = apiUrl.replace("%YEAR%", year.toString());
+        const url = getApiUrl().replace("%YEAR%", year.toString());
         console.debug(`API URL: ${url}`);
         fetch(url)
             .then((response) => {

@@ -1,7 +1,8 @@
-import "./ScheduleTable.css";
+import './ScheduleTable.css';
 import textConfig from '../conf/text-config.json';
 
-import moment from "moment";
+import moment from 'moment';
+import parse from 'html-react-parser';
 
 /**
  * Denotes the schedule of a tournament in the API call JSON data.
@@ -27,7 +28,7 @@ export default function ScheduleTable(props) {
         <table name="schedule" aria-label="schedule" className="ScheduleTable">
             <thead>
                 <tr>
-                    <th>{textConfig.scheduleTable.columnNames.TOURNAMENT}</th>
+                    <th className="Tournament">{textConfig.scheduleTable.columnNames.TOURNAMENT}</th>
                     <th>{textConfig.scheduleTable.columnNames.SCHEDULE}</th>
                 </tr>
             </thead>
@@ -35,8 +36,8 @@ export default function ScheduleTable(props) {
                 {records.map((record, i) => {
                     return (
                         <tr key={'basho-' + i + '-' + record.basho}>
-                            <td>{printBasho(record)}</td>
-                            <td>{printScheduleDates(record)}</td>
+                            <td className="Tournament">{printBasho(record)}</td>
+                            <td>{parse(printSchedule(record))}</td>
                         </tr>
                     )
                 })}
@@ -54,18 +55,16 @@ export default function ScheduleTable(props) {
 const printBasho = (record) => textConfig.bashoNameMap[record.basho];
 
 /**
- * Prints the dates of the tournament.
+ * Prints the schedule of the tournament.
  * 
  * @param {BashoJson} record denotes the schedule of a tournament
- * @returns {string} [day1] to [day15];
- *                   see text configuration `scheduleTable.dateDisplayFormat`
- *                   for the date format
+ * @returns {string} the display text for the Schedule column; may contain HTML tags\
+ *                      see text configuration `scheduleTable.scheduleFormat` for the content format
+ *                      and `scheduleTable.dateDisplayFormat` for the date format
  */
-function printScheduleDates(record) {
-    var day1 = formatDate(record.dates.at(0));
-    var day15 = formatDate(record.dates.at(14));
-    return `${day1} to ${day15}`;
-}
+const printSchedule = (record) => textConfig.scheduleTable.scheduleFormat
+    .replace("%DAY1%", formatDate(record.dates.at(0)))
+    .replace("%DAY15%", formatDate(record.dates.at(14)));
 
 /**
  * Formats a date from the API JSON data for display.

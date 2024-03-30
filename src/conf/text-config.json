@@ -21,6 +21,7 @@
             "MONTH": "Month",
             "SCHEDULE": "Schedule"
         },
+        "scheduleFormat": "%DAY1%<wbr> to<br> %DAY15%",
         "dateDisplayFormat": "MMMM D (dddd)"
     },
     "yearDropdown": {

@@ -1,5 +1,7 @@
 .ScheduleTable {
     width: 90%;
+    min-width: 350px;
+    max-width: 600px;
     border: 1px solid #666666;
     border-spacing: 1px;
     border-width: 2px;
@@ -14,6 +16,10 @@
     background-color: #ffcc77;
     color: #02125b;
     text-align: center;
+  }
+  .ScheduleTable .Tournament {
+    width: 40%;
+    min-width: 170px;
   }
   .ScheduleTable td {
     text-align: left;

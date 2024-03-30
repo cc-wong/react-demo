@@ -13,10 +13,9 @@ import moment from "moment";
  * Builds the results table listing the tournament schedule for the chosen year.
  * 
  * The table includes the following columns:
- * - Tournament: the name of the tournament, eg. Hatsu
+ * - Tournament: the description of the tournament, eg. January (Hatsu)
  * - Month: the name of the month the tournament is held in
- * - Schedule: the schedule of the tournament as `MMMM D to MMMM D`,
- *   eg. January 8 to January 22
+ * - Schedule: the schedule of the tournament
  * 
  * @param {{data: BashoJson[]}} props input arguments to this component
  * 
@@ -47,10 +46,10 @@ export default function ScheduleTable(props) {
 }
 
 /**
- * Prints the name of the tournament.
+ * Prints the description of the tournament.
  * 
  * @param {BashoJson} record denotes the schedule of a tournament
- * @returns the tournament's full name 
+ * @returns the description of the tournament
  */
 const printBasho = (record) => textConfig.bashoNameMap[record.basho];
 

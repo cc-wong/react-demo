@@ -3,8 +3,11 @@ import config from '../conf/config.json';
 import textConfig from '../conf/text-config.json';
 
 /**
- * Builds a dropdown box with items denoting the years from the current year
- * to 20 years after the current year.
+ * Builds a dropdown box with items denoting the current year
+ * and the next several years.
+ * 
+ * The maximum number of years from the current year is configued by
+ * `yearDropdown.maxYearsFromCurrent`.
  * 
  * @param {{selectedYear: number; onChangeEvent: ((event: any) => void)}} props
  *          the argument(s) to pass to this component

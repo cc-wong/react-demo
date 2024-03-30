@@ -29,7 +29,6 @@ export default function ScheduleTable(props) {
             <thead>
                 <tr>
                     <th>{textConfig.scheduleTable.columnNames.TOURNAMENT}</th>
-                    <th>{textConfig.scheduleTable.columnNames.MONTH}</th>
                     <th>{textConfig.scheduleTable.columnNames.SCHEDULE}</th>
                 </tr>
             </thead>
@@ -38,7 +37,6 @@ export default function ScheduleTable(props) {
                     return (
                         <tr key={'basho-' + i + '-' + record.basho}>
                             <td>{printBasho(record)}</td>
-                            <td>{printMonth(record)}</td>
                             <td>{printScheduleDates(record)}</td>
                         </tr>
                     )

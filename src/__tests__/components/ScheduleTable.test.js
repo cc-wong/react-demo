@@ -12,8 +12,8 @@ describe('Unit tests on the table displaying the retrieved schedule for the year
         render(<ScheduleTable data={[]} />);
 
         const headers = screen.getAllByRole('columnheader');
-        expect(headers.length).toBe(3);
-        const expectedHeaderLabels = ["Tournament", "Month", "Schedule"];
+        const expectedHeaderLabels = ["Tournament", "Schedule"];
+        expect(headers.length).toBe(expectedHeaderLabels.length);
         expectedHeaderLabels.forEach((label, i) => {
             expect(headers.at(i)).toHaveTextContent(label);
         });
@@ -23,13 +23,13 @@ describe('Unit tests on the table displaying the retrieved schedule for the year
         assertTableRecords(testData.dataFromApi, 6);
 
         const cells = screen.getAllByRole('cell');
-        expect(cells.length).toBe(18);
-        assertRecordRow(cells.slice(0, 3), "Hatsu", "January", "January 12 to January 26");
-        assertRecordRow(cells.slice(3, 6), "Haru", "March", "March 9 to March 23");
-        assertRecordRow(cells.slice(6, 9), "Natsu", "May", "May 11 to May 25");
-        assertRecordRow(cells.slice(9, 12), "Nagoya", "July", "July 13 to July 27");
-        assertRecordRow(cells.slice(12, 15), "Aki", "September", "September 14 to September 28");
-        assertRecordRow(cells.slice(15, 18), "Kyushu", "November", "November 9 to November 23");
+        expect(cells.length).toBe(2 * 6);
+        assertRecordRow(cells.slice(0, 2), "January (Hatsu)", "January 12 to January 26");
+        assertRecordRow(cells.slice(2, 4), "March (Haru/Spring)", "March 9 to March 23");
+        assertRecordRow(cells.slice(4, 6), "May (Natsu/Summer)", "May 11 to May 25");
+        assertRecordRow(cells.slice(6, 8), "July (Nagoya)", "July 13 to July 27");
+        assertRecordRow(cells.slice(8, 10), "September (Aki/Autumn)", "September 14 to September 28");
+        assertRecordRow(cells.slice(10, 12), "November (Kyushu)", "November 9 to November 23");
     });
 
     test("Table with no records.", () => {
@@ -54,13 +54,10 @@ describe('Unit tests on the table displaying the retrieved schedule for the year
      * 
      * @param {Array} rowCells the cells of the row to check
      * @param {string} basho the expected text of the Tournament column
-     * @param {string} month the expected text of the Month column
      * @param {string} dates the expected text of the Schedule column
      */
-    function assertRecordRow(rowCells, basho, month, dates) {
+    function assertRecordRow(rowCells, basho, dates) {
         expect(rowCells.at(0)).toHaveTextContent(basho);
-        expect(rowCells.at(1)).toHaveTextContent(month);
-        expect(rowCells.at(2)).toHaveTextContent(dates);
+        expect(rowCells.at(1)).toHaveTextContent(dates);
     }
-
 });

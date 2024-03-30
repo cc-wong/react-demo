@@ -1,12 +1,12 @@
 {
     "title": "Grand Sumo Tournament Schedule",
     "bashoNameMap": {
-        "HATSU": "Hatsu",
-        "HARU": "Haru",
-        "NATSU": "Natsu",
-        "NAGOYA": "Nagoya",
-        "AKI": "Aki",
-        "KYUSHU": "Kyushu"
+        "HATSU": "January (Hatsu)",
+        "HARU": "March (Haru/Spring)",
+        "NATSU": "May (Natsu/Summer)",
+        "NAGOYA": "July (Nagoya)",
+        "AKI": "September (Aki/Autumn)",
+        "KYUSHU": "November (Kyushu)"
     },
     "error": {
         "title": "ERROR",

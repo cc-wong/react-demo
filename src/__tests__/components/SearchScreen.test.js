@@ -106,16 +106,63 @@ describe('Integration tests on the search screen module', () => {
 
             assertApiCall(2, [2025, 2026]);
         });
+    });
+
+    describe('Network delay on API call', () => {
+        test('Delay on initial rendering.', async () => {
+            mockApiCallWithDelay(30, testData.sixRecords);
+
+            await act(() => render(<SearchScreen />));
+            await waitFor(() => {
+                assertApiCall(1, [2025]);
+                assertErrorMessageNotExist();
+            });
+
+            await act(() => advanceTimersBySeconds(35));
+            assertScreen(2025, 6);
+        });
+
+        test('Delay on Year dropdown change.', async () => {
+            mockSuccessfulApiCall(testData.oneRecord);
+            mockApiCallWithDelay(30, testData.sixRecords);
+
+            await act(async () => render(<SearchScreen />));
+            await waitFor(() => {
+                assertScreen(2025, 1);
+                assertErrorMessageNotExist();
+            });
+
+            await act(async () => fireChangeYearDropdownValueEvent(2028));
+            await waitFor(() => {
+                assertErrorMessageNotExist();
+            });
+            await act(() => advanceTimersBySeconds(35));
+            assertScreen(2028, 6);
+
+            assertApiCall(2, [2025, 2028]);
+        });
 
         /**
-         * Fires an event for changing the value of the Year dropdown.
+         * Mocks a successful API call with a given amount of time in delay.
          * 
-         * @param {number} year the new dropdown value
+         * @param {number} seconds the delay in seconds
+         * @param {*} json the results data from the API call response
          */
-        const fireChangeYearDropdownValueEvent = (year) =>
-            fireEvent.change(screen.getByRole('combobox', { name: 'year' }), {
-                target: { value: year }
-            });
+        const mockApiCallWithDelay = (seconds, json) => {
+            jest.spyOn(global, 'fetch').mockImplementation(() => new Promise((resolve) =>
+                setTimeout(() => resolve(initSuccessfulApiResponse(json)), seconds * 1000)));
+        }
+
+        /**
+         * Simulates the advancement of time in a test case
+         * by advancing the timer by a given amount of time.
+         * 
+         * @param {number} seconds time to advance in seconds
+         */
+        const advanceTimersBySeconds = async (seconds) => {
+            jest.advanceTimersByTime(seconds * 1000);
+            await new Promise(jest.requireActual('timers').setImmediate);
+        }
     });
 
     /**
@@ -125,12 +172,22 @@ describe('Integration tests on the search screen module', () => {
      */
     const mockSuccessfulApiCall = (...responseJson) => {
         responseJson.forEach((json) => {
-            mockApiCall({
-                ok: true,
-                status: 200,
-                json: () => (json),
-            })
+            mockApiCall(initSuccessfulApiResponse(json))
         });
+    }
+
+    /**
+     * Initializes a API JSON response with status code 200.
+     * 
+     * @param {*} json the JSON data to set
+     * @returns the new API JSON response
+     */
+    const initSuccessfulApiResponse = (json) => {
+        return {
+            ok: true,
+            status: 200,
+            json: () => (json),
+        }
     }
 
     /**
@@ -157,6 +214,16 @@ describe('Integration tests on the search screen module', () => {
      */
     const mockApiCall = (response) => jest.spyOn(global, 'fetch')
         .mockImplementationOnce(() => Promise.resolve(response));
+
+    /**
+     * Fires an event for changing the value of the Year dropdown.
+     * 
+     * @param {number} year the new dropdown value
+     */
+    const fireChangeYearDropdownValueEvent = (year) =>
+        fireEvent.change(screen.getByRole('combobox', { name: 'year' }), {
+            target: { value: year }
+        });
 
     const apiBaseUrl = "http://localhost:5000";
     /**

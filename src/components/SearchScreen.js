@@ -10,13 +10,18 @@ import { getCurrentYear } from '../utils/DateUtils';
 import { APIError } from '../types/APIError';
 
 /**
+ * (Placeholder) API source.
+ */
+const apiSource = 'LOCAL';
+
+/**
  * The URL for the API call.
  * 
  * The token `%YEAR%` will be replaced by the selected year.
  * 
  * TO-DO: Key for base URL lookup to be provided via environment variables.
  */
-const apiUrl = config.api.urlFormat.replace("%API_BASE_URL%", config.api.baseUrl['LOCAL']);
+const apiUrl = config.api.urlFormat.replace("%API_BASE_URL%", config.api.baseUrl[apiSource]);
 
 /**
  * The initial (default) value of the state `apiData`.
@@ -47,6 +52,7 @@ export default function SearchScreen() {
                 return response.json();
             })
             .then(setApiData)
+            .then(setError(null))
             .catch((error) => {
                 console.error("Error caught: " + error);
                 setError(error instanceof APIError ?
@@ -68,7 +74,6 @@ export default function SearchScreen() {
                 <YearDropdown selectedYear={year}
                     onChangeEvent={((event) => {
                         setYear(event.target.value);
-                        setError(null);
                     })} />
             </form>
             <ScheduleTable data={apiData.result} />

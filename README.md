@@ -21,12 +21,22 @@ URL: <http://localhost:3000/>
 Reference: <https://create-react-app.dev/docs/getting-started#scripts>
 
 ### Run locally
-1. Go to the project root directory at the terminal.
-2. `npm install` (only required for the first time)
-3. `npm start`
+Run the following command at the project root:
+```
+npm start
+```
+* Environment variables are configured by .env files in this app.
+You may override them with .env*.local files at your development machine.
+See [here](https://create-react-app.dev/docs/adding-custom-environment-variables/#what-other-env-files-can-be-used) for details.
+* They may also be [added/overridden temporarily at the start command](https://create-react-app.dev/docs/adding-custom-environment-variables/#adding-temporary-environment-variables-in-your-shell).
+> [!NOTE]
+> 1. Run `npm install` before starting the app for the first time.
+> 2. The automatic opening of the app on startup is disabled.
+> Open it manually in a browser for development testing.
 
 ## Unit testing
-
-Run `npm test`.
+```
+npm test
+```
 * Tests will be rerun whenever a file is updated.
 * Press `Ctrl+C` to exit.

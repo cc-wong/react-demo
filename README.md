@@ -18,7 +18,9 @@ URL: <http://localhost:3000/>
 
 ## Development, startup and deployment
 
-Reference: <https://create-react-app.dev/docs/getting-started#scripts>
+Reference:
+* At ["Getting Started with Create React App" at this project's Wiki](https://github.com/cc-wong/react-demo/wiki/Getting-Started-with-Create-React-App#available-scripts)
+* <https://create-react-app.dev/docs/getting-started#scripts>
 
 ### Run locally
 Run the following command at the project root:

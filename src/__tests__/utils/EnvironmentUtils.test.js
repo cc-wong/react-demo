@@ -22,51 +22,31 @@ const environmentFixture = (key) => {
     }
 }
 
-describe('Get environment variable API_SOURCE', () => {
-    const fixture = environmentFixture('REACT_APP_API_SOURCE');
-
-    afterEach(() => fixture.restore());
-
-    test('Environment variable present.', () => {
-        fixture.mock("AZURE");
-        expect(envUtils.getEnvVariableApiSource()).toBe("AZURE");
-    });
-
-    test('Environment variable missing.', () => {
-        fixture.delete();
-        expect(envUtils.getEnvVariableApiSource()).toBe("LOCAL");
-    });
-});
-
 describe('Get API URL', () => {
-    const fixture = environmentFixture('REACT_APP_API_SOURCE');
+    const fixture = environmentFixture('REACT_APP_API_BASE_URL');
 
     afterEach(() => fixture.restore());
 
-    test('Environment variable REACT_APP_API_SOURCE=LOCAL.', () => {
-        fixture.mock("LOCAL");
-        const baseUrl = "http://localhost:5000";
-        assertApiUrl(baseUrl);
+    test('Environment variable REACT_APP_API_BASE_URL is present.', () => {
+        fixture.mock("https://my-api-host.net");
+        expect(envUtils.getApiUrl())
+            .toBe("https://my-api-host.net/getSumoHonbashoSchedule?year=%YEAR%");
     });
 
-    test('Environment variable REACT_APP_API_SOURCE=RENDER.', () => {
-        fixture.mock("RENDER");
-        const baseUrl = "https://python-webservice-demo.onrender.com";
-        assertApiUrl(baseUrl);
-    });
-
-    test('Environment variable REACT_APP_API_SOURCE missing.', () => {
+    test('Environment variable REACT_APP_API_BASE_URL missing.', () => {
         fixture.delete();
-        const baseUrl = "http://localhost:5000";
-        assertApiUrl(baseUrl);
+        assertThrowException();
+    });
+
+    test('Environment variable REACT_APP_API_BASE_URL is empty.', () => {
+        fixture.mock('');
+        assertThrowException();
     });
 
     /**
-     * Runs a test case on `getApiUrl()`.
-     * 
-     * @param {string} baseUrl the expected base URL
+     * Asserts that an exception is thrown.
      */
-    const assertApiUrl = (baseUrl) => expect(envUtils.getApiUrl())
-        .toBe(baseUrl + "/getSumoHonbashoSchedule?year=%YEAR%");
+    const assertThrowException = () => expect(() => { envUtils.getApiUrl(); })
+        .toThrow("REACT_APP_API_BASE_URL must be provided!");
 })
 

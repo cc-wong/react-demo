@@ -13,7 +13,14 @@
 .SearchScreen label {
     font-weight: bold;
 }
-.SearchScreen .ErrorMessageBox {
+.LoadingText {
+    padding: 8px;
+    font-size: calc(12px + 1vmin);
+    font-weight: bold;
+    font-style: italic;
+    color: blue;
+}
+.ErrorMessageBox {
     width: 70%;
     padding: 15px;
     font-size: calc(12px + 1vmin);

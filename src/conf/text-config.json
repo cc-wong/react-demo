@@ -16,6 +16,7 @@
             "apiFailStatusCode": "Could not retrieve data (returned status code %STATUS_CODE%)"
         }
     },
+    "loading": "Loading...",
     "scheduleTable": {
         "columnNames": {
             "TOURNAMENT": "Tournament",

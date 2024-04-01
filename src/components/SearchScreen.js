@@ -24,11 +24,13 @@ const initialApiData = { result: [] };
 export default function SearchScreen() {
     const [year, setYear] = useState(getCurrentYear);
     const [apiData, setApiData] = useState(initialApiData);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         const url = getApiUrl().replace("%YEAR%", year.toString());
         console.debug(`API URL: ${url}`);
+        setLoading(true);
         fetch(url)
             .then((response) => {
                 console.debug(`Status code: ${response.status}, ok: ${response.ok}`);
@@ -47,7 +49,8 @@ export default function SearchScreen() {
                         .replace("%STATUS_CODE%", error.statusCode) :
                     textConfig.error.messages.apiCallError);
                 setApiData(initialApiData);
-            });
+            })
+            .finally(() => setLoading(false));
     }, [year]);
 
     return (
@@ -63,6 +66,9 @@ export default function SearchScreen() {
                         setYear(event.target.value);
                     })} />
             </form>
+            {loading &&
+                (<div className='LoadingText' id='loadingText'>{textConfig.loading}</div>)
+            }
             <ScheduleTable data={apiData.result} />
         </div>
     );

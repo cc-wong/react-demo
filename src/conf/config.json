@@ -1,0 +1,12 @@
+{
+    "api": {
+        "urlFormat": "%API_BASE_URL%/getSumoHonbashoSchedule?year=%YEAR%",
+        "baseUrl": {
+            "LOCAL": "http://localhost:5000",
+            "RENDER": "https://python-webservice-demo.onrender.com"
+        }
+    },
+    "yearDropdown": {
+        "maxYearsFromCurrent": 10
+    }
+}

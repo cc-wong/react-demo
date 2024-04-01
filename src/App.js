@@ -1,20 +1,18 @@
 import './App.css';
 
 import SearchScreen from './components/SearchScreen';
+import textConfig from './conf/text-config.json';
+import { getEnvVariableApiSource } from './utils/EnvironmentUtils';
 
 /**
- * The app's main function.
- * 
- * @returns the page components
- * 
+ * The app's main component.
  */
-function App() {
+export default function App() {
+  console.debug(`API source: ${getEnvVariableApiSource()}`)
   return (
     <div className="App">
-      <h1>Grand Sumo Tournament Schedule</h1>
+      <h1>{textConfig.title}</h1>
       <SearchScreen />
     </div>
   );
 }
-
-export default App;

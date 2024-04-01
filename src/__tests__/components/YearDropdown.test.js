@@ -2,12 +2,8 @@ import { render, screen, cleanup, fireEvent } from '@testing-library/react';
 import YearDropdown from '../../components/YearDropdown';
 
 describe('Unit tests on the year dropdown box', () => {
-    beforeEach(() => {
-        jest.useFakeTimers().setSystemTime(new Date('2022-03-28'));
-    });
-    afterEach(() => {
-        cleanup();
-    })
+    beforeEach(() => jest.useFakeTimers().setSystemTime(new Date('2022-03-28')));
+    afterEach(() => cleanup());
 
     test('Field is rendered.', () => {
         const selectedYear = 2027;
@@ -18,7 +14,7 @@ describe('Unit tests on the year dropdown box', () => {
         expect(dropdown).toHaveAttribute("name", "year");
 
         const options = screen.getAllByRole('option');
-        expect(options.length).toBe(20 + 1);
+        expect(options.length).toBe(10 + 1);
         options.map((option, i) => {
             var year = 2022 + i;
             expect(option).toHaveAttribute("value", year.toString());
@@ -37,7 +33,6 @@ describe('Unit tests on the year dropdown box', () => {
      * Mock onChange event for the dropdown box.
      */
     const mockOnChangeEvent = jest.fn();
-
     test('onChange event called on value change.', () => {
         render(<YearDropdown onChangeEvent={mockOnChangeEvent} />);
         const dropdown = getDropdown();
@@ -55,8 +50,5 @@ describe('Unit tests on the year dropdown box', () => {
      * 
      * @returns the dropdown object
      */
-    function getDropdown() {
-        return screen.getByLabelText("Year");
-    }
-
+    const getDropdown = () => screen.getByLabelText("Year");
 });

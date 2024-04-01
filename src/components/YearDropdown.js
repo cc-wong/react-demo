@@ -1,14 +1,13 @@
 import { getCurrentYear } from "../utils/DateUtils";
+import config from '../conf/config.json';
+import textConfig from '../conf/text-config.json';
 
 /**
- * The dropdown box will have values
- * from the current year to this number of years from the current year.
- */
-const maxNumOfYearsFromCurrentYear = 20;
-
-/**
- * Builds a dropdown box with items denoting the years from the current year
- * to 20 years after the current year.
+ * Builds a dropdown box with items denoting the current year
+ * and the next several years.
+ * 
+ * The maximum number of years from the current year is configued by
+ * `yearDropdown.maxYearsFromCurrent`.
  * 
  * @param {{selectedYear: number; onChangeEvent: ((event: any) => void)}} props
  *          the argument(s) to pass to this component
@@ -19,20 +18,19 @@ export default function YearDropdown(props) {
     var selectedYear = props.selectedYear;
 
     var options = [];
-    for (var year = thisYear; year <= thisYear + maxNumOfYearsFromCurrentYear; year++) {
+    for (var year = thisYear; year <= thisYear + config.yearDropdown.maxYearsFromCurrent; year++) {
         options.push(
             <option key={'year' + year.toString()} value={year}>{year}</option>
         );
     }
     return (
         <>
-            <label htmlFor="year">Year</label>
+            <label htmlFor="year">{textConfig.yearDropdown.label}</label>
             &nbsp;&nbsp;
             <select id="year" name="year"
                 aria-required="true" aria-label="year"
                 defaultValue={selectedYear}
-                onChange={props.onChangeEvent}
-            >
+                onChange={props.onChangeEvent}>
                 {options}
             </select>
         </>

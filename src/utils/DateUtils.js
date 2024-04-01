@@ -5,6 +5,4 @@
  * 
  * @returns {number} the current year number
  */
-export const getCurrentYear = () => {
-    return (new Date()).getFullYear();
-}
+export const getCurrentYear = () => (new Date()).getFullYear();

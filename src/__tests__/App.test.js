@@ -2,9 +2,7 @@ import { render, screen, cleanup } from '@testing-library/react';
 import App from '../App';
 
 describe('Test cases on the components in the app screen', () => {
-  afterEach(() => {
-    cleanup();
-  });
+  afterEach(() => cleanup());
 
   test('Title is present.', () => {
     render(<App />);

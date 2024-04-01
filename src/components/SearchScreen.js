@@ -1,19 +1,14 @@
 import './SearchScreen.css';
 
+import textConfig from '../conf/text-config.json';
+
 import { useEffect, useState } from "react";
 
 import YearDropdown from "./YearDropdown";
 import ScheduleTable from "./ScheduleTable";
 import { getCurrentYear } from '../utils/DateUtils';
+import { getApiUrl } from '../utils/EnvironmentUtils';
 import { APIError } from '../types/APIError';
-
-/**
- * The base URL for the API call.
- * 
- * Hard-coding is temporary. To be configurable later.
- */
-const apiBaseUrl = "http://localhost:5000";
-// const apiBaseUrl = "https://python-webservice-demo.onrender.com";
 
 /**
  * The initial (default) value of the state `apiData`.
@@ -32,7 +27,7 @@ export default function SearchScreen() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const url = `${apiBaseUrl}/getSumoHonbashoSchedule?year=${year}`;
+        const url = getApiUrl().replace("%YEAR%", year.toString());
         console.debug(`API URL: ${url}`);
         fetch(url)
             .then((response) => {
@@ -44,11 +39,13 @@ export default function SearchScreen() {
                 return response.json();
             })
             .then(setApiData)
+            .then(setError(null))
             .catch((error) => {
                 console.error("Error caught: " + error);
                 setError(error instanceof APIError ?
-                    `Could not retrieve data (returned status code ${error.statusCode})` :
-                    'Could not retrieve data (error on making API call)');
+                    textConfig.error.messages.apiFailStatusCode
+                        .replace("%STATUS_CODE%", error.statusCode) :
+                    textConfig.error.messages.apiCallError);
                 setApiData(initialApiData);
             });
     }, [year]);
@@ -57,14 +54,13 @@ export default function SearchScreen() {
         <div className='SearchScreen'>
             {(error &&
                 <div className='ErrorMessageBox' id='errorMessage'>
-                    <div className='ErrorMessageHeading'>ERROR</div>{error}
+                    <div className='ErrorMessageHeading'>{textConfig.error.title}</div>{error}
                 </div>
             ) || <></>}
             <form name='pickYear'>
                 <YearDropdown selectedYear={year}
                     onChangeEvent={((event) => {
                         setYear(event.target.value);
-                        setError(null);
                     })} />
             </form>
             <ScheduleTable data={apiData.result} />

@@ -22,6 +22,7 @@
 }
 .ErrorMessageBox {
     width: 70%;
+    max-width: 470px;
     padding: 15px;
     font-size: calc(12px + 1vmin);
     background-color: rgb(250, 218, 223);

@@ -14,3 +14,10 @@ export const getApiUrl = () => {
     return config.api.urlFormat
         .replace("%API_BASE_URL%", process.env.REACT_APP_API_BASE_URL);
 }
+
+/**
+ * Returns the environment variable `REACT_APP_REMOTE_API`.
+ * 
+ * @returns {boolean} the value of `REACT_APP_REMOTE_API`, or `false` if it is not configured
+ */
+export const isRemoteApi = () => process.env.REACT_APP_REMOTE_API?.toLowerCase() === "true";

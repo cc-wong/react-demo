@@ -50,3 +50,50 @@ describe('Get API URL', () => {
         .toThrow("REACT_APP_API_BASE_URL must be provided!");
 })
 
+describe('Environment variable REACT_APP_REMOTE_API', () => {
+    const fixture = environmentFixture('REACT_APP_REMOTE_API');
+
+    afterEach(() => fixture.restore());
+
+    test('Is true (lowercase).', () => {
+        fixture.mock("true");
+        testIsRemoteApi(true);
+    })
+
+    test('Is true (uppercase).', () => {
+        fixture.mock("TRUE");
+        testIsRemoteApi(true);
+    })
+
+    test('Is true (proper case).', () => {
+        fixture.mock("True");
+        testIsRemoteApi(true);
+    })
+
+    test('Is false (lowercase).', () => {
+        fixture.mock("false");
+        testIsRemoteApi(false);
+    })
+
+    test('Is false (uppercase).', () => {
+        fixture.mock("FALSE");
+        testIsRemoteApi(false);
+    })
+
+    test('Is false (proper case).', () => {
+        fixture.mock("False");
+        testIsRemoteApi(false);
+    })
+
+    test('Is not defined.', () => {
+        fixture.delete();
+        testIsRemoteApi(false);
+    })
+
+    /**
+     * Runs a test case on `isRemoteApi()`.
+     * 
+     * @param {boolean} expected the expected return value
+     */
+    const testIsRemoteApi = (expected) => expect(envUtils.isRemoteApi()).toBe(expected);
+})

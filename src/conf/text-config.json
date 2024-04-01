@@ -8,6 +8,7 @@
         "AKI": "September (Aki/Autumn)",
         "KYUSHU": "November (Kyushu)"
     },
+    "remoteApiRemark": "Note:<br>The API service used here will spin down after some time of inactivity, and will need time to start up again when called. In such a case it can take up to 50 seconds to load data, but subsequent queries made shortly afterwards should be quick.<br>If loading is stuck for significantly more than a minute, reload the page to re-trigger the API call.",
     "error": {
         "title": "ERROR",
         "messages": {

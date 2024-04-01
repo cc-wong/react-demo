@@ -185,148 +185,148 @@ describe('Integration tests on the search screen module', () => {
             assertNotDisplayLoadingText();
         });
 
-        /**
-         * Mocks an API call with a given amount of time in delay.
-         * 
-         * @param {number} seconds the delay in seconds
-         * @param {*} response either the API call response or the error thrown
-         */
-        const mockApiCallWithDelay = (seconds, response) => {
-            jest.spyOn(global, 'fetch').mockImplementationOnce(() =>
-                new Promise((resolve, reject) => setTimeout(
-                    () => { response instanceof Error ? reject(response) : resolve(response) },
-                    seconds * 1000)));
-        }
-
-        /**
-         * Simulates the advancement of time in a test case
-         * by advancing the timer by a given amount of time.
-         * 
-         * @param {number} seconds time to advance in seconds
-         */
-        const advanceTimersBySeconds = async (seconds) => {
-            jest.advanceTimersByTime(seconds * 1000);
-            await new Promise(jest.requireActual('timers').setImmediate);
-        }
     });
 
     /**
-     * Mocks successful call(s) to the API with status code 200.
+     * Mocks an API call with a given amount of time in delay.
      * 
-     * @param  {...any} responseJson the response JSON data returned in order
+     * @param {number} seconds the delay in seconds
+     * @param {*} response either the API call response or the error thrown
      */
-    const mockSuccessfulApiCall = (...responseJson) => {
-        responseJson.forEach((json) => {
-            mockApiCall(initSuccessfulApiResponse(json))
-        });
+    const mockApiCallWithDelay = (seconds, response) => {
+        jest.spyOn(global, 'fetch').mockImplementationOnce(() =>
+            new Promise((resolve, reject) => setTimeout(
+                () => { response instanceof Error ? reject(response) : resolve(response) },
+                seconds * 1000)));
     }
 
     /**
-     * Initializes a API JSON response with status code 200.
+     * Simulates the advancement of time in a test case
+     * by advancing the timer by a given amount of time.
      * 
-     * @param {*} json the JSON data to set
-     * @returns the new API JSON response
+     * @param {number} seconds time to advance in seconds
      */
-    const initSuccessfulApiResponse = (json) => {
-        return {
-            ok: true,
-            status: 200,
-            json: () => (json),
-        }
+    const advanceTimersBySeconds = async (seconds) => {
+        jest.advanceTimersByTime(seconds * 1000);
+        await new Promise(jest.requireActual('timers').setImmediate);
     }
-
-    /**
-     * Initializes a API JSON response with status code 400.
-     * 
-     * @returns the new API JSON response
-     */
-    const initBadRequestApiResponse = () => {
-        return {
-            ok: false,
-            status: 400,
-            json: () => ("Bad request.")
-        }
-    };
-
-    /**
-     * Mocks the API call to return a 400 bad request response once.
-     */
-    const mockBadRequestApiCallOnce = () => mockApiCall(initBadRequestApiResponse());
-
-    /**
-     * Mocks the API call to throw an error once.
-     */
-    const mockApiCallThrowErrorOnce = () => jest.spyOn(global, 'fetch')
-        .mockRejectedValueOnce(new TypeError("Load failed"));
-
-    /**
-     * Mocks an API call that returns a response.
-     * 
-     * The response statuts status code may or may not be 200.
-     * 
-     * @param {*} response the response from the API call
-     */
-    const mockApiCall = (response) => jest.spyOn(global, 'fetch')
-        .mockImplementationOnce(() => Promise.resolve(response));
-
-    /**
-     * Fires an event for changing the value of the Year dropdown.
-     * 
-     * @param {number} year the new dropdown value
-     */
-    const fireChangeYearDropdownValueEvent = (year) =>
-        fireEvent.change(screen.getByRole('combobox', { name: 'year' }), {
-            target: { value: year }
-        });
-
-    /**
-     * Asserts the calls to the API.
-     * 
-     * @param {number} times expected number of times called
-     * @param {number[]} years the expected `year` parameter values in the order of API call
-     */
-    const assertApiCall = (times, years) => {
-        expect(global.fetch).toHaveBeenCalledTimes(times);
-        years.forEach((year) => expect(global.fetch).toHaveBeenCalledWith(mockApiUrl + year));
-    }
-
-    /**
-     * Asserts the screen at the end of the test.
-     * 
-     * @param {number} expectedYear the expected selected value of the Year dropdown
-     * @param {number} recordCount the expected number of records in the results table
-     */
-    const assertScreen = (expectedYear, recordCount) => {
-        expect(screen.getByRole('option', { name: expectedYear }).selected).toBe(true);
-        expect(screen.getAllByRole('row').length).toBe(recordCount + 1);
-    }
-
-    /**
-     * Regex escape function.
-     * 
-     * @param {string} text the text to escape regex for
-     * @returns the escaped text
-     */
-    const escapeRegex = (text) => text.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
-    /**
-     * Asserts that the error message box is present in the screen.
-     * 
-     * @param {string} message the expected error message text excluding the heading
-     */
-    const assertErrorMessageBox = (message) => {
-        const errorMessageBox = document.querySelector('#errorMessage');
-        expect(errorMessageBox).toBeInTheDocument();
-
-        const errorTextRegex = new RegExp(`ERROR.*${escapeRegex(message)}`);
-        expect(errorTextRegex.test(errorMessageBox.innerHTML)).toBe(true);
-    }
-
-    /**
-     * Asserts that the error message box is not present in the screen.
-     */
-    const assertErrorMessageNotExist = () => expect(document.querySelector('#errorMessage')).toBeNull();
 });
 
+/**
+ * Mocks successful call(s) to the API with status code 200.
+ * 
+ * @param  {...any} responseJson the response JSON data returned in order
+ */
+const mockSuccessfulApiCall = (...responseJson) => {
+    responseJson.forEach((json) => {
+        mockApiCall(initSuccessfulApiResponse(json))
+    });
+}
+
+/**
+ * Initializes a API JSON response with status code 200.
+ * 
+ * @param {*} json the JSON data to set
+ * @returns the new API JSON response
+ */
+const initSuccessfulApiResponse = (json) => {
+    return {
+        ok: true,
+        status: 200,
+        json: () => (json),
+    }
+}
+
+/**
+ * Initializes a API JSON response with status code 400.
+ * 
+ * @returns the new API JSON response
+ */
+const initBadRequestApiResponse = () => {
+    return {
+        ok: false,
+        status: 400,
+        json: () => ("Bad request.")
+    }
+};
+
+/**
+ * Mocks the API call to return a 400 bad request response once.
+ */
+const mockBadRequestApiCallOnce = () => mockApiCall(initBadRequestApiResponse());
+
+/**
+ * Mocks the API call to throw an error once.
+ */
+const mockApiCallThrowErrorOnce = () => jest.spyOn(global, 'fetch')
+    .mockRejectedValueOnce(new TypeError("Load failed"));
+
+/**
+ * Mocks an API call that returns a response.
+ * 
+ * The response statuts status code may or may not be 200.
+ * 
+ * @param {*} response the response from the API call
+ */
+const mockApiCall = (response) => jest.spyOn(global, 'fetch')
+    .mockImplementationOnce(() => Promise.resolve(response));
+
+/**
+ * Fires an event for changing the value of the Year dropdown.
+ * 
+ * @param {number} year the new dropdown value
+ */
+const fireChangeYearDropdownValueEvent = (year) =>
+    fireEvent.change(screen.getByRole('combobox', { name: 'year' }), {
+        target: { value: year }
+    });
+
+/**
+ * Asserts the calls to the API.
+ * 
+ * @param {number} times expected number of times called
+ * @param {number[]} years the expected `year` parameter values in the order of API call
+ */
+const assertApiCall = (times, years) => {
+    expect(global.fetch).toHaveBeenCalledTimes(times);
+    years.forEach((year) => expect(global.fetch).toHaveBeenCalledWith(mockApiUrl + year));
+}
+
+/**
+ * Asserts the screen at the end of the test.
+ * 
+ * @param {number} expectedYear the expected selected value of the Year dropdown
+ * @param {number} recordCount the expected number of records in the results table
+ */
+const assertScreen = (expectedYear, recordCount) => {
+    expect(screen.getByRole('option', { name: expectedYear }).selected).toBe(true);
+    expect(screen.getAllByRole('row').length).toBe(recordCount + 1);
+}
+
+/**
+ * Regex escape function.
+ * 
+ * @param {string} text the text to escape regex for
+ * @returns the escaped text
+ */
+const escapeRegex = (text) => text.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
+/**
+ * Asserts that the error message box is present in the screen.
+ * 
+ * @param {string} message the expected error message text excluding the heading
+ */
+const assertErrorMessageBox = (message) => {
+    const errorMessageBox = document.querySelector('#errorMessage');
+    expect(errorMessageBox).toBeInTheDocument();
+
+    const errorTextRegex = new RegExp(`ERROR.*${escapeRegex(message)}`);
+    expect(errorTextRegex.test(errorMessageBox.innerHTML)).toBe(true);
+}
+
+/**
+ * Asserts that the error message box is not present in the screen.
+ */
+const assertErrorMessageNotExist = () => expect(document.querySelector('#errorMessage')).toBeNull();
 /**
  * Asserts that the "Loading..." text is on the screen.
  */

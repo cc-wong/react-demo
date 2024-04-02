@@ -22,6 +22,12 @@ const environmentFixture = (key) => {
     }
 }
 
+test('Get app version number.', () => {
+    const fixture = environmentFixture('REACT_APP_VERSION');
+    fixture.mock("1.0.0");
+    expect(envUtils.getAppVersionNumber()).toBe("1.0.0");
+})
+
 describe('Get API URL', () => {
     const fixture = environmentFixture('REACT_APP_API_BASE_URL');
 

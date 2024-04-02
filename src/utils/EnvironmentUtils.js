@@ -1,6 +1,13 @@
 import config from '../conf/config.json';
 
 /**
+ * Returns the app's version number.
+ * 
+ * @returns the version number configured in `package.json`
+ */
+export const getAppVersionNumber = () => process.env.REACT_APP_VERSION;
+
+/**
  * Returns the API URL configured by the environment variables.
  * 
  * @returns the API URL as configured by environment variable `REACT_APP_API_BASE_URL`;

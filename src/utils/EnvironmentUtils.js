@@ -26,5 +26,6 @@ export const getApiUrl = () => {
  * Returns the environment variable `REACT_APP_REMOTE_API`.
  * 
  * @returns {boolean} the value of `REACT_APP_REMOTE_API`, or `false` if it is not configured
+ * @deprecated May no longer be needed in the future if the Render instance spin-down issue is solved
  */
 export const isRemoteApi = () => process.env.REACT_APP_REMOTE_API?.toLowerCase() === "true";

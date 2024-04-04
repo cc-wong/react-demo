@@ -9,14 +9,9 @@ This app allows you to look up the schedules of the Grand Sumo Tournament in the
 1. An API call is made to endpoint `/getSumoHonbashoSchedule` of the webservice from [Python Webservice Demo](https://github.com/cc-wong/python-webservice-demo). The year argument is provided by a dropdown field.
 2. The JSON data returned by the API call is populated to the frontend.
 
-> [!NOTE]
-> This app calls the local instance of the Python Webservice Demo webservice.\
-> Please refer to [its GitHub page](https://github.com/cc-wong/python-webservice-demo)
-> on how to set up and start it at your local mahine.
+See ["Environments" in this repository's Wiki](https://github.com/cc-wong/react-demo/wiki#environments) for more information on the instances of this webapp.
 
-URL: <http://localhost:3000/>
-
-## Development, startup and deployment
+## Development and testing
 
 Reference:
 * At ["Getting Started with Create React App" at this project's Wiki](https://github.com/cc-wong/react-demo/wiki/Getting-Started-with-Create-React-App#available-scripts)
@@ -35,6 +30,7 @@ See [here](https://create-react-app.dev/docs/adding-custom-environment-variables
 > 1. Run `npm install` before starting the app for the first time.
 > 2. The automatic opening of the app on startup is disabled.
 > Open it manually in a browser for development testing.
+>    - URL: <http://localhost:3000/>
 
 ## Unit testing
 ```

@@ -35,7 +35,7 @@ export default function ScheduleTable(props) {
             <tbody>
                 {records.map((record, i) => {
                     return (
-                        <tr key={'basho-' + i + '-' + record.basho}>
+                        <tr key={`basho-${i}-${record.basho}`}>
                             <td className="Tournament">{printBasho(record)}</td>
                             <td>{parse(printSchedule(record))}</td>
                         </tr>

@@ -40,7 +40,7 @@ const buildDropdownOptions = () => {
     var i = config.yearDropdown.maxYearsFromCurrent + 1;
     while (i--) {
         options.push(
-            <option key={'year' + year.toString()} value={year}>{year}</option>
+            <option key={`year-${year.toString()}`} value={year}>{year}</option>
         );
         year++;
     }

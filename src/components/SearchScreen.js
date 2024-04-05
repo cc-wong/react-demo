@@ -28,20 +28,8 @@ export default function SearchScreen() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const url = getApiUrl().replace("%YEAR%", year.toString());
-        console.debug(`API URL: ${url}`);
         setLoading(true);
-        fetch(url)
-            .then((response) => {
-                console.debug(`Returned status code: ${response.status} (ok: ${response.ok})`);
-                if (!response.ok) {
-                    console.error(response);
-                    throw new APIError(response.status);
-                }
-                return response.json();
-            })
-            .then(setApiData)
-            .then(setError(null))
+        fetch(apiUrl(year)).then(getResponseBody).then(setApiData).then(setError(null))
             .catch((error) => {
                 console.error(`Error caught: ${error}`);
                 setError(buildAPIErrorMessage(error));
@@ -67,6 +55,34 @@ export default function SearchScreen() {
             <ScheduleTable data={apiData.result} />
         </div>
     );
+}
+
+/**
+ * Builds the API URL.
+ * 
+ * @param {number} year the year to retrieve data for
+ * @returns the URL with the `%YEAR%` token replaced with `year`
+ */
+const apiUrl = (year) => {
+    const url = getApiUrl().replace("%YEAR%", year.toString());
+    console.debug(`API URL: ${url}`);
+    return url;
+}
+
+/**
+ * Gets the body of a given API call response.
+ * 
+ * @param {Response} response the response object returned from the call
+ * @returns {Promise} the response's JSON body
+ * @throws `APIError` if the response's OK status is `false`, ie. not successful
+ */
+const getResponseBody = (response) => {
+    console.debug(`Returned status code: ${response.status} (ok: ${response.ok})`);
+    if (!response.ok) {
+        console.error(response);
+        throw new APIError(response.status);
+    }
+    return response.json();
 }
 
 /**

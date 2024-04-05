@@ -16,4 +16,8 @@ describe('Test cases on the components in the app screen', () => {
     expect(screen.getByRole('combobox', { name: 'year' })).toBeInTheDocument();
     expect(screen.getByRole('table', { name: 'schedule' })).toBeInTheDocument();
   });
+
+  test('Fail test case.', () => {
+    expect(1 + 1).toBe(3);
+  });
 });

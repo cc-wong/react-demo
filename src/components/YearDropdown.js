@@ -14,25 +14,35 @@ import textConfig from '../conf/text-config.json';
  * @returns the dropdown box component with a label saying "Year"
  */
 export default function YearDropdown(props) {
-    var thisYear = getCurrentYear();
-    var selectedYear = props.selectedYear;
-
-    var options = [];
-    for (var year = thisYear; year <= thisYear + config.yearDropdown.maxYearsFromCurrent; year++) {
-        options.push(
-            <option key={'year' + year.toString()} value={year}>{year}</option>
-        );
-    }
     return (
         <>
             <label htmlFor="year">{textConfig.yearDropdown.label}</label>
             &nbsp;&nbsp;
             <select id="year" name="year"
                 aria-required="true" aria-label="year"
-                defaultValue={selectedYear}
+                defaultValue={props.selectedYear}
                 onChange={props.onChangeEvent}>
-                {options}
+                {buildDropdownOptions()}
             </select>
         </>
     );
+}
+
+/**
+ * Builds the dropdown box options.
+ * 
+ * @returns {any[]} a list of `<option>` elements for years from (current year)
+ *                  to (current year + `yearDropdown.maxYearsFromCurrent`)
+ */
+const buildDropdownOptions = () => {
+    var options = [];
+    var year = getCurrentYear();
+    var i = config.yearDropdown.maxYearsFromCurrent + 1;
+    while (i--) {
+        options.push(
+            <option key={'year' + year.toString()} value={year}>{year}</option>
+        );
+        year++;
+    }
+    return options;
 }

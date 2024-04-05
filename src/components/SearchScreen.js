@@ -33,7 +33,7 @@ export default function SearchScreen() {
         setLoading(true);
         fetch(url)
             .then((response) => {
-                console.debug(`Status code: ${response.status}, ok: ${response.ok}`);
+                console.debug(`Returned status code: ${response.status} (ok: ${response.ok})`);
                 if (!response.ok) {
                     console.error(response);
                     throw new APIError(response.status);
@@ -43,11 +43,8 @@ export default function SearchScreen() {
             .then(setApiData)
             .then(setError(null))
             .catch((error) => {
-                console.error("Error caught: " + error);
-                setError(error instanceof APIError ?
-                    textConfig.error.messages.apiFailStatusCode
-                        .replace("%STATUS_CODE%", error.statusCode) :
-                    textConfig.error.messages.apiCallError);
+                console.error(`Error caught: ${error}`);
+                setError(buildAPIErrorMessage(error));
                 setApiData(initialApiData);
             })
             .finally(() => setLoading(false));
@@ -55,21 +52,32 @@ export default function SearchScreen() {
 
     return (
         <div className='SearchScreen'>
-            {(error &&
+            {error && (
                 <div className='ErrorMessageBox' id='errorMessage'>
                     <div className='ErrorMessageHeading'>{textConfig.error.title}</div>{error}
                 </div>
-            ) || <></>}
+            )}
             <form name='pickYear'>
                 <YearDropdown selectedYear={year}
-                    onChangeEvent={((event) => {
-                        setYear(event.target.value);
-                    })} />
+                    onChangeEvent={(event) => setYear(event.target.value)} />
             </form>
-            {loading &&
-                (<div className='LoadingText' id='loadingText'>{textConfig.loading}</div>)
-            }
+            {loading && (
+                <div className='LoadingText' id='loadingText'>{textConfig.loading}</div>
+            )}
             <ScheduleTable data={apiData.result} />
         </div>
     );
 }
+
+/**
+ * Builds the error message to display on-screen for API call failures.
+ * 
+ * @param {Error} error the API call error
+ * @returns the message configured by `error.messages.apiFailStatusCode` if
+ *          the error is an `APIError`, meaning that a response was returned
+ *          but with a non-200 status code; the message configured by
+ *          `error.messages.apiCallError` otherwise
+ */
+const buildAPIErrorMessage = (error) => error instanceof APIError ?
+    textConfig.error.messages.apiFailStatusCode.replace("%STATUS_CODE%", error.statusCode) :
+    textConfig.error.messages.apiCallError;

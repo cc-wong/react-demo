@@ -131,7 +131,7 @@ describe('Integration tests on the search screen module', () => {
         });
 
         test('Non-200 response after delay.', async () => {
-            mockApiCallWithDelay(60, initBadRequestApiResponse());
+            mockApiCallWithDelay(50, initBadRequestApiResponse());
 
             await act(() => render(<SearchScreen />));
             await waitFor(() => {
@@ -140,14 +140,14 @@ describe('Integration tests on the search screen module', () => {
                 assertDisplayLoadingText();
             });
 
-            await act(() => advanceTimersBySeconds(65));
+            await act(() => advanceTimersBySeconds(55));
             assertErrorMessageBox("Could not retrieve data (returned status code 400)");
             assertScreen(2025, 0);
             assertNotDisplayLoadingText();
         });
 
         test('API error after delay.', async () => {
-            mockApiCallWithDelay(60, new TypeError("Error"));
+            mockApiCallWithDelay(50, new TypeError("Error"));
 
             await act(() => render(<SearchScreen />));
             await waitFor(() => {
@@ -156,7 +156,7 @@ describe('Integration tests on the search screen module', () => {
                 assertDisplayLoadingText();
             });
 
-            await act(() => advanceTimersBySeconds(65));
+            await act(() => advanceTimersBySeconds(55));
             assertErrorMessageBox("Could not retrieve data (error on making API call)");
             assertScreen(2025, 0);
             assertNotDisplayLoadingText();

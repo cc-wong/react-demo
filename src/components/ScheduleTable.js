@@ -33,11 +33,11 @@ export default function ScheduleTable(props) {
                 </tr>
             </thead>
             <tbody>
-                {records.map((record, i) => {
+                {records.map(({ basho, dates }, i) => {
                     return (
-                        <tr key={`basho-${i}-${record.basho}`}>
-                            <td className="Tournament">{printBasho(record)}</td>
-                            <td>{parse(printSchedule(record))}</td>
+                        <tr key={`basho-${i}-${basho}`}>
+                            <td className="Tournament">{textConfig.bashoNameMap[basho]}</td>
+                            <td>{parse(printSchedule(dates))}</td>
                         </tr>
                     )
                 })}
@@ -47,24 +47,16 @@ export default function ScheduleTable(props) {
 }
 
 /**
- * Prints the description of the tournament.
+ * Prints the schedule of a tournament.
  * 
- * @param {BashoJson} record denotes the schedule of a tournament
- * @returns the description of the tournament
- */
-const printBasho = (record) => textConfig.bashoNameMap[record.basho];
-
-/**
- * Prints the schedule of the tournament.
- * 
- * @param {BashoJson} record denotes the schedule of a tournament
+ * @param {string[]} dates the dates of the tournament as `YYYY-MM-DD` strings
  * @returns {string} the display text for the Schedule column; may contain HTML tags\
  *                      see text configuration `scheduleTable.scheduleFormat` for the content format
  *                      and `scheduleTable.dateDisplayFormat` for the date format
  */
-const printSchedule = (record) => textConfig.scheduleTable.scheduleFormat
-    .replace("%DAY1%", formatDate(record.dates.at(0)))
-    .replace("%DAY15%", formatDate(record.dates.at(14)));
+const printSchedule = (dates) => textConfig.scheduleTable.scheduleFormat
+    .replace("%DAY1%", formatDate(dates.at(0)))
+    .replace("%DAY15%", formatDate(dates.at(14)));
 
 /**
  * Formats a date from the API JSON data for display.

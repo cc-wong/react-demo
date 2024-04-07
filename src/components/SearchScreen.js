@@ -29,7 +29,7 @@ export default function SearchScreen() {
 
     useEffect(() => {
         setLoading(true);
-        fetch(apiUrl(year)).then(getResponseBody).then(setApiData).then(setError(null))
+        callApi(year).then(setApiData).then(setError(null))
             .catch((error) => {
                 console.error(`Error caught: ${error}`);
                 setError(buildAPIErrorMessage(error));
@@ -58,15 +58,18 @@ export default function SearchScreen() {
 }
 
 /**
- * Builds the API URL.
+ * Makes an API call.
  * 
- * @param {number} year the year to retrieve data for
- * @returns the URL with the `%YEAR%` token replaced with `year`
+ * @param {number} year the year to use as the request parameter value
+ * @returns {Promise} Promise for the JSON response body
+ * @throws `APIError` if the response's OK status is `false`, ie. not successful
+ * @throws `Error` if an error occurs while making the API call
  */
-const apiUrl = (year) => {
+const callApi = async (year) => {
     const url = getApiUrl().replace("%YEAR%", year.toString());
     console.debug(`API URL: ${url}`);
-    return url;
+
+    return fetch(url).then(getResponseBody);
 }
 
 /**

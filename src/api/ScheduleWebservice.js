@@ -16,7 +16,7 @@ import { APIError } from '../types/APIError';
 /**
  * Makes an API call to retrieve the tournament schedule for a given year.
  * 
- * @param {number} year the year to retrieve data for
+ * @param {number|string} year the year to retrieve data for
  * @returns {ScheduleData} the data returned by the API call
  * @throws `APIError` if the API call returns a response with a status code other than 200
  * @throws `Error` if an error occurs during the API call

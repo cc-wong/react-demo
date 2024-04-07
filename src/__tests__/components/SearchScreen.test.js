@@ -4,13 +4,13 @@ import { act } from 'react-dom/test-utils';
 import SearchScreen from '../../components/SearchScreen';
 
 import testData from './SearchScreen.test.json';
+import { APIError } from '../../types/APIError';
 
+const api = require('../../api/ScheduleWebservice');
+const spyApi = jest.spyOn(api, 'getData');
 
-beforeAll(() => jest.useFakeTimers().setSystemTime(new Date('2025-10-10')));
-const mockApiUrl = "http://my-api-host.net/getSumoHonbashoSchedule?year=";
-beforeEach(() => {
-    const environmentUtils = require('../../utils/EnvironmentUtils');
-    jest.spyOn(environmentUtils, 'getApiUrl').mockReturnValue(mockApiUrl + "%YEAR%");
+beforeAll(() => {
+    jest.useFakeTimers().setSystemTime(new Date('2025-10-10'));
 });
 afterEach(() => cleanup());
 
@@ -34,8 +34,8 @@ describe('Integration tests on the search screen module', () => {
             });
         });
 
-        test('API call returns non-200 status code.', async () => {
-            mockBadRequestApiCallOnce();
+        test('API call returns unsuccessful response.', async () => {
+            mockUnsuccessfulApiCallOnce(400);
             render(<SearchScreen />);
 
             await waitFor(() => {
@@ -46,7 +46,7 @@ describe('Integration tests on the search screen module', () => {
         });
 
         test('Error thrown on API call.', async () => {
-            mockApiCallThrowErrorOnce();
+            mockApiCallThrowErrorOnce(new TypeError("Load failed"));
             render(<SearchScreen />);
 
             await waitFor(() => {
@@ -77,7 +77,7 @@ describe('Integration tests on the search screen module', () => {
         });
 
         test('API call failed on initial rendering but successful on year value change.', async () => {
-            mockBadRequestApiCallOnce();
+            mockUnsuccessfulApiCallOnce(400);
             mockSuccessfulApiCall(testData.sixRecords);
 
             await act(async () => render(<SearchScreen />));
@@ -97,7 +97,7 @@ describe('Integration tests on the search screen module', () => {
 
         test('API call failure on year value change.', async () => {
             mockSuccessfulApiCall(testData.sixRecords);
-            mockApiCallThrowErrorOnce();
+            mockApiCallThrowErrorOnce(new TypeError("Load failed"));
             await act(async () => render(<SearchScreen />));
             await waitFor(() => {
                 assertScreen(2025, 6);
@@ -116,7 +116,7 @@ describe('Integration tests on the search screen module', () => {
 
     describe('Network delay on API call', () => {
         test('Delay on initial rendering.', async () => {
-            mockApiCallWithDelay(30, initSuccessfulApiResponse(testData.sixRecords));
+            mockApiCallWithDelay(30, testData.sixRecords);
 
             await act(() => render(<SearchScreen />));
             await waitFor(() => {
@@ -130,8 +130,8 @@ describe('Integration tests on the search screen module', () => {
             assertNotDisplayLoadingText();
         });
 
-        test('Non-200 response after delay.', async () => {
-            mockApiCallWithDelay(50, initBadRequestApiResponse());
+        test('Unsuccessful response after delay.', async () => {
+            mockApiCallWithDelay(50, new APIError(400));
 
             await act(() => render(<SearchScreen />));
             await waitFor(() => {
@@ -146,7 +146,7 @@ describe('Integration tests on the search screen module', () => {
             assertNotDisplayLoadingText();
         });
 
-        test('API error after delay.', async () => {
+        test('API call error after delay.', async () => {
             mockApiCallWithDelay(50, new TypeError("Error"));
 
             await act(() => render(<SearchScreen />));
@@ -164,7 +164,7 @@ describe('Integration tests on the search screen module', () => {
 
         test('Delay on Year dropdown change.', async () => {
             mockSuccessfulApiCall(testData.oneRecord);
-            mockApiCallWithDelay(30, initSuccessfulApiResponse(testData.sixRecords));
+            mockApiCallWithDelay(30, testData.sixRecords);
 
             await act(async () => render(<SearchScreen />));
             await waitFor(() => {
@@ -191,14 +191,12 @@ describe('Integration tests on the search screen module', () => {
      * Mocks an API call with a given amount of time in delay.
      * 
      * @param {number} seconds the delay in seconds
-     * @param {*} response either the API call response or the error thrown
+     * @param {*} response either the JSON data returned or the error thrown
      */
-    const mockApiCallWithDelay = (seconds, response) => {
-        jest.spyOn(global, 'fetch').mockImplementationOnce(() =>
-            new Promise((resolve, reject) => setTimeout(
-                () => { response instanceof Error ? reject(response) : resolve(response) },
-                seconds * 1000)));
-    }
+    const mockApiCallWithDelay = (seconds, response) => spyApi.mockImplementationOnce(() =>
+        new Promise((resolve, reject) => setTimeout(() => {
+            response instanceof Error ? reject(response) : resolve(response)
+        }, seconds * 1000)));
 
     /**
      * Simulates the advancement of time in a test case
@@ -217,59 +215,37 @@ describe('Integration tests on the search screen module', () => {
  * 
  * @param  {...any} responseJson the response JSON data returned in order
  */
-const mockSuccessfulApiCall = (...responseJson) => {
-    responseJson.forEach((json) => {
-        mockApiCall(initSuccessfulApiResponse(json))
-    });
-}
+const mockSuccessfulApiCall = (...responseJson) => responseJson.forEach((json) => {
+    mockApiCall(json)
+});
 
 /**
- * Initializes a API JSON response with status code 200.
+ * Mocks the API to return an unsuccessful response once.
  * 
- * @param {*} json the JSON data to set
- * @returns the new API JSON response
+ * @param {number} status the response status code
  */
-const initSuccessfulApiResponse = (json) => {
-    return {
-        ok: true,
-        status: 200,
-        json: () => (json),
-    }
-}
-
-/**
- * Initializes a API JSON response with status code 400.
- * 
- * @returns the new API JSON response
- */
-const initBadRequestApiResponse = () => {
-    return {
-        ok: false,
-        status: 400,
-        json: () => ("Bad request.")
-    }
-};
+const mockUnsuccessfulApiCallOnce = (status) => mockApiCallThrowErrorOnce(new APIError(status));
 
 /**
  * Mocks the API call to return a 400 bad request response once.
  */
-const mockBadRequestApiCallOnce = () => mockApiCall(initBadRequestApiResponse());
+// const mockBadRequestApiCallOnce = () => mockApiCall(initBadRequestApiResponse());
 
 /**
  * Mocks the API call to throw an error once.
+ * 
+ * @param {Error} error the error thrown
  */
-const mockApiCallThrowErrorOnce = () => jest.spyOn(global, 'fetch')
-    .mockRejectedValueOnce(new TypeError("Load failed"));
+const mockApiCallThrowErrorOnce = (error) => spyApi.mockRejectedValueOnce(error);
 
 /**
  * Mocks an API call that returns a response.
  * 
  * The response statuts status code may or may not be 200.
  * 
- * @param {*} response the response from the API call
+ * @param {*} json the JSON response body from the API call
  */
-const mockApiCall = (response) => jest.spyOn(global, 'fetch')
-    .mockImplementationOnce(() => Promise.resolve(response));
+const mockApiCall = (json) => spyApi.mockImplementationOnce(() => Promise.resolve(json));
 
 /**
  * Fires an event for changing the value of the Year dropdown.
@@ -277,9 +253,7 @@ const mockApiCall = (response) => jest.spyOn(global, 'fetch')
  * @param {number} year the new dropdown value
  */
 const fireChangeYearDropdownValueEvent = (year) =>
-    fireEvent.change(screen.getByRole('combobox', { name: 'year' }), {
-        target: { value: year }
-    });
+    fireEvent.change(screen.getByRole('combobox', { name: 'year' }), { target: { value: year } });
 
 /**
  * Asserts the calls to the API.
@@ -288,8 +262,8 @@ const fireChangeYearDropdownValueEvent = (year) =>
  * @param {number[]} years the expected `year` parameter values in the order of API call
  */
 const assertApiCall = (times, years) => {
-    expect(global.fetch).toHaveBeenCalledTimes(times);
-    years.forEach((year) => expect(global.fetch).toHaveBeenCalledWith(mockApiUrl + year));
+    expect(spyApi).toHaveBeenCalledTimes(times);
+    years.forEach((year) => expect(spyApi).toHaveBeenCalledWith(year.toString()));
 }
 
 /**

@@ -13,8 +13,8 @@ beforeEach(() => {
 });
 afterEach(() => cleanup());
 
-describe('Tests on the schedule retrieval API calls.', () => {
-    test('Normal API call with data returned.', async () => {
+describe('Happy path test cases with data returned', () => {
+    test('Year parameter value is a number.', async () => {
         mockSuccessfulApiCall(testData.data);
 
         api.getData(2025).then((json) => {
@@ -23,25 +23,34 @@ describe('Tests on the schedule retrieval API calls.', () => {
         assertApiCall(1, [2025]);
     });
 
-    test('API call returns non-200 status code.', () => {
-        mockUnsuccessfulApiCallOnce(400, "Bad request.");
-        api.getData(2025).then(() => { throw new Error("Not supposed to return normally!") })
-            .catch((error) => {
-                expect(error instanceof APIError).toBe(true);
-                expect(error.statusCode).toBe(400);
-            });
-        assertApiCall(1, [2025]);
-    });
+    test('Year parameter value is a string.', async () => {
+        mockSuccessfulApiCall(testData.data);
 
-    test('Error thrown on API call.', () => {
-        const error = new TypeError("Load failed");
-        mockApiCallThrowErrorOnce(error);
-        api.getData(2025).then(() => { throw new Error("Not supposed to return normally!") })
-            .catch((error) => {
-                expect(error).toBe(error);
-            });
-        assertApiCall(1, [2025]);
+        api.getData("2025").then((json) => {
+            expect(json).toBe(testData.data);
+        });
+        assertApiCall(1, ["2025"]);
     });
+});
+
+test('API call returns non-200 status code.', () => {
+    mockUnsuccessfulApiCallOnce(400, "Bad request.");
+    api.getData(2025).then(() => { throw new Error("Not supposed to return normally!") })
+        .catch((error) => {
+            expect(error instanceof APIError).toBe(true);
+            expect(error.statusCode).toBe(400);
+        });
+    assertApiCall(1, [2025]);
+});
+
+test('Error thrown on API call.', () => {
+    const error = new TypeError("Load failed");
+    mockApiCallThrowErrorOnce(error);
+    api.getData(2025).then(() => { throw new Error("Not supposed to return normally!") })
+        .catch((error) => {
+            expect(error).toBe(error);
+        });
+    assertApiCall(1, [2025]);
 });
 
 /**

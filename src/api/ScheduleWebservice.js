@@ -17,7 +17,7 @@ import { APIError } from '../types/APIError';
  * Makes an API call to retrieve the tournament schedule for a given year.
  * 
  * @param {number|string} year the year to retrieve data for
- * @returns {ScheduleData} the data returned by the API call
+ * @returns {Promise<ScheduleData>} Promise for the JSON data returned by the API call
  * @throws `APIError` if the API call returns a response with a status code other than 200
  * @throws `Error` if an error occurs during the API call
  */
@@ -32,14 +32,14 @@ export const getData = async (year) => {
  * Gets the body of a given API call response.
  * 
  * @param {Response} response the response object returned from the call
- * @returns {Promise<BashoJson>} Promise for the response's JSON body
+ * @returns {Promise<ScheduleData>} Promise for the response's JSON body
  * @throws `APIError` if the response's OK status is `false`, ie. not successful
  */
 const getResponseBody = (response) => {
     console.debug(`Returned status code: ${response.status} (ok: ${response.ok})`);
     if (!response.ok) {
         console.error(response);
-        throw new APIError(response.status);
+        throw APIError.InitUnsuccessfulResponseError(response.status);
     }
     return response.json();
 }

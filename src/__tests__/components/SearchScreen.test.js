@@ -1,16 +1,17 @@
 import { render, screen, cleanup, fireEvent, waitFor } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
+import * as utils from '../../testUtils';
 
 import SearchScreen from '../../components/SearchScreen';
+import { APIError } from '../../types/APIError';
 
 import testData from './SearchScreen.test.json';
-import { APIError } from '../../types/APIError';
 
 const api = require('../../api/ScheduleWebservice');
 const spyApi = jest.spyOn(api, 'getData');
 
 beforeAll(() => {
-    jest.useFakeTimers().setSystemTime(new Date('2025-10-10'));
+    utils.mockCurrentDate('2025-10-10');
 });
 afterEach(() => cleanup());
 
@@ -125,13 +126,13 @@ describe('Integration tests on the search screen module', () => {
                 assertDisplayLoadingText();
             });
 
-            await act(() => advanceTimersBySeconds(35));
+            await act(() => utils.advanceTimersBySeconds(35));
             assertScreen(2025, 6);
             assertNotDisplayLoadingText();
         });
 
         test('Unsuccessful response after delay.', async () => {
-            mockApiCallWithDelay(50, new APIError(400));
+            mockApiCallWithDelay(50, APIError.InitUnsuccessfulResponseError(400));
 
             await act(() => render(<SearchScreen />));
             await waitFor(() => {
@@ -140,7 +141,7 @@ describe('Integration tests on the search screen module', () => {
                 assertDisplayLoadingText();
             });
 
-            await act(() => advanceTimersBySeconds(55));
+            await act(() => utils.advanceTimersBySeconds(55));
             assertErrorMessageBox("Could not retrieve data (returned status code 400)");
             assertScreen(2025, 0);
             assertNotDisplayLoadingText();
@@ -156,7 +157,7 @@ describe('Integration tests on the search screen module', () => {
                 assertDisplayLoadingText();
             });
 
-            await act(() => advanceTimersBySeconds(55));
+            await act(() => utils.advanceTimersBySeconds(55));
             assertErrorMessageBox("Could not retrieve data (error on making API call)");
             assertScreen(2025, 0);
             assertNotDisplayLoadingText();
@@ -178,58 +179,37 @@ describe('Integration tests on the search screen module', () => {
                 assertErrorMessageNotExist();
                 assertDisplayLoadingText();
             });
-            await act(() => advanceTimersBySeconds(35));
+            await act(() => utils.advanceTimersBySeconds(35));
             assertScreen(2028, 6);
 
             assertApiCall(2, [2025, 2028]);
             assertNotDisplayLoadingText();
         });
-
     });
-
-    /**
-     * Mocks an API call with a given amount of time in delay.
-     * 
-     * @param {number} seconds the delay in seconds
-     * @param {*} response either the JSON data returned or the error thrown
-     */
-    const mockApiCallWithDelay = (seconds, response) => spyApi.mockImplementationOnce(() =>
-        new Promise((resolve, reject) => setTimeout(() => {
-            response instanceof Error ? reject(response) : resolve(response)
-        }, seconds * 1000)));
-
-    /**
-     * Simulates the advancement of time in a test case
-     * by advancing the timer by a given amount of time.
-     * 
-     * @param {number} seconds time to advance in seconds
-     */
-    const advanceTimersBySeconds = async (seconds) => {
-        jest.advanceTimersByTime(seconds * 1000);
-        await new Promise(jest.requireActual('timers').setImmediate);
-    }
 });
+
+/**
+ * Mocks an API call with a given amount of time in delay.
+ * 
+ * @param {number} seconds the delay in seconds
+ * @param {*} response either the JSON data returned or the error thrown
+ */
+const mockApiCallWithDelay = (seconds, response) => utils.mockFunctionWithDelay(spyApi, seconds, response);
 
 /**
  * Mocks successful call(s) to the API with status code 200.
  * 
  * @param  {...any} responseJson the response JSON data returned in order
  */
-const mockSuccessfulApiCall = (...responseJson) => responseJson.forEach((json) => {
-    mockApiCall(json)
-});
+const mockSuccessfulApiCall = (...responseJson) => responseJson.forEach((json) => mockApiCall(json));
 
 /**
  * Mocks the API to return an unsuccessful response once.
  * 
  * @param {number} status the response status code
  */
-const mockUnsuccessfulApiCallOnce = (status) => mockApiCallThrowErrorOnce(new APIError(status));
-
-/**
- * Mocks the API call to return a 400 bad request response once.
- */
-// const mockBadRequestApiCallOnce = () => mockApiCall(initBadRequestApiResponse());
+const mockUnsuccessfulApiCallOnce = (status) =>
+    mockApiCallThrowErrorOnce(APIError.InitUnsuccessfulResponseError(status));
 
 /**
  * Mocks the API call to throw an error once.
@@ -278,13 +258,6 @@ const assertScreen = (expectedYear, recordCount) => {
 }
 
 /**
- * Regex escape function.
- * 
- * @param {string} text the text to escape regex for
- * @returns the escaped text
- */
-const escapeRegex = (text) => text.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
-/**
  * Asserts that the error message box is present in the screen.
  * 
  * @param {string} message the expected error message text excluding the heading
@@ -293,7 +266,7 @@ const assertErrorMessageBox = (message) => {
     const errorMessageBox = document.querySelector('#errorMessage');
     expect(errorMessageBox).toBeInTheDocument();
 
-    const errorTextRegex = new RegExp(`ERROR.*${escapeRegex(message)}`);
+    const errorTextRegex = new RegExp(`ERROR.*${utils.escapeRegex(message)}`);
     expect(errorTextRegex.test(errorMessageBox.innerHTML)).toBe(true);
 }
 

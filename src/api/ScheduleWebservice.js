@@ -25,7 +25,17 @@ export const getData = async (year) => {
     const url = getApiUrl().replace("%YEAR%", year.toString());
     console.debug(`API URL: ${url}`);
 
-    return fetch(url).then(getResponseBody);
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), 60 * 1000);
+    console.debug(`timeout ID: ${id}; controller signal: ${controller.signal}`);
+
+    try {
+        return await fetch(url, { signal: controller.signal, }).then(getResponseBody);
+    }
+    finally {
+        console.debug('Clear timeout.')
+        clearTimeout(id);
+    }
 }
 
 /**

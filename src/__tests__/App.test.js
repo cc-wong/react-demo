@@ -1,9 +1,13 @@
 import { render, screen, cleanup } from '@testing-library/react';
 import App from '../App';
 
-describe('Test cases on the components in the app screen', () => {
-  afterEach(() => cleanup());
+beforeEach(() => {
+  const environmentUtils = require('../utils/EnvironmentUtils');
+  jest.spyOn(environmentUtils, 'getApiUrl').mockReturnValue("http://dummy.host/myEndpoint?year=%YEAR%");
+});
+afterEach(() => cleanup());
 
+describe('Test cases on the components in the app screen', () => {
   test('Title is present.', () => {
     render(<App />);
     const heading = screen.getByRole('heading', { level: 1 });

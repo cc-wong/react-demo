@@ -31,8 +31,7 @@ export const getData = async (year) => {
 
     try {
         return await fetch(url, { signal: controller.signal, }).then(getResponseBody);
-    }
-    finally {
+    } finally {
         console.debug('Clear timeout.')
         clearTimeout(id);
     }

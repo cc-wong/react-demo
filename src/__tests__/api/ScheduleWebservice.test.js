@@ -53,25 +53,15 @@ describe('API call failure', () => {
         assertApiCall(1, [2025]);
     });
 
-    // xtest('Does the fake timer even work?', () => {
-    //     console.log("It is now: " + new Date());
-    //     act(() => {
-    //         utils.advanceTimersBySeconds(61)
-    //     });
-    //     console.log("It is now: " + new Date());
-
-    // })
-
-    xtest('Timeout.', async () => {
+    xtest('Timeout.', async () => {  // Still no idea how to test.
         utils.mockFunctionWithDelay(spyFetch, 61, new DOMException('DOMException: The operation timed out.', 'TimeoutError'));
         // Mock fetch() to reject with DOMException (AbortError or TimeoutError) after 60 seconds.
-        const abortSpy = jest.spyOn(AbortController.prototype, 'abort');
+        // const abortSpy = jest.spyOn(AbortController.prototype, 'abort');
         // const timeoutSpy = jest.spyOn(AbortSignal.prototype, 'timeout');
 
         let callApi = api.getData(2025);
         console.log("It is now: " + new Date());
         await act(() => utils.advanceTimersBySeconds(65));
-        // jest.advanceTimersByTime(71 * 1000);
 
         let errorThrown = false;
         await waitFor(() => {
@@ -81,11 +71,6 @@ describe('API call failure', () => {
                 errorThrown = true;
             })
         });
-        // await callApi.catch((error) => {
-        //     assertAPIError(error, APIError.ErrorType.Timeout,
-        //         '');
-        //     errorThrown = true;
-        // });
         console.log("Error thrown? " + errorThrown);
         console.log(callApi);
         assertApiCall(1, [2025]);
@@ -94,24 +79,6 @@ describe('API call failure', () => {
         } catch (e) {
             throw new Error('Timeout error should be thrown!');
         }
-
-        // await waitFor(() => {
-        //     console.log("It is now: " + new Date());
-        //     console.log(callApi);
-
-        //     let errorThrown = false;
-        //     callApi.catch((error) => {
-        //         assertAPIError(error, APIError.ErrorType.Timeout,
-        //             '');
-        //         errorThrown = true;
-        //     });
-        //     console.log("Error thrown? " + errorThrown);
-        //     try {
-        //         expect(errorThrown).toBe(true);
-        //     } catch (e) {
-        //         throw new Error('Timeout error should be thrown!');
-        //     }
-        // })
     });
 });
 

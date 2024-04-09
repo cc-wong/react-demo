@@ -54,4 +54,8 @@ export class APIError extends Error {
         return new APIError(APIError.ErrorType.UnsuccessfulResponse, statusCode,
             `API call returned status code: ${statusCode}`);
     }
+
+    static InitTimeoutError() {
+        return new APIError(APIError.ErrorType.Timeout, 0, 'API call timed out.');
+    }
 }

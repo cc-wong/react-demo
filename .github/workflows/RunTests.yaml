@@ -5,7 +5,7 @@ on:
             # No need for "master" since "Deploy to Netlify" already handles its testing.
             - next-version
 jobs:
-    deploy-to-netlify:
+    run-test-cases:
         runs-on: ubuntu-latest
         strategy:
             matrix:

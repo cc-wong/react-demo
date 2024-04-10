@@ -1,6 +1,7 @@
 {
     "api": {
-        "urlFormat": "%API_BASE_URL%/getSumoHonbashoSchedule?year=%YEAR%"
+        "urlFormat": "%API_BASE_URL%/getSumoHonbashoSchedule?year=%YEAR%",
+        "timeout": 60
     },
     "yearDropdown": {
         "maxYearsFromCurrent": 10

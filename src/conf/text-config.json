@@ -11,8 +11,9 @@
     "error": {
         "title": "ERROR",
         "messages": {
-            "apiCallError": "Could not retrieve data (error on making API call)",
-            "apiFailStatusCode": "Could not retrieve data (returned status code %STATUS_CODE%)"
+            "UnsuccessfulResponse": "Could not retrieve data (returned status code %STATUS_CODE%)",
+            "ErrorThrown": "Could not retrieve data (error on making API call)",
+            "Timeout": "Request timed out. Please try again."
         }
     },
     "loading": "Loading...",

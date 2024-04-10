@@ -1,16 +1,17 @@
 import { render, screen, cleanup, fireEvent, waitFor } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
+import * as utils from '../../testUtils';
 
 import SearchScreen from '../../components/SearchScreen';
 
 import testData from './SearchScreen.test.json';
+import { APICallResult } from '../../types/APICallResult';
 
+const api = require('../../api/ScheduleWebservice');
+const spyApi = jest.spyOn(api, 'fetchData');
 
-beforeAll(() => jest.useFakeTimers().setSystemTime(new Date('2025-10-10')));
-const mockApiUrl = "http://my-api-host.net/getSumoHonbashoSchedule?year=";
-beforeEach(() => {
-    const environmentUtils = require('../../utils/EnvironmentUtils');
-    jest.spyOn(environmentUtils, 'getApiUrl').mockReturnValue(mockApiUrl + "%YEAR%");
+beforeAll(() => {
+    utils.mockCurrentDate('2025-10-10');
 });
 afterEach(() => cleanup());
 
@@ -24,7 +25,7 @@ afterEach(() => cleanup());
 describe('Integration tests on the search screen module', () => {
     describe('On initial rendering', () => {
         test('Normal screen render (API call successful).', async () => {
-            mockSuccessfulApiCall(testData.sixRecords);
+            mockApiCalls(APICallResult.InitForSuccessfulResponse(testData.sixRecords));
             render(<SearchScreen />);
 
             await waitFor(() => {
@@ -34,81 +35,62 @@ describe('Integration tests on the search screen module', () => {
             });
         });
 
-        test('API call returns non-200 status code.', async () => {
-            mockBadRequestApiCallOnce();
+        test('API call returns unsuccessful response.', async () => {
+            mockApiCalls(APICallResult.InitForUnsuccessfulResponse(400));
             render(<SearchScreen />);
 
-            await waitFor(() => {
-                assertApiCall(1, [2025]);
-                assertErrorMessageBox("Could not retrieve data (returned status code 400)");
-                assertScreen(2025, 0);
-            });
+            await waitFor(() => assertUnsuccessfulAPIResponse(400, 2025));
+            assertApiCall(1, [2025]);
         });
 
         test('Error thrown on API call.', async () => {
-            mockApiCallThrowErrorOnce();
+            mockApiCalls(APICallResult.InitForErrorThrown());
             render(<SearchScreen />);
 
-            await waitFor(() => {
-                assertApiCall(1, [2025]);
-                assertErrorMessageBox("Could not retrieve data (error on making API call)");
-                assertScreen(2025, 0);
-            });
+            await waitFor(() => assertAPICallErrorThrown(2025));
+            assertApiCall(1, [2025]);
         });
     });
 
     describe('Year dropdown value changed', () => {
         test('Successful API data retrieval (happy path).', async () => {
-            mockSuccessfulApiCall(testData.oneRecord, testData.sixRecords);
+            mockApiCalls(APICallResult.InitForSuccessfulResponse(testData.oneRecord),
+                APICallResult.InitForSuccessfulResponse(testData.sixRecords));
 
             await act(async () => render(<SearchScreen />));
-            await waitFor(() => {
-                assertScreen(2025, 1);
-                assertErrorMessageNotExist();
-            });
+            await waitFor(() => assertErrorMessageNotExist());
+            assertScreen(2025, 1);
 
             await act(async () => fireChangeYearDropdownValueEvent(2028));
-            await waitFor(() => {
-                assertScreen(2028, 6);
-                assertErrorMessageNotExist();
-            });
+            await waitFor(() => assertErrorMessageNotExist());
+            assertScreen(2028, 6);
 
             assertApiCall(2, [2025, 2028]);
         });
 
         test('API call failed on initial rendering but successful on year value change.', async () => {
-            mockBadRequestApiCallOnce();
-            mockSuccessfulApiCall(testData.sixRecords);
+            mockApiCalls(APICallResult.InitForUnsuccessfulResponse(400),
+                APICallResult.InitForSuccessfulResponse(testData.sixRecords));
 
             await act(async () => render(<SearchScreen />));
-            await waitFor(() => {
-                assertErrorMessageBox("Could not retrieve data (returned status code 400)");
-                assertScreen(2025, 0);
-            });
+            await waitFor(() => assertUnsuccessfulAPIResponse(400, 2025));
 
             await act(async () => fireChangeYearDropdownValueEvent(2030));
-            await waitFor(() => {
-                assertScreen(2030, 6);
-                assertErrorMessageNotExist();
-            });
+            await waitFor(() => assertErrorMessageNotExist());
+            assertScreen(2030, 6);
 
             assertApiCall(2, [2025, 2030]);
         });
 
         test('API call failure on year value change.', async () => {
-            mockSuccessfulApiCall(testData.sixRecords);
-            mockApiCallThrowErrorOnce();
+            mockApiCalls(APICallResult.InitForSuccessfulResponse(testData.sixRecords),
+                APICallResult.InitForErrorThrown());
             await act(async () => render(<SearchScreen />));
-            await waitFor(() => {
-                assertScreen(2025, 6);
-                assertErrorMessageNotExist();
-            });
+            await waitFor(() => assertErrorMessageNotExist());
+            assertScreen(2025, 6);
 
             await act(async () => fireChangeYearDropdownValueEvent(2026));
-            await waitFor(() => {
-                assertErrorMessageBox("Could not retrieve data (error on making API call)");
-                assertScreen(2026, 0);
-            });
+            await waitFor(() => assertAPICallErrorThrown(2026));
 
             assertApiCall(2, [2025, 2026]);
         });
@@ -116,7 +98,8 @@ describe('Integration tests on the search screen module', () => {
 
     describe('Network delay on API call', () => {
         test('Delay on initial rendering.', async () => {
-            mockApiCallWithDelay(30, initSuccessfulApiResponse(testData.sixRecords));
+            mockApiCallWithDelay(30,
+                APICallResult.InitForSuccessfulResponse(testData.sixRecords));
 
             await act(() => render(<SearchScreen />));
             await waitFor(() => {
@@ -125,13 +108,13 @@ describe('Integration tests on the search screen module', () => {
                 assertDisplayLoadingText();
             });
 
-            await act(() => advanceTimersBySeconds(35));
+            await act(() => utils.advanceTimersBySeconds(35));
             assertScreen(2025, 6);
             assertNotDisplayLoadingText();
         });
 
-        test('Non-200 response after delay.', async () => {
-            mockApiCallWithDelay(50, initBadRequestApiResponse());
+        test('Unsuccessful response after delay.', async () => {
+            mockApiCallWithDelay(20, APICallResult.InitForUnsuccessfulResponse(400));
 
             await act(() => render(<SearchScreen />));
             await waitFor(() => {
@@ -140,14 +123,12 @@ describe('Integration tests on the search screen module', () => {
                 assertDisplayLoadingText();
             });
 
-            await act(() => advanceTimersBySeconds(55));
-            assertErrorMessageBox("Could not retrieve data (returned status code 400)");
-            assertScreen(2025, 0);
-            assertNotDisplayLoadingText();
+            await act(() => utils.advanceTimersBySeconds(21));
+            assertUnsuccessfulAPIResponse(400, 2025);
         });
 
-        test('API error after delay.', async () => {
-            mockApiCallWithDelay(50, new TypeError("Error"));
+        test('API call error after delay.', async () => {
+            mockApiCallWithDelay(50, APICallResult.InitForErrorThrown());
 
             await act(() => render(<SearchScreen />));
             await waitFor(() => {
@@ -156,15 +137,28 @@ describe('Integration tests on the search screen module', () => {
                 assertDisplayLoadingText();
             });
 
-            await act(() => advanceTimersBySeconds(55));
-            assertErrorMessageBox("Could not retrieve data (error on making API call)");
-            assertScreen(2025, 0);
-            assertNotDisplayLoadingText();
+            await act(() => utils.advanceTimersBySeconds(55));
+            assertAPICallErrorThrown(2025);
+        });
+
+        test('API call timeout after delay.', async () => {
+            mockApiCallWithDelay(60, APICallResult.InitForTimeout());
+
+            await act(() => render(<SearchScreen />));
+            await waitFor(() => {
+                assertApiCall(1, [2025]);
+                assertErrorMessageNotExist();
+                assertDisplayLoadingText();
+            });
+
+            await act(() => utils.advanceTimersBySeconds(61));
+            assertAPICallTimeout(2025);
         });
 
         test('Delay on Year dropdown change.', async () => {
-            mockSuccessfulApiCall(testData.oneRecord);
-            mockApiCallWithDelay(30, initSuccessfulApiResponse(testData.sixRecords));
+            mockApiCalls(APICallResult.InitForSuccessfulResponse(testData.oneRecord));
+            mockApiCallWithDelay(30,
+                APICallResult.InitForSuccessfulResponse(testData.sixRecords));
 
             await act(async () => render(<SearchScreen />));
             await waitFor(() => {
@@ -178,98 +172,30 @@ describe('Integration tests on the search screen module', () => {
                 assertErrorMessageNotExist();
                 assertDisplayLoadingText();
             });
-            await act(() => advanceTimersBySeconds(35));
+            await act(() => utils.advanceTimersBySeconds(35));
             assertScreen(2028, 6);
 
             assertApiCall(2, [2025, 2028]);
             assertNotDisplayLoadingText();
         });
-
     });
-
-    /**
-     * Mocks an API call with a given amount of time in delay.
-     * 
-     * @param {number} seconds the delay in seconds
-     * @param {*} response either the API call response or the error thrown
-     */
-    const mockApiCallWithDelay = (seconds, response) => {
-        jest.spyOn(global, 'fetch').mockImplementationOnce(() =>
-            new Promise((resolve, reject) => setTimeout(
-                () => { response instanceof Error ? reject(response) : resolve(response) },
-                seconds * 1000)));
-    }
-
-    /**
-     * Simulates the advancement of time in a test case
-     * by advancing the timer by a given amount of time.
-     * 
-     * @param {number} seconds time to advance in seconds
-     */
-    const advanceTimersBySeconds = async (seconds) => {
-        jest.advanceTimersByTime(seconds * 1000);
-        await new Promise(jest.requireActual('timers').setImmediate);
-    }
 });
 
 /**
- * Mocks successful call(s) to the API with status code 200.
+ * Mocks an API call with a given amount of time in delay.
  * 
- * @param  {...any} responseJson the response JSON data returned in order
+ * @param {number} seconds the delay in seconds
+ * @param {APICallResult} result the API call result object to return
  */
-const mockSuccessfulApiCall = (...responseJson) => {
-    responseJson.forEach((json) => {
-        mockApiCall(initSuccessfulApiResponse(json))
-    });
-}
+const mockApiCallWithDelay = (seconds, result) => utils.mockFunctionWithDelay(spyApi, seconds, result);
 
 /**
- * Initializes a API JSON response with status code 200.
+ * Mocks calls to the API.
  * 
- * @param {*} json the JSON data to set
- * @returns the new API JSON response
+ * @param  {...APICallResult} results the API call result objects to return
  */
-const initSuccessfulApiResponse = (json) => {
-    return {
-        ok: true,
-        status: 200,
-        json: () => (json),
-    }
-}
-
-/**
- * Initializes a API JSON response with status code 400.
- * 
- * @returns the new API JSON response
- */
-const initBadRequestApiResponse = () => {
-    return {
-        ok: false,
-        status: 400,
-        json: () => ("Bad request.")
-    }
-};
-
-/**
- * Mocks the API call to return a 400 bad request response once.
- */
-const mockBadRequestApiCallOnce = () => mockApiCall(initBadRequestApiResponse());
-
-/**
- * Mocks the API call to throw an error once.
- */
-const mockApiCallThrowErrorOnce = () => jest.spyOn(global, 'fetch')
-    .mockRejectedValueOnce(new TypeError("Load failed"));
-
-/**
- * Mocks an API call that returns a response.
- * 
- * The response statuts status code may or may not be 200.
- * 
- * @param {*} response the response from the API call
- */
-const mockApiCall = (response) => jest.spyOn(global, 'fetch')
-    .mockImplementationOnce(() => Promise.resolve(response));
+const mockApiCalls = (...results) => results.forEach((result) =>
+    spyApi.mockImplementationOnce(() => Promise.resolve(result)));
 
 /**
  * Fires an event for changing the value of the Year dropdown.
@@ -277,9 +203,7 @@ const mockApiCall = (response) => jest.spyOn(global, 'fetch')
  * @param {number} year the new dropdown value
  */
 const fireChangeYearDropdownValueEvent = (year) =>
-    fireEvent.change(screen.getByRole('combobox', { name: 'year' }), {
-        target: { value: year }
-    });
+    fireEvent.change(screen.getByRole('combobox', { name: 'year' }), { target: { value: year } });
 
 /**
  * Asserts the calls to the API.
@@ -288,8 +212,41 @@ const fireChangeYearDropdownValueEvent = (year) =>
  * @param {number[]} years the expected `year` parameter values in the order of API call
  */
 const assertApiCall = (times, years) => {
-    expect(global.fetch).toHaveBeenCalledTimes(times);
-    years.forEach((year) => expect(global.fetch).toHaveBeenCalledWith(mockApiUrl + year));
+    expect(spyApi).toHaveBeenCalledTimes(times);
+    years.forEach((year) => expect(spyApi).toHaveBeenCalledWith(year.toString()));
+}
+
+/**
+ * Asserts the screen for a test case with unsuccessful API response.
+ * @param {number} statusCode the response status code
+ * @param {number} expectedYear the expected selected value in the Year dropdown box
+ */
+const assertUnsuccessfulAPIResponse = (statusCode, expectedYear) =>
+    assertScreenWithError(expectedYear, `Could not retrieve data (returned status code ${statusCode})`);
+
+/**
+ * Asserts the screen for a test case where the API call throws (non-timeout) error.
+ * @param {number} expectedYear the expected selected value in the Year dropdown box
+ */
+const assertAPICallErrorThrown = (expectedYear) =>
+    assertScreenWithError(expectedYear, 'Could not retrieve data (error on making API call)');
+
+/**
+ * Asserts the screen for a test case with API call timeout.
+ * @param {number} expectedYear the expected selected value in the Year dropdown box
+ */
+const assertAPICallTimeout = (expectedYear) =>
+    assertScreenWithError(expectedYear, 'Request timed out. Please try again.');
+
+/**
+ * Asserts the screen for a test case with an error message displaying due to an unsuccessful API call.
+ * @param {number} expectedYear the expected selected value in the Year dropdown box
+ * @param {string} message the expected message displayed in the error box
+ */
+const assertScreenWithError = (expectedYear, message) => {
+    assertErrorMessageBox(message);
+    assertScreen(expectedYear, 0);
+    assertNotDisplayLoadingText();
 }
 
 /**
@@ -304,13 +261,6 @@ const assertScreen = (expectedYear, recordCount) => {
 }
 
 /**
- * Regex escape function.
- * 
- * @param {string} text the text to escape regex for
- * @returns the escaped text
- */
-const escapeRegex = (text) => text.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
-/**
  * Asserts that the error message box is present in the screen.
  * 
  * @param {string} message the expected error message text excluding the heading
@@ -318,9 +268,7 @@ const escapeRegex = (text) => text.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
 const assertErrorMessageBox = (message) => {
     const errorMessageBox = document.querySelector('#errorMessage');
     expect(errorMessageBox).toBeInTheDocument();
-
-    const errorTextRegex = new RegExp(`ERROR.*${escapeRegex(message)}`);
-    expect(errorTextRegex.test(errorMessageBox.innerHTML)).toBe(true);
+    expect(errorMessageBox.innerHTML).toMatch(new RegExp(`ERROR.*${utils.escapeRegex(message)}`));
 }
 
 /**

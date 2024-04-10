@@ -30,7 +30,11 @@ describe('Unit tests on the table displaying the retrieved schedule for the year
         assertRecordRow(cells.slice(10, 12), "November (Kyushu)", "November 9 (Sunday) to November 23 (Sunday)");
     });
 
-    test("Table with no records.", () => assertTableRecords([], 0));
+    describe('Table with no records', () => {
+        test("Property 'data' is an empty list.", () => assertTableRecords([], 0));
+        test("Property 'data' is undefined.", () => assertTableRecords(undefined, 0));
+        test("Property 'data' is null.", () => assertTableRecords(null, 0));
+    })
 
     /**
      * Runs a test case on populating table records.

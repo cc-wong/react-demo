@@ -33,8 +33,25 @@ See [here](https://create-react-app.dev/docs/adding-custom-environment-variables
 >    - URL: <http://localhost:3000/>
 
 ## Unit testing
+### Default
 ```
 npm test
 ```
 * Tests will be rerun whenever a file is updated.
-* Press `Ctrl+C` to exit.
+* See the Watch Usage on the screen for operation.
+
+### Run all tests
+The command above runs only tests affected by updated modules
+by default.
+
+To run all test cases from the start:
+```
+npm run testAll
+```
+* Tests will be rerun whenever a file is updated.
+* See the Watch Usage on the screen for operation.
+
+### Get test coverage
+```
+npm run coverage
+```

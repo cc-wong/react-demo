@@ -6,14 +6,9 @@ import { useEffect, useState } from "react";
 
 import YearDropdown from "./YearDropdown";
 import ScheduleTable from "./ScheduleTable";
+import * as api from '../api/ScheduleWebservice';
+import { APICallResult } from '../types/APICallResult';
 import { getCurrentYear } from '../utils/DateUtils';
-import { getApiUrl } from '../utils/EnvironmentUtils';
-import { APIError } from '../types/APIError';
-
-/**
- * The initial (default) value of the state `apiData`.
- */
-const initialApiData = { result: [] };
 
 /**
  * Populates the search screen which includes a dropdown for the year
@@ -22,20 +17,22 @@ const initialApiData = { result: [] };
  * @returns a wrapper component including the dropdown and table
  */
 export default function SearchScreen() {
-    const [year, setYear] = useState(getCurrentYear);
-    const [apiData, setApiData] = useState(initialApiData);
+    const [year, setYear] = useState(getCurrentYear().toString());
+    const [apiData, setApiData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         setLoading(true);
-        callApi(year).then(setApiData).then(setError(null))
-            .catch((error) => {
-                console.error(`Error caught: ${error}`);
-                setError(buildAPIErrorMessage(error));
-                setApiData(initialApiData);
-            })
-            .finally(() => setLoading(false));
+        api.fetchData(year).then((result) => {
+            if (result.success) {
+                setApiData(result.data);
+                setError(null);
+            } else {
+                setError(getAPIErrorMessage(result));
+                setApiData([]);
+            }
+        }).finally(() => setLoading(false));
     }, [year]);
 
     return (
@@ -52,51 +49,23 @@ export default function SearchScreen() {
             {loading && (
                 <div className='LoadingText' id='loadingText'>{textConfig.loading}</div>
             )}
-            <ScheduleTable data={apiData.result} />
+            <ScheduleTable data={apiData} />
         </div>
     );
 }
 
 /**
- * Makes an API call.
- * 
- * @param {number} year the year to use as the request parameter value
- * @returns {Promise} Promise for the JSON response body
- * @throws `APIError` if the response's OK status is `false`, ie. not successful
- * @throws `Error` if an error occurs while making the API call
- */
-const callApi = async (year) => {
-    const url = getApiUrl().replace("%YEAR%", year.toString());
-    console.debug(`API URL: ${url}`);
-
-    return fetch(url).then(getResponseBody);
-}
-
-/**
- * Gets the body of a given API call response.
- * 
- * @param {Response} response the response object returned from the call
- * @returns {Promise} the response's JSON body
- * @throws `APIError` if the response's OK status is `false`, ie. not successful
- */
-const getResponseBody = (response) => {
-    console.debug(`Returned status code: ${response.status} (ok: ${response.ok})`);
-    if (!response.ok) {
-        console.error(response);
-        throw new APIError(response.status);
-    }
-    return response.json();
-}
-
-/**
  * Builds the error message to display on-screen for API call failures.
  * 
- * @param {Error} error the API call error
- * @returns the message configured by `error.messages.apiFailStatusCode` if
- *          the error is an `APIError`, meaning that a response was returned
- *          but with a non-200 status code; the message configured by
- *          `error.messages.apiCallError` otherwise
+ * @param {APICallResult} result the API call result object
+ * @returns {string} the message configured by `error.messages.<result.error.type>`
  */
-const buildAPIErrorMessage = (error) => error instanceof APIError ?
-    textConfig.error.messages.apiFailStatusCode.replace("%STATUS_CODE%", error.statusCode) :
-    textConfig.error.messages.apiCallError;
+const getAPIErrorMessage = (result) => {
+    var message = textConfig.error.messages[result.error.type];
+    switch (result.error.type) {
+        case APICallResult.FailType.UnsuccessfulResponse:
+            return message.replace("%STATUS_CODE%", result.error.statusCode);
+        default:
+            return message;
+    }
+}

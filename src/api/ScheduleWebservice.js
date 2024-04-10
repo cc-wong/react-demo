@@ -1,4 +1,4 @@
-import { getApiUrl } from '../utils/EnvironmentUtils';
+import { getAPIURL, getAPITimeout } from '../utils/EnvironmentUtils';
 import { APICallResult } from '../types/APICallResult';
 
 /**
@@ -21,8 +21,8 @@ import { APICallResult } from '../types/APICallResult';
  *              includes failure details otherwise
  */
 export const fetchData = async (year) => {
-    const url = getApiUrl().replace("%YEAR%", year.toString());
-    console.debug(`API URL: ${url}`);
+    const url = getAPIURL(year);
+    console.debug(`API URL: ${url}\nTimeout: ${getAPITimeout()} second(s)`);
 
     const { id, signal } = initTimeout();
     return await fetch(url, { signal: signal }).then(getResponseBody).then(parseResponseBody)
@@ -47,7 +47,7 @@ const initTimeout = () => {
     timeoutError.name = 'APITimeoutError';
 
     const controller = new AbortController();
-    const id = setTimeout(() => controller.abort(timeoutError), 60 * 1000);
+    const id = setTimeout(() => controller.abort(timeoutError), getAPITimeout() * 1000);
     return { id: id, signal: controller.signal };
 }
 

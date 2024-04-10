@@ -3,7 +3,7 @@ import App from '../App';
 
 beforeEach(() => {
   const environmentUtils = require('../utils/EnvironmentUtils');
-  jest.spyOn(environmentUtils, 'getApiUrl').mockReturnValue("http://dummy.host/myEndpoint?year=%YEAR%");
+  jest.spyOn(environmentUtils, 'getAPIURL').mockReturnValue("http://dummy.host/myEndpoint?year=2024");
 });
 afterEach(() => cleanup());
 

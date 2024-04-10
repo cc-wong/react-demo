@@ -33,11 +33,18 @@ describe('Get API URL', () => {
 
     afterEach(() => fixture.restore());
 
-    test('Environment variable REACT_APP_API_BASE_URL is present.', () => {
-        fixture.mock("https://my-api-host.net");
-        expect(envUtils.getApiUrl())
-            .toBe("https://my-api-host.net/getSumoHonbashoSchedule?year=%YEAR%");
-    });
+    describe('Environment variable REACT_APP_API_BASE_URL is present', () => {
+        test('"year" value is a number.', () => {
+            fixture.mock("https://my-api-host.net");
+            expect(envUtils.getAPIURL(2024))
+                .toBe("https://my-api-host.net/getSumoHonbashoSchedule?year=2024");
+        });
+        test('"year" value is a string.', () => {
+            fixture.mock("https://my-api-host.net");
+            expect(envUtils.getAPIURL("2024"))
+                .toBe("https://my-api-host.net/getSumoHonbashoSchedule?year=2024");
+        });
+    })
 
     test('Environment variable REACT_APP_API_BASE_URL missing.', () => {
         fixture.delete();
@@ -52,6 +59,10 @@ describe('Get API URL', () => {
     /**
      * Asserts that an exception is thrown.
      */
-    const assertThrowException = () => expect(() => { envUtils.getApiUrl(); })
+    const assertThrowException = () => expect(() => { envUtils.getAPIURL(2024); })
         .toThrow("REACT_APP_API_BASE_URL must be provided!");
+})
+
+test('Get API timeout in seconds.', () => {
+    expect(envUtils.getAPITimeout()).toBe(60);
 })

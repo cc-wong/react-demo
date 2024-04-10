@@ -7,13 +7,8 @@ import { useEffect, useState } from "react";
 import YearDropdown from "./YearDropdown";
 import ScheduleTable from "./ScheduleTable";
 import * as api from '../api/ScheduleWebservice';
+import { APICallResult } from '../types/APICallResult';
 import { getCurrentYear } from '../utils/DateUtils';
-import { APIError } from '../types/APIError';
-
-/**
- * The initial (default) value of the state `apiData`.
- */
-const initialApiData = { result: [] };
 
 /**
  * Populates the search screen which includes a dropdown for the year
@@ -23,19 +18,21 @@ const initialApiData = { result: [] };
  */
 export default function SearchScreen() {
     const [year, setYear] = useState(getCurrentYear().toString());
-    const [apiData, setApiData] = useState(initialApiData);
+    const [apiData, setApiData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         setLoading(true);
-        api.getData(year).then(setApiData).then(setError(null))
-            .catch((error) => {
-                console.error(`Error caught: ${error}`);
-                setError(buildAPIErrorMessage(error));
-                setApiData(initialApiData);
-            })
-            .finally(() => setLoading(false));
+        api.fetchData(year).then((result) => {
+            if (result.success) {
+                setApiData(result.data);
+                setError(null);
+            } else {
+                setError(getAPIErrorMessage(result));
+                setApiData([]);
+            }
+        }).finally(() => setLoading(false));
     }, [year]);
 
     return (
@@ -52,7 +49,7 @@ export default function SearchScreen() {
             {loading && (
                 <div className='LoadingText' id='loadingText'>{textConfig.loading}</div>
             )}
-            <ScheduleTable data={apiData.result} />
+            <ScheduleTable data={apiData} />
         </div>
     );
 }
@@ -60,12 +57,15 @@ export default function SearchScreen() {
 /**
  * Builds the error message to display on-screen for API call failures.
  * 
- * @param {Error} error the API call error
- * @returns the message configured by `error.messages.apiFailStatusCode` if
- *          the error is an `APIError`, meaning that a response was returned
- *          but with a non-200 status code; the message configured by
- *          `error.messages.apiCallError` otherwise
+ * @param {APICallResult} result the API call result object
+ * @returns {string} the message configured by `error.messages.<result.error.type>`
  */
-const buildAPIErrorMessage = (error) => error instanceof APIError ?
-    textConfig.error.messages.apiFailStatusCode.replace("%STATUS_CODE%", error.statusCode) :
-    textConfig.error.messages.apiCallError;
+const getAPIErrorMessage = (result) => {
+    var message = textConfig.error.messages[result.error.type];
+    switch (result.error.type) {
+        case APICallResult.FailType.UnsuccessfulResponse:
+            return message.replace("%STATUS_CODE%", result.error.statusCode);
+        default:
+            return message;
+    }
+}

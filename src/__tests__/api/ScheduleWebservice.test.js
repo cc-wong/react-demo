@@ -2,96 +2,115 @@ import { cleanup, act, waitFor } from '@testing-library/react';
 import * as utils from '../../testUtils';
 
 import * as api from '../../api/ScheduleWebservice';
-import { APIError } from '../../types/APIError';
+import { APICallResult } from '../../types/APICallResult';
 
 import testData from './ScheduleWebservice.test.json';
 
 const mockApiUrl = "http://my-api-host.net/getSumoHonbashoSchedule?year=";
 const spyFetch = jest.spyOn(global, 'fetch');
+const spyAbort = jest.spyOn(AbortController.prototype, 'abort');
 
-beforeAll(() => {
-    utils.mockCurrentDate('2025-10-10');
-});
+beforeAll(() => utils.mockCurrentDate('2025-10-10'));
 beforeEach(() => {
     const environmentUtils = require('../../utils/EnvironmentUtils');
     jest.spyOn(environmentUtils, 'getApiUrl').mockReturnValue(mockApiUrl + "%YEAR%");
 });
 afterEach(() => cleanup());
 
-describe('Happy path test cases with data returned', () => {
-    test('Year parameter value is a number.', async () => {
-        mockSuccessfulApiCall(testData.data);
+describe('Successful API calls', () => {
+    test('Year parameter value is a number.', async () => runHappyPathTestCase(2025));
+    test('Year parameter value is a string.', async () => runHappyPathTestCase("2025"));
 
-        api.getData(2025).then((json) => expect(json).toBe(testData.data));
-        assertApiCall(1, [2025]);
-    });
+    /**
+     * Runs a happy path test case.
+     * @param {number|string} year the year parameter value
+     */
+    const runHappyPathTestCase = (year) => {
+        mockSuccessfulApiCallOnce(testData.data);
 
-    test('Year parameter value is a string.', async () => {
-        mockSuccessfulApiCall(testData.data);
-
-        api.getData("2025").then((json) => expect(json).toBe(testData.data));
-        assertApiCall(1, ["2025"]);
-    });
+        api.fetchData(year).then((result) => {
+            expect(result.success).toBe(true);
+            expect(result.data).toEqual(testData.data.result);
+        });
+        assertApiCall(year);
+        expect(spyAbort).not.toHaveBeenCalled();
+    }
 });
 
-describe('API call failure', () => {
+describe('Unsuccessful API calls', () => {
     test('Unsuccessful response.', async () => {
         mockUnsuccessfulApiCallOnce(400, "Bad request.");
-        api.getData(2025).then(() => { throw new Error("Not supposed to return normally!") })
-            .catch((error) => assertAPIError(error, APIError.ErrorType.UnsuccessfulResponse,
-                'API call returned status code: 400', 400));
-        assertApiCall(1, [2025]);
+        api.fetchData(2025).then((result) => {
+            expect(result.success).toBe(false);
+            expect(result.error).toEqual({
+                type: APICallResult.FailType.UnsuccessfulResponse, statusCode: 400
+            });
+        })
+        assertApiCall(2025);
+        expect(spyAbort).not.toHaveBeenCalled();
     });
 
     test('Error thrown.', async () => {
         const error = new TypeError("Load failed");
         mockApiCallThrowErrorOnce(error);
-        api.getData(2025).then(() => { throw new Error("Not supposed to return normally!") })
-            .catch((error) => {
-                expect(error).toBe(error)
-            });
-        assertApiCall(1, [2025]);
+        api.fetchData(2025).then((result) => {
+            expect(result.success).toBe(false);
+            expect(result.error).toEqual({ type: APICallResult.FailType.ErrorThrown });
+        })
+        assertApiCall(2025);
+        expect(spyAbort).not.toHaveBeenCalled();
     });
 
-    xtest('Timeout.', async () => {  // Still no idea how to test.
-        utils.mockFunctionWithDelay(spyFetch, 61, new DOMException('DOMException: The operation timed out.', 'TimeoutError'));
-        // Mock fetch() to reject with DOMException (AbortError or TimeoutError) after 60 seconds.
-        // const abortSpy = jest.spyOn(AbortController.prototype, 'abort');
-        // const timeoutSpy = jest.spyOn(AbortSignal.prototype, 'timeout');
+    test('Timeout - Firefox (throws the APITimeoutError defined in the abort() call).', async () => {
+        var timeoutError = new Error('API call timed out!');
+        timeoutError.name = 'APITimeoutError';
+        utils.mockFunctionWithDelay(spyFetch, 61, timeoutError);
 
-        let callApi = api.getData(2025);
-        console.log("It is now: " + new Date());
+        const callApi = api.fetchData(2025);
         await act(() => utils.advanceTimersBySeconds(65));
 
-        let errorThrown = false;
-        await waitFor(() => {
-            callApi.catch((error) => {
-                assertAPIError(error, APIError.ErrorType.Timeout,
-                    '');
-                errorThrown = true;
-            })
-        });
-        console.log("Error thrown? " + errorThrown);
-        console.log(callApi);
-        assertApiCall(1, [2025]);
-        try {
-            expect(errorThrown).toBe(true);
-        } catch (e) {
-            throw new Error('Timeout error should be thrown!');
-        }
-    });
+        await waitFor(() => callApi.then((result) => {
+            expect(result.success).toBe(false);
+            expect(result.error).toEqual({ type: APICallResult.FailType.Timeout });
+        }));
+        assertApiCall(2025);
+        expect(spyAbort).toHaveBeenCalledTimes(1);
+        expect(spyAbort).toHaveBeenCalledWith(expect.objectContaining({
+            name: 'APITimeoutError',
+            message: 'API call timed out!'
+        }));
+    })
+
+    test('Timeout - Safari/Chrome (throws AbortError anyway).', async () => {
+        var timeoutError = new DOMException('The user aborted a request.', 'AbortError');
+        // timeoutError.name = 'APITimeoutError';
+        utils.mockFunctionWithDelay(spyFetch, 61, timeoutError);
+
+        const callApi = api.fetchData(2025);
+        await act(() => utils.advanceTimersBySeconds(65));
+
+        await waitFor(() => callApi.then((result) => {
+            expect(result.success).toBe(false);
+            expect(result.error).toEqual({ type: APICallResult.FailType.Timeout });
+        }));
+        assertApiCall(2025);
+        expect(spyAbort).toHaveBeenCalledTimes(1);
+        expect(spyAbort).toHaveBeenCalledWith(expect.objectContaining({
+            name: 'APITimeoutError',
+            message: 'API call timed out!'
+        }));
+    })
 });
 
 /**
- * Mocks successful call(s) to the API with status code 200.
+ * Mocks an API call to return a successful response.
  * 
- * @param  {...any} responseJson the response JSON data returned in order
+ * @param  {*} json the response JSON data returned
  */
-const mockSuccessfulApiCall = (...responseJson) =>
-    responseJson.forEach((json) => mockApiCall(initApiResponse(true, 200, json)));
+const mockSuccessfulApiCallOnce = (json) => mockApiCall(initApiResponse(true, 200, json));
 
 /**
- * Mocks the API call to return an unsucessful response.
+ * Mocks an API call to return an unsucessful response.
  * 
  * @param {number} statusCode the status code, eg. 400
  * @param {string} message the response body message
@@ -132,33 +151,9 @@ const mockApiCallThrowErrorOnce = (error) => spyFetch.mockRejectedValueOnce(erro
 const mockApiCall = (response) => spyFetch.mockImplementationOnce(() => Promise.resolve(response));
 
 /**
- * Asserts the calls to the API.
+ * Asserts that a call has been made to the API URL.
  * 
- * @param {number} times expected number of times called
- * @param {number[]} years the expected `year` parameter values in the order of API call
+ * @param {number} year the expected `year` parameter value
  */
-const assertApiCall = (times, years) => {
-    expect(global.fetch).toHaveBeenCalledTimes(times);
-    years.forEach((year) => expect(global.fetch).toHaveBeenCalledWith(mockApiUrl + year, expect.anything()));
-}
-
-/**
- * Asserts an `APIError` object.
- * 
- * @param {APIError} error the error object to check
- * @param {string} type the expected error type; expects one of `APIError.ErrorType`
- * @param {string} message the expected error message
- * @param {number} statusCode (optional) the expected status code
- */
-const assertAPIError = (error, type, message, statusCode = null) => {
-    try {
-        expect(error instanceof APIError).toBe(true);
-    } catch (e) {
-        throw new Error(`Error thrown is ${error.name}, message: ${error.message}`);
-    }
-    expect(error.name).toBe(type);
-    if (statusCode) {
-        expect(error.statusCode).toBe(statusCode);
-    }
-    expect(error.message).toBe(message);
-}
+const assertApiCall = (year) => expect(global.fetch).toHaveBeenCalledWith(mockApiUrl + year,
+    expect.objectContaining({ signal: expect.any(AbortSignal) }));

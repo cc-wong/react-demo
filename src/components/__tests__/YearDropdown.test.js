@@ -1,5 +1,5 @@
 import { render, screen, cleanup, fireEvent } from '@testing-library/react';
-import YearDropdown from '../../components/YearDropdown';
+import YearDropdown from '../YearDropdown';
 
 describe('Unit tests on the year dropdown box', () => {
     beforeEach(() => jest.useFakeTimers().setSystemTime(new Date('2022-03-28')));

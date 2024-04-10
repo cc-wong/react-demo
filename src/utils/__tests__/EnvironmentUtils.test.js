@@ -1,4 +1,4 @@
-import * as envUtils from '../../utils/EnvironmentUtils';
+import * as envUtils from '../EnvironmentUtils';
 
 /**
  * Initializes a fixture for an environment variable.

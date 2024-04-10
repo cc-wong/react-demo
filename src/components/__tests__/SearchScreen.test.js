@@ -2,7 +2,7 @@ import { render, screen, cleanup, fireEvent, waitFor } from '@testing-library/re
 import { act } from 'react-dom/test-utils';
 import * as utils from '../../testUtils';
 
-import SearchScreen from '../../components/SearchScreen';
+import SearchScreen from '../SearchScreen';
 
 import testData from './SearchScreen.test.json';
 import { APICallResult } from '../../types/APICallResult';

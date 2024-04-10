@@ -1,5 +1,5 @@
 import { render, screen, cleanup } from '@testing-library/react';
-import ScheduleTable from '../../components/ScheduleTable';
+import ScheduleTable from '../ScheduleTable';
 
 import testData from './ScheduleTable.test.json';
 

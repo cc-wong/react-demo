@@ -1,4 +1,4 @@
-import { getCurrentYear } from "../../utils/DateUtils";
+import { getCurrentYear } from "../DateUtils";
 
 describe('Unit test(s) on the date utility function(s)', () => {
     test('Get current year number.', () => {

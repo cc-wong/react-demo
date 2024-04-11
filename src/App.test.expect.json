@@ -1,0 +1,54 @@
+{
+    "year2024": [
+        {
+            "tournament": "January (Hatsu)",
+            "schedule": "January 14 (Sunday) to January 28 (Sunday)"
+        },
+        {
+            "tournament": "March (Haru/Spring)",
+            "schedule": "March 10 (Sunday) to March 24 (Sunday)"
+        },
+        {
+            "tournament": "May (Natsu/Summer)",
+            "schedule": "May 12 (Sunday) to May 26 (Sunday)"
+        },
+        {
+            "tournament": "July (Nagoya)",
+            "schedule": "July 14 (Sunday) to July 28 (Sunday)"
+        },
+        {
+            "tournament": "September (Aki/Autumn)",
+            "schedule": "September 8 (Sunday) to September 22 (Sunday)"
+        },
+        {
+            "tournament": "November (Kyushu)",
+            "schedule": "November 10 (Sunday) to November 24 (Sunday)"
+        }
+    ],
+    "year2026": [
+        {
+            "tournament": "January (Hatsu)",
+            "schedule": "January 11 (Sunday) to January 25 (Sunday)"
+        },
+        {
+            "tournament": "March (Haru/Spring)",
+            "schedule": "March 8 (Sunday) to March 22 (Sunday)"
+        },
+        {
+            "tournament": "May (Natsu/Summer)",
+            "schedule": "May 10 (Sunday) to May 24 (Sunday)"
+        },
+        {
+            "tournament": "July (Nagoya)",
+            "schedule": "July 12 (Sunday) to July 26 (Sunday)"
+        },
+        {
+            "tournament": "September (Aki/Autumn)",
+            "schedule": "September 13 (Sunday) to September 27 (Sunday)"
+        },
+        {
+            "tournament": "November (Kyushu)",
+            "schedule": "November 8 (Sunday) to November 22 (Sunday)"
+        }
+    ]
+}

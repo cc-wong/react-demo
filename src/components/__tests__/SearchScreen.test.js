@@ -10,9 +10,7 @@ import { APICallResult } from '../../types/APICallResult';
 const api = require('../../api/ScheduleWebservice');
 const spyApi = jest.spyOn(api, 'fetchData');
 
-beforeAll(() => {
-    utils.mockCurrentDate('2025-10-10');
-});
+beforeAll(() => utils.mockCurrentDate('2025-10-10'));
 afterEach(() => cleanup());
 
 /**

@@ -1,10 +1,12 @@
 import { render, screen, cleanup, fireEvent } from '@testing-library/react';
+import * as utils from '../../testUtils';
+
 import YearDropdown from '../YearDropdown';
 
-describe('Unit tests on the year dropdown box', () => {
-    beforeEach(() => jest.useFakeTimers().setSystemTime(new Date('2022-03-28')));
-    afterEach(() => cleanup());
+beforeAll(() => utils.mockCurrentDate('2022-03-28'));
+afterEach(() => cleanup());
 
+describe('Unit tests on the year dropdown box', () => {
     test('Field is rendered.', () => {
         const selectedYear = 2027;
 

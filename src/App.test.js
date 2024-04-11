@@ -1,8 +1,8 @@
 import { render, screen, cleanup } from '@testing-library/react';
-import App from '../App';
+import App from './App';
 
 beforeEach(() => {
-  const environmentUtils = require('../utils/EnvironmentUtils');
+  const environmentUtils = require('./utils/EnvironmentUtils');
   jest.spyOn(environmentUtils, 'getAPIURL').mockReturnValue("http://dummy.host/myEndpoint?year=2024");
 });
 afterEach(() => cleanup());

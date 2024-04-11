@@ -30,7 +30,11 @@ describe('Successful API calls', () => {
      */
     const runHappyPathTestCase = (year) => {
         mockGetAPIURL(year);
-        mockSuccessfulApiCallOnce(testData.data);
+        mockApiCall({
+            ok: true,
+            status: 200,
+            json: () => (testData.data),
+        });
 
         api.fetchData(year).then((result) => {
             expect(result.success).toBe(true);
@@ -44,7 +48,11 @@ describe('Successful API calls', () => {
 
 describe('Unsuccessful API calls', () => {
     test('Unsuccessful response.', async () => {
-        mockUnsuccessfulApiCallOnce(400, "Bad request.");
+        mockApiCall({
+            ok: false,
+            status: 400,
+            json: () => ("Bad request."),
+        });
         testUnsuccessfulAPICall({
             type: APICallResult.FailType.UnsuccessfulResponse,
             statusCode: 400
@@ -52,7 +60,7 @@ describe('Unsuccessful API calls', () => {
     });
 
     test('Error thrown.', async () => {
-        mockApiCallThrowErrorOnce(new TypeError("Load failed"));
+        spyFetch.mockRejectedValueOnce(new TypeError("Load failed"));
         testUnsuccessfulAPICall({ type: APICallResult.FailType.ErrorThrown });
     });
 
@@ -121,45 +129,6 @@ const assertEnvUtilityFunctionsCalled = (year) => {
     expect(spyGetAPIURL).toHaveBeenCalledWith(year);
     expect(spyGetAPITimeout).toHaveBeenCalled();
 }
-
-/**
- * Mocks an API call to return a successful response.
- * 
- * @param  {*} json the response JSON data returned
- */
-const mockSuccessfulApiCallOnce = (json) => mockApiCall(initApiResponse(true, 200, json));
-
-/**
- * Mocks an API call to return an unsucessful response.
- * 
- * @param {number} statusCode the status code, eg. 400
- * @param {string} message the response body message
- */
-const mockUnsuccessfulApiCallOnce = (statusCode, message) =>
-    mockApiCall(initApiResponse(false, statusCode, message));
-
-/**
- * Initializes a API JSON response with status code 200.
- * 
- * @param {boolean} successful whether this response is a successful one
- * @param {number} statusCode the response status code
- * @param {*|string} body the JSON data to set (for successful responses) or the message (otherwise)
- * @returns {{ok: boolean; status: number; json: *}} the new API response
- */
-const initApiResponse = (successful, statusCode, body) => {
-    return {
-        ok: successful,
-        status: statusCode,
-        json: () => (body),
-    }
-}
-
-/**
- * Mocks the API call to throw an error once.
- * 
- * @param {Error} error the error thrown
- */
-const mockApiCallThrowErrorOnce = (error) => spyFetch.mockRejectedValueOnce(error);
 
 /**
  * Mocks an API call that returns a response.

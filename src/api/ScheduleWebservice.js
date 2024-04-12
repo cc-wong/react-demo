@@ -1,15 +1,11 @@
 import { getAPIURL, getAPITimeout } from '../utils/EnvironmentUtils';
 import { APICallResult } from '../types/APICallResult';
+import { Tournament } from '../types/Tournament';
 
 /**
- * Denotes the data returned by the API call.
+ * Denotes the API call response body, ie. the data returned.
  * 
- * @typedef {{result: BashoJson[]}} ScheduleData
- */
-/**
- * Denotes the schedule of a tournament in the API call JSON data.
- * 
- * @typedef {{basho: string; dates: string[]; month: number; month_name: string;}} BashoJson
+ * @typedef {{result: {basho: string; dates: string[]; month: number; month_name: string;}[]}} ResponseBody
  */
 
 /**
@@ -52,9 +48,9 @@ const initTimeout = () => {
 }
 
 /**
- * Gets the body of the response data returned from an API call.
- * @param {*} response the response data
- * @returns {ScheduleData|{statusCode: number}} the JSON response body if `response.ok` is `true`;
+ * Gets the body of the response returned from an API call.
+ * @param {*} response the API call response
+ * @returns {ResponseBody|{statusCode: number}} the JSON response body if `response.ok` is `true`;
  *              otherwise, a new JSON object with field `statusCode` as the status code returned
  */
 const getResponseBody = async (response) => {
@@ -69,13 +65,22 @@ const getResponseBody = async (response) => {
 
 /**
  * Parses the response body of an API call.
- * @param {ScheduleData|{statusCode: number}} json
+ * @param {ResponseBody|{statusCode: number}} json
  *          the API call response body or a JSON object containing the unsuccessful status code
  * @returns {APICallResult} a new result object set according to the result of the API call
  */
 const parseResponseBody = (json) => json.result ?
-    APICallResult.InitForSuccessfulResponse(json.result) :
+    APICallResult.InitForSuccessfulResponse(parseToTournament(json.result)) :
     APICallResult.InitForUnsuccessfulResponse(json.statusCode);
+
+/**
+ * Parses the response body of a successful API call into `Tournament` objects.
+ * @param {{basho: string; dates: string[]; month: number; month_name: string;}[]} json 
+ *          tournament entries from the the API call response body
+ * @returns a list of transformed `Tournament` objects
+ */
+const parseToTournament = (json) => json.map(({ basho, dates }) =>
+    new Tournament(basho, dates.map((date) => new Date(date))));
 
 /**
  * Handles an error thrown from an API call, due to timeout or otherwise.

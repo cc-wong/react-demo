@@ -1,6 +1,6 @@
 {
     "title": "Grand Sumo Tournament Schedule",
-    "bashoNameMap": {
+    "tournamentNameMap": {
         "HATSU": "January (Hatsu)",
         "HARU": "March (Haru/Spring)",
         "NATSU": "May (Natsu/Summer)",

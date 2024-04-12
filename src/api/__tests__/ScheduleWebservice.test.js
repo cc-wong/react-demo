@@ -1,7 +1,7 @@
 import { cleanup, act, waitFor } from '@testing-library/react';
 import * as utils from '../../testUtils';
 
-import * as api from '../../api/ScheduleWebservice';
+import * as api from '../ScheduleWebservice';
 import { APICallResult } from '../../types/APICallResult';
 
 import testData from './ScheduleWebservice.test.json';
@@ -38,7 +38,7 @@ describe('Successful API calls', () => {
 
         api.fetchData(year).then((result) => {
             expect(result.success).toBe(true);
-            expect(result.data).toEqual(testData.data.result);
+            expect(result.schedule).toEqual(utils.parseToTournament(testData.expected));
         });
         assertApiCall(year);
         assertEnvUtilityFunctionsCalled(year);

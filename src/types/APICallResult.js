@@ -28,25 +28,14 @@ export class APICallResult {
     success;
 
     /**
-     * Denotes the schedule of a tournament.
-     * @typedef {{basho: string; dates: string[]; month: number; month_name: string;}} BashoJson
-     */
-    /**
      * The tournament schedule for the given year if the API call was successful.
-     * @type BashoJson[]
+     * @type Tournament[]
      */
-    data;
+    schedule;
 
     /**
-     * Denotes the error details.
-     * 
-     * For `type`, use one of `FailType`.
-     * 
-     * @typedef {{type: string; statusCode: number}} ErrorDetails
-     */
-    /**
      * Error details if the API call failed.
-     * @type ErrorDetails
+     * @type {{type: string; statusCode: number}}
      */
     error;
 
@@ -55,22 +44,23 @@ export class APICallResult {
      * 
      * Please use one of the static methods to initialize an instance instead.
      * @param {boolean} success whether the API call was successful
-     * @param {{data: BashoJson[]; error: ErrorDetails}} result 
+     * @param {{schedule: Tournament[]; error: {type: string; statusCode: number}}} result 
      *           data returned by the API call or error details of the failure
      */
-    constructor(success, { data = [], error = {} }) {
+    constructor(success, { schedule = [], error = {} }) {
         this.success = success;
-        this.data = data;
+        this.schedule = schedule;
         this.error = error;
     }
 
     /**
      * Initializes a result object for a successful API call.
-     * @param {BashoJson[]} schedule the tournament schedule returned from the API call
-     * @returns a new object where `success` is `true` and the value of `schedule` is set to `data`
+     * @param {Tournament[]} schedule the tournament schedule returned from the API call
+     * @returns {APICallResult}
+     *          a new object where `success` is `true` and the value of `schedule` is set to `schedule`
      */
     static InitForSuccessfulResponse(schedule) {
-        return new APICallResult(true, { data: schedule });
+        return new APICallResult(true, { schedule: schedule });
     }
 
     /**

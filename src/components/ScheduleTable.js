@@ -5,20 +5,13 @@ import moment from 'moment';
 import parse from 'html-react-parser';
 
 /**
- * Denotes the schedule of a tournament in the API call JSON data.
- * 
- * @typedef {{basho: string; dates: string[]; month?: number; month_name?: string;}} BashoJson
- */
-
-/**
  * Builds the results table listing the tournament schedule for the chosen year.
  * 
  * The table includes the following columns:
  * - Tournament: the description of the tournament, eg. January (Hatsu)
- * - Month: the name of the month the tournament is held in
  * - Schedule: the schedule of the tournament
  * 
- * @param {{data: BashoJson[]}} props input arguments to this component
+ * @param {{data: Tournament[]}} props input arguments to this component
  * 
  * @returns the table component with name `schedule`
  */
@@ -33,11 +26,11 @@ export default function ScheduleTable(props) {
                 </tr>
             </thead>
             <tbody>
-                {records.map(({ basho, dates }, i) => {
+                {records.map(({ code, schedule }, i) => {
                     return (
-                        <tr key={`basho-${i}-${basho}`}>
-                            <td className="Tournament">{textConfig.bashoNameMap[basho]}</td>
-                            <td>{parse(printSchedule(dates))}</td>
+                        <tr key={`tournament-${i}-${code}`}>
+                            <td className="Tournament">{textConfig.tournamentNameMap[code]}</td>
+                            <td>{parse(printSchedule(schedule))}</td>
                         </tr>
                     )
                 })}
@@ -49,19 +42,19 @@ export default function ScheduleTable(props) {
 /**
  * Prints the schedule of a tournament.
  * 
- * @param {string[]} dates the dates of the tournament as `YYYY-MM-DD` strings
+ * @param {Date[]} schedule the dates of the tournament
  * @returns {string} the display text for the Schedule column; may contain HTML tags\
  *                      see text configuration `scheduleTable.scheduleFormat` for the content format
  *                      and `scheduleTable.dateDisplayFormat` for the date format
  */
-const printSchedule = (dates) => textConfig.scheduleTable.scheduleFormat
-    .replace("%DAY1%", formatDate(dates.at(0)))
-    .replace("%DAY15%", formatDate(dates.at(14)));
+const printSchedule = (schedule) => textConfig.scheduleTable.scheduleFormat
+    .replace("%DAY1%", formatDate(schedule.at(0)))
+    .replace("%DAY15%", formatDate(schedule.at(14)));
 
 /**
- * Formats a date from the API JSON data for display.
+ * Formats a date for display.
  * 
- * @param {string} date the date as a `YYYY-MM-DD` string
+ * @param {Date} date the date to format
  * @returns {string} a string representation of the date formatted as configured 
  *          by `scheduleTable.dateDisplayFormat` in the text configurations
  */

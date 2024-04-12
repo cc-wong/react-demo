@@ -1,3 +1,5 @@
+import { Tournament } from "./types/Tournament";
+
 /**
  * Regex escape function.
  * 
@@ -43,3 +45,13 @@ export const advanceTimersBySeconds = async (seconds) => {
     jest.advanceTimersByTime(seconds * 1000);
     await new Promise(jest.requireActual('timers').setImmediate);
 }
+
+/**
+ * Parses test data from a JSON file to a `Tournament` object.
+ * 
+ * The JSON data must follow the format as specified by the parameter.
+ * @param {{code: string; schedule: string[]}[]} data
+ *          test data from a JSON file; `schedule` is a list of dates in `YYYY-MM-DD` format
+ * @returns {Tournament[]} the list of transformed `Tournament` objects
+ */
+export const parseToTournament = (data) => data.map(({ code, schedule }) => Tournament.Init(code, schedule));

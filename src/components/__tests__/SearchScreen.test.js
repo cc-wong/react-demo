@@ -23,7 +23,7 @@ afterEach(() => cleanup());
 describe('Integration tests on the search screen module', () => {
     describe('On initial rendering', () => {
         test('Normal screen render (API call successful).', async () => {
-            mockApiCalls(APICallResult.InitForSuccessfulResponse(testData.sixRecords));
+            mockApiCalls(initSuccessfulAPICallResult(testData.sixRecords));
             render(<SearchScreen />);
 
             await waitFor(() => {
@@ -52,8 +52,8 @@ describe('Integration tests on the search screen module', () => {
 
     describe('Year dropdown value changed', () => {
         test('Successful API data retrieval (happy path).', async () => {
-            mockApiCalls(APICallResult.InitForSuccessfulResponse(testData.oneRecord),
-                APICallResult.InitForSuccessfulResponse(testData.sixRecords));
+            mockApiCalls(initSuccessfulAPICallResult(testData.oneRecord),
+                initSuccessfulAPICallResult(testData.sixRecords));
 
             await act(async () => render(<SearchScreen />));
             await waitFor(() => assertErrorMessageNotExist());
@@ -68,7 +68,7 @@ describe('Integration tests on the search screen module', () => {
 
         test('API call failed on initial rendering but successful on year value change.', async () => {
             mockApiCalls(APICallResult.InitForUnsuccessfulResponse(400),
-                APICallResult.InitForSuccessfulResponse(testData.sixRecords));
+                initSuccessfulAPICallResult(testData.sixRecords));
 
             await act(async () => render(<SearchScreen />));
             await waitFor(() => assertUnsuccessfulAPIResponse(400, 2025));
@@ -81,7 +81,7 @@ describe('Integration tests on the search screen module', () => {
         });
 
         test('API call failure on year value change.', async () => {
-            mockApiCalls(APICallResult.InitForSuccessfulResponse(testData.sixRecords),
+            mockApiCalls(initSuccessfulAPICallResult(testData.sixRecords),
                 APICallResult.InitForErrorThrown());
             await act(async () => render(<SearchScreen />));
             await waitFor(() => assertErrorMessageNotExist());
@@ -96,8 +96,7 @@ describe('Integration tests on the search screen module', () => {
 
     describe('Network delay on API call', () => {
         test('Delay on initial rendering.', async () => {
-            mockApiCallWithDelay(30,
-                APICallResult.InitForSuccessfulResponse(testData.sixRecords));
+            mockApiCallWithDelay(30, initSuccessfulAPICallResult(testData.sixRecords));
 
             await act(() => render(<SearchScreen />));
             await waitFor(() => {
@@ -154,9 +153,8 @@ describe('Integration tests on the search screen module', () => {
         });
 
         test('Delay on Year dropdown change.', async () => {
-            mockApiCalls(APICallResult.InitForSuccessfulResponse(testData.oneRecord));
-            mockApiCallWithDelay(30,
-                APICallResult.InitForSuccessfulResponse(testData.sixRecords));
+            mockApiCalls(initSuccessfulAPICallResult(testData.oneRecord));
+            mockApiCallWithDelay(30, initSuccessfulAPICallResult(testData.sixRecords));
 
             await act(async () => render(<SearchScreen />));
             await waitFor(() => {
@@ -178,6 +176,14 @@ describe('Integration tests on the search screen module', () => {
         });
     });
 });
+
+/**
+ * Initializes a result object for a successful API call.
+ * @param {{code: string; schedule: string[]}[]} data test data from the JSON file
+ * @returns the new result object
+ */
+const initSuccessfulAPICallResult = (data) =>
+    APICallResult.InitForSuccessfulResponse(utils.parseToTournament(data));
 
 /**
  * Mocks an API call with a given amount of time in delay.
@@ -285,7 +291,4 @@ const assertDisplayLoadingText = () => {
 /**
  * Asserts that the "Loading..." text is not on the screen.
  */
-const assertNotDisplayLoadingText = () => {
-    const loadingTextDiv = document.querySelector('#loadingText');
-    expect(loadingTextDiv).toBeNull();
-}
+const assertNotDisplayLoadingText = () => expect(document.querySelector('#loadingText')).toBeNull();

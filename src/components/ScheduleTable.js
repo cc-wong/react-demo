@@ -29,7 +29,7 @@ export default function ScheduleTable(props) {
                 {records.map(({ code, schedule }, i) => {
                     return (
                         <tr key={`tournament-${i}-${code}`}>
-                            <td className="Tournament">{textConfig.tournamentNameMap[code]}</td>
+                            <td className="Tournament">{printName(code)}</td>
                             <td>{parse(printSchedule(schedule))}</td>
                         </tr>
                     )
@@ -37,6 +37,18 @@ export default function ScheduleTable(props) {
             </tbody>
         </table>
     );
+}
+
+/**
+ * Prints the tournament name configured in `text-config.json` for a given code.
+ * @param {string} code the tournament code
+ * @returns the configured name; if the code is not a valid one,
+ *          print a warning in the console and return the code
+ */
+const printName = (code) => {
+    if (code in textConfig.tournamentNameMap) return textConfig.tournamentNameMap[code];
+    console.warn(`Unrecognized tournament code: ${code}`);
+    return code;
 }
 
 /**

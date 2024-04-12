@@ -14,6 +14,14 @@ export const escapeRegex = (text) => text.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$
 export const mockCurrentDate = (date) => jest.useFakeTimers().setSystemTime(new Date(date));
 
 /**
+ * Mocks a function to return a value.
+ * @param {jest.SpyInstance<*} spyFunction the function to mock
+ * @param {*} result the function's return value
+ */
+export const mockFunctionToReturnValue = (spyFunction, returnValue) =>
+    spyFunction.mockImplementationOnce(() => Promise.resolve(returnValue));
+
+/**
  * Mocks a function with a given amount of time in delay.
  * 
  * @param {jest.SpyInstance<*>} spyFunction the function to mock

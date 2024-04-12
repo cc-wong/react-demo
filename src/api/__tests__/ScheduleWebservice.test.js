@@ -137,7 +137,7 @@ const assertEnvUtilityFunctionsCalled = (year) => {
  * 
  * @param {*} response the response from the API call
  */
-const mockApiCall = (response) => spyFetch.mockImplementationOnce(() => Promise.resolve(response));
+const mockApiCall = (response) => utils.mockFunctionToReturnValue(spyFetch, response);
 
 /**
  * Asserts that a call has been made to the API URL.

@@ -7,7 +7,7 @@ import parse from 'html-react-parser';
 /**
  * Denotes the schedule of a tournament in the API call JSON data.
  * 
- * @typedef {{basho: string; dates: string[]; month: number; month_name: string;}} BashoJson
+ * @typedef {{basho: string; dates: string[]; month?: number; month_name?: string;}} BashoJson
  */
 
 /**

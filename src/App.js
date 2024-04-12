@@ -8,7 +8,7 @@ import * as envUtils from './utils/EnvironmentUtils';
  * The app's main component.
  */
 export default function App() {
-  console.debug(`App version: ${envUtils.getAppVersionNumber()}`);
+  console.info(`App version: ${envUtils.getAppVersionNumber()}`);
   return (
     <div className="App">
       <h1>{textConfig.title}</h1>

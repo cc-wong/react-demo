@@ -193,7 +193,7 @@ const mockApiCallWithDelay = (seconds, result) => utils.mockFunctionWithDelay(sp
  * @param  {...APICallResult} results the API call result objects to return
  */
 const mockApiCalls = (...results) => results.forEach((result) =>
-    spyApi.mockImplementationOnce(() => Promise.resolve(result)));
+    utils.mockFunctionToReturnValue(spyApi, result));
 
 /**
  * Fires an event for changing the value of the Year dropdown.

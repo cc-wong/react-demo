@@ -3,8 +3,7 @@ import * as utils from './testUtils';
 
 import App from './App';
 
-import testData from './App.test.data.json';
-import testExpected from './App.test.expect.json';
+import testData from './App.test.json'
 
 const spyFetch = jest.spyOn(global, 'fetch');
 
@@ -29,12 +28,12 @@ describe('Verify screen', () => {
 
 describe('Integration tests', () => {
   test('Page load - Data load success.', async () => {
-    mockSuccessfulAPICall(testData.year2024);
+    mockSuccessfulAPICall(testData.input.year2024);
 
     await act(() => render(<App />));
     await waitFor(() => {
       assertDropdownValue(2024);
-      assertTableContent(testExpected.year2024);
+      assertTableContent(testData.expected.year2024);
     });
   });
 
@@ -66,20 +65,20 @@ describe('Integration tests', () => {
   });
 
   test('Select year from dropdown.', async () => {
-    mockSuccessfulAPICall(testData.year2024);
-    mockSuccessfulAPICall(testData.year2026);
+    mockSuccessfulAPICall(testData.input.year2024);
+    mockSuccessfulAPICall(testData.input.year2026);
 
     await act(() => render(<App />));
     await waitFor(() => {
       assertDropdownValue(2024);
-      assertTableContent(testExpected.year2024);
+      assertTableContent(testData.expected.year2024);
     });
 
     await act(() =>
       fireEvent.change(screen.getByRole('combobox', { name: 'year' }), { target: { value: 2026 } }));
     await waitFor(() => {
       assertDropdownValue(2026);
-      assertTableContent(testExpected.year2026);
+      assertTableContent(testData.expected.year2026);
     });
   });
 })
@@ -88,12 +87,11 @@ describe('Integration tests', () => {
  * Mocks a successful API call.
  * @param {any[]} schedule the tournament schedule to be returned
  */
-const mockSuccessfulAPICall = (schedule) => spyFetch.mockImplementationOnce(() =>
-  Promise.resolve({
-    ok: true,
-    status: 200,
-    json: () => ({ result: schedule }),
-  }));
+const mockSuccessfulAPICall = (schedule) => utils.mockFunctionToReturnValue(spyFetch, {
+  ok: true,
+  status: 200,
+  json: () => ({ result: schedule }),
+});
 
 /**
  * Asserts the selected value of the Year dropdown box.

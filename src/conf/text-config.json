@@ -20,7 +20,6 @@
     "scheduleTable": {
         "columnNames": {
             "TOURNAMENT": "Tournament",
-            "MONTH": "Month",
             "SCHEDULE": "Schedule"
         },
         "scheduleFormat": "%DAY1%<wbr> to<br> %DAY15%",

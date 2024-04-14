@@ -1,8 +1,8 @@
 import './ScheduleTable.css';
 import textConfig from '../conf/text-config.json';
 
-import moment from 'moment';
 import parse from 'html-react-parser';
+import { formatDate } from '../utils/DateUtils';
 
 /**
  * Builds the results table listing the tournament schedule for the chosen year.
@@ -60,14 +60,5 @@ const printName = (code) => {
  *                      and `scheduleTable.dateDisplayFormat` for the date format
  */
 const printSchedule = (schedule) => textConfig.scheduleTable.scheduleFormat
-    .replace("%DAY1%", formatDate(schedule.at(0)))
-    .replace("%DAY15%", formatDate(schedule.at(14)));
-
-/**
- * Formats a date for display.
- * 
- * @param {Date} date the date to format
- * @returns {string} a string representation of the date formatted as configured 
- *          by `scheduleTable.dateDisplayFormat` in the text configurations
- */
-const formatDate = (date) => moment(date).format(textConfig.scheduleTable.dateDisplayFormat);
+    .replace("%DAY1%", formatDate(schedule.at(0), textConfig.scheduleTable.dateDisplayFormat))
+    .replace("%DAY15%", formatDate(schedule.at(14), textConfig.scheduleTable.dateDisplayFormat));

@@ -4,6 +4,7 @@ on:
         branches:
             # No need for "master" since "Deploy to Netlify" already handles its testing.
             - next-version
+            - multilanguage
 jobs:
     run-test-cases:
         runs-on: ubuntu-latest

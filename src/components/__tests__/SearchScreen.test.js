@@ -24,7 +24,7 @@ describe('Integration tests on the search screen module', () => {
     describe('On initial rendering', () => {
         test('Normal screen render (API call successful).', async () => {
             mockApiCalls(initSuccessfulAPICallResult(testData.sixRecords));
-            render(<SearchScreen />);
+            renderComponent();
 
             await waitFor(() => {
                 assertApiCall(1, [2025]);
@@ -35,7 +35,7 @@ describe('Integration tests on the search screen module', () => {
 
         test('API call returns unsuccessful response.', async () => {
             mockApiCalls(APICallResult.InitForUnsuccessfulResponse(400));
-            render(<SearchScreen />);
+            renderComponent();
 
             await waitFor(() => assertUnsuccessfulAPIResponse(400, 2025));
             assertApiCall(1, [2025]);
@@ -43,7 +43,7 @@ describe('Integration tests on the search screen module', () => {
 
         test('Error thrown on API call.', async () => {
             mockApiCalls(APICallResult.InitForErrorThrown());
-            render(<SearchScreen />);
+            renderComponent();
 
             await waitFor(() => assertAPICallErrorThrown(2025));
             assertApiCall(1, [2025]);
@@ -55,7 +55,7 @@ describe('Integration tests on the search screen module', () => {
             mockApiCalls(initSuccessfulAPICallResult(testData.oneRecord),
                 initSuccessfulAPICallResult(testData.sixRecords));
 
-            await act(async () => render(<SearchScreen />));
+            await act(async () => renderComponent());
             await waitFor(() => assertErrorMessageNotExist());
             assertScreen(2025, 1);
 
@@ -70,7 +70,7 @@ describe('Integration tests on the search screen module', () => {
             mockApiCalls(APICallResult.InitForUnsuccessfulResponse(400),
                 initSuccessfulAPICallResult(testData.sixRecords));
 
-            await act(async () => render(<SearchScreen />));
+            await act(async () => renderComponent());
             await waitFor(() => assertUnsuccessfulAPIResponse(400, 2025));
 
             await act(async () => fireChangeYearDropdownValueEvent(2030));
@@ -83,7 +83,7 @@ describe('Integration tests on the search screen module', () => {
         test('API call failure on year value change.', async () => {
             mockApiCalls(initSuccessfulAPICallResult(testData.sixRecords),
                 APICallResult.InitForErrorThrown());
-            await act(async () => render(<SearchScreen />));
+            await act(async () => renderComponent());
             await waitFor(() => assertErrorMessageNotExist());
             assertScreen(2025, 6);
 
@@ -98,7 +98,7 @@ describe('Integration tests on the search screen module', () => {
         test('Delay on initial rendering.', async () => {
             mockApiCallWithDelay(30, initSuccessfulAPICallResult(testData.sixRecords));
 
-            await act(() => render(<SearchScreen />));
+            await act(() => renderComponent());
             await waitFor(() => {
                 assertApiCall(1, [2025]);
                 assertErrorMessageNotExist();
@@ -113,7 +113,7 @@ describe('Integration tests on the search screen module', () => {
         test('Unsuccessful response after delay.', async () => {
             mockApiCallWithDelay(20, APICallResult.InitForUnsuccessfulResponse(400));
 
-            await act(() => render(<SearchScreen />));
+            await act(() => renderComponent());
             await waitFor(() => {
                 assertApiCall(1, [2025]);
                 assertErrorMessageNotExist();
@@ -127,7 +127,7 @@ describe('Integration tests on the search screen module', () => {
         test('API call error after delay.', async () => {
             mockApiCallWithDelay(50, APICallResult.InitForErrorThrown());
 
-            await act(() => render(<SearchScreen />));
+            await act(() => renderComponent());
             await waitFor(() => {
                 assertApiCall(1, [2025]);
                 assertErrorMessageNotExist();
@@ -141,7 +141,7 @@ describe('Integration tests on the search screen module', () => {
         test('API call timeout after delay.', async () => {
             mockApiCallWithDelay(60, APICallResult.InitForTimeout());
 
-            await act(() => render(<SearchScreen />));
+            await act(() => renderComponent());
             await waitFor(() => {
                 assertApiCall(1, [2025]);
                 assertErrorMessageNotExist();
@@ -156,7 +156,7 @@ describe('Integration tests on the search screen module', () => {
             mockApiCalls(initSuccessfulAPICallResult(testData.oneRecord));
             mockApiCallWithDelay(30, initSuccessfulAPICallResult(testData.sixRecords));
 
-            await act(async () => render(<SearchScreen />));
+            await act(async () => renderComponent());
             await waitFor(() => {
                 assertScreen(2025, 1);
                 assertErrorMessageNotExist();
@@ -200,6 +200,11 @@ const mockApiCallWithDelay = (seconds, result) => utils.mockFunctionWithDelay(sp
  */
 const mockApiCalls = (...results) => results.forEach((result) =>
     utils.mockFunctionToReturnValue(spyApi, result));
+
+/**
+ * Renders the component.
+ */
+const renderComponent = () => render(<SearchScreen />);
 
 /**
  * Fires an event for changing the value of the Year dropdown.

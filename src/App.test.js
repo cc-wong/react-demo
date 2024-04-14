@@ -10,23 +10,7 @@ const spyFetch = jest.spyOn(global, 'fetch');
 beforeAll(() => utils.mockCurrentDate('2024-04-11'));
 afterEach(() => cleanup());
 
-describe('Verify screen', () => {
-  test('Screen components are present.', async () => {
-    mockSuccessfulAPICall([]);
-
-    await act(() => render(<App />));
-    await waitFor(() => {
-      const heading = screen.getByRole('heading', { level: 1 });
-      expect(heading).toHaveTextContent("Grand Sumo Tournament Schedule");
-
-      expect(screen.getByText("Year")).toBeInTheDocument();
-      expect(screen.getByRole('combobox', { name: 'year' })).toBeInTheDocument();
-      expect(screen.getByRole('table', { name: 'schedule' })).toBeInTheDocument();
-    });
-  });
-});
-
-describe('Integration tests', () => {
+describe('Integration tests - Sumo Tournament Schedule Lookup', () => {
   test('Page load - Data load success.', async () => {
     mockSuccessfulAPICall(testData.input.year2024);
 

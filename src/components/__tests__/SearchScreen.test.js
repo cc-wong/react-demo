@@ -20,160 +20,174 @@ afterEach(() => cleanup());
  * https://github.com/testing-library/react-testing-library/issues/1051#issuecomment-1149569930)
  */
 
-describe('Integration tests on the search screen module', () => {
-    describe('On initial rendering', () => {
-        test('Normal screen render (API call successful).', async () => {
-            mockApiCalls(initSuccessfulAPICallResult(testData.sixRecords));
-            renderComponent();
+describe('Verify screen', () => {
+    test('Screen components are rendered.', async () => {
+        mockApiCalls(initSuccessfulAPICallResult(testData.sixRecords));
+        await act(async () => renderComponent());
 
-            await waitFor(() => {
-                assertApiCall(1, [2025]);
-                assertScreen(2025, 6);
-                assertErrorMessageNotExist();
-            });
+        await waitFor(() => {
+            const heading = screen.getByRole('heading', { level: 1 });
+            expect(heading).toHaveTextContent("Grand Sumo Tournament Schedule");
+
+            expect(screen.getByText("Year")).toBeInTheDocument();
+            expect(screen.getByRole('combobox', { name: 'year' })).toBeInTheDocument();
+            expect(screen.getByRole('table', { name: 'schedule' })).toBeInTheDocument();
         });
+    })
+})
 
-        test('API call returns unsuccessful response.', async () => {
-            mockApiCalls(APICallResult.InitForUnsuccessfulResponse(400));
-            renderComponent();
+describe('On initial rendering', () => {
+    test('Normal screen render (API call successful).', async () => {
+        mockApiCalls(initSuccessfulAPICallResult(testData.sixRecords));
+        renderComponent();
 
-            await waitFor(() => assertUnsuccessfulAPIResponse(400, 2025));
+        await waitFor(() => {
             assertApiCall(1, [2025]);
-        });
-
-        test('Error thrown on API call.', async () => {
-            mockApiCalls(APICallResult.InitForErrorThrown());
-            renderComponent();
-
-            await waitFor(() => assertAPICallErrorThrown(2025));
-            assertApiCall(1, [2025]);
+            assertScreen(2025, 6);
+            assertErrorMessageNotExist();
         });
     });
 
-    describe('Year dropdown value changed', () => {
-        test('Successful API data retrieval (happy path).', async () => {
-            mockApiCalls(initSuccessfulAPICallResult(testData.oneRecord),
-                initSuccessfulAPICallResult(testData.sixRecords));
+    test('API call returns unsuccessful response.', async () => {
+        mockApiCalls(APICallResult.InitForUnsuccessfulResponse(400));
+        renderComponent();
 
-            await act(async () => renderComponent());
-            await waitFor(() => assertErrorMessageNotExist());
+        await waitFor(() => assertUnsuccessfulAPIResponse(400, 2025));
+        assertApiCall(1, [2025]);
+    });
+
+    test('Error thrown on API call.', async () => {
+        mockApiCalls(APICallResult.InitForErrorThrown());
+        renderComponent();
+
+        await waitFor(() => assertAPICallErrorThrown(2025));
+        assertApiCall(1, [2025]);
+    });
+});
+
+describe('Year dropdown value changed', () => {
+    test('Successful API data retrieval (happy path).', async () => {
+        mockApiCalls(initSuccessfulAPICallResult(testData.oneRecord),
+            initSuccessfulAPICallResult(testData.sixRecords));
+
+        await act(async () => renderComponent());
+        await waitFor(() => assertErrorMessageNotExist());
+        assertScreen(2025, 1);
+
+        await act(async () => fireChangeYearDropdownValueEvent(2028));
+        await waitFor(() => assertErrorMessageNotExist());
+        assertScreen(2028, 6);
+
+        assertApiCall(2, [2025, 2028]);
+    });
+
+    test('API call failed on initial rendering but successful on year value change.', async () => {
+        mockApiCalls(APICallResult.InitForUnsuccessfulResponse(400),
+            initSuccessfulAPICallResult(testData.sixRecords));
+
+        await act(async () => renderComponent());
+        await waitFor(() => assertUnsuccessfulAPIResponse(400, 2025));
+
+        await act(async () => fireChangeYearDropdownValueEvent(2030));
+        await waitFor(() => assertErrorMessageNotExist());
+        assertScreen(2030, 6);
+
+        assertApiCall(2, [2025, 2030]);
+    });
+
+    test('API call failure on year value change.', async () => {
+        mockApiCalls(initSuccessfulAPICallResult(testData.sixRecords),
+            APICallResult.InitForErrorThrown());
+        await act(async () => renderComponent());
+        await waitFor(() => assertErrorMessageNotExist());
+        assertScreen(2025, 6);
+
+        await act(async () => fireChangeYearDropdownValueEvent(2026));
+        await waitFor(() => assertAPICallErrorThrown(2026));
+
+        assertApiCall(2, [2025, 2026]);
+    });
+});
+
+describe('Network delay on API call', () => {
+    test('Delay on initial rendering.', async () => {
+        mockApiCallWithDelay(30, initSuccessfulAPICallResult(testData.sixRecords));
+
+        await act(() => renderComponent());
+        await waitFor(() => {
+            assertApiCall(1, [2025]);
+            assertErrorMessageNotExist();
+            assertDisplayLoadingText();
+        });
+
+        await act(() => utils.advanceTimersBySeconds(35));
+        assertScreen(2025, 6);
+        assertNotDisplayLoadingText();
+    });
+
+    test('Unsuccessful response after delay.', async () => {
+        mockApiCallWithDelay(20, APICallResult.InitForUnsuccessfulResponse(400));
+
+        await act(() => renderComponent());
+        await waitFor(() => {
+            assertApiCall(1, [2025]);
+            assertErrorMessageNotExist();
+            assertDisplayLoadingText();
+        });
+
+        await act(() => utils.advanceTimersBySeconds(21));
+        assertUnsuccessfulAPIResponse(400, 2025);
+    });
+
+    test('API call error after delay.', async () => {
+        mockApiCallWithDelay(50, APICallResult.InitForErrorThrown());
+
+        await act(() => renderComponent());
+        await waitFor(() => {
+            assertApiCall(1, [2025]);
+            assertErrorMessageNotExist();
+            assertDisplayLoadingText();
+        });
+
+        await act(() => utils.advanceTimersBySeconds(55));
+        assertAPICallErrorThrown(2025);
+    });
+
+    test('API call timeout after delay.', async () => {
+        mockApiCallWithDelay(60, APICallResult.InitForTimeout());
+
+        await act(() => renderComponent());
+        await waitFor(() => {
+            assertApiCall(1, [2025]);
+            assertErrorMessageNotExist();
+            assertDisplayLoadingText();
+        });
+
+        await act(() => utils.advanceTimersBySeconds(61));
+        assertAPICallTimeout(2025);
+    });
+
+    test('Delay on Year dropdown change.', async () => {
+        mockApiCalls(initSuccessfulAPICallResult(testData.oneRecord));
+        mockApiCallWithDelay(30, initSuccessfulAPICallResult(testData.sixRecords));
+
+        await act(async () => renderComponent());
+        await waitFor(() => {
             assertScreen(2025, 1);
-
-            await act(async () => fireChangeYearDropdownValueEvent(2028));
-            await waitFor(() => assertErrorMessageNotExist());
-            assertScreen(2028, 6);
-
-            assertApiCall(2, [2025, 2028]);
-        });
-
-        test('API call failed on initial rendering but successful on year value change.', async () => {
-            mockApiCalls(APICallResult.InitForUnsuccessfulResponse(400),
-                initSuccessfulAPICallResult(testData.sixRecords));
-
-            await act(async () => renderComponent());
-            await waitFor(() => assertUnsuccessfulAPIResponse(400, 2025));
-
-            await act(async () => fireChangeYearDropdownValueEvent(2030));
-            await waitFor(() => assertErrorMessageNotExist());
-            assertScreen(2030, 6);
-
-            assertApiCall(2, [2025, 2030]);
-        });
-
-        test('API call failure on year value change.', async () => {
-            mockApiCalls(initSuccessfulAPICallResult(testData.sixRecords),
-                APICallResult.InitForErrorThrown());
-            await act(async () => renderComponent());
-            await waitFor(() => assertErrorMessageNotExist());
-            assertScreen(2025, 6);
-
-            await act(async () => fireChangeYearDropdownValueEvent(2026));
-            await waitFor(() => assertAPICallErrorThrown(2026));
-
-            assertApiCall(2, [2025, 2026]);
-        });
-    });
-
-    describe('Network delay on API call', () => {
-        test('Delay on initial rendering.', async () => {
-            mockApiCallWithDelay(30, initSuccessfulAPICallResult(testData.sixRecords));
-
-            await act(() => renderComponent());
-            await waitFor(() => {
-                assertApiCall(1, [2025]);
-                assertErrorMessageNotExist();
-                assertDisplayLoadingText();
-            });
-
-            await act(() => utils.advanceTimersBySeconds(35));
-            assertScreen(2025, 6);
+            assertErrorMessageNotExist();
             assertNotDisplayLoadingText();
         });
 
-        test('Unsuccessful response after delay.', async () => {
-            mockApiCallWithDelay(20, APICallResult.InitForUnsuccessfulResponse(400));
-
-            await act(() => renderComponent());
-            await waitFor(() => {
-                assertApiCall(1, [2025]);
-                assertErrorMessageNotExist();
-                assertDisplayLoadingText();
-            });
-
-            await act(() => utils.advanceTimersBySeconds(21));
-            assertUnsuccessfulAPIResponse(400, 2025);
+        await act(async () => fireChangeYearDropdownValueEvent(2028));
+        await waitFor(() => {
+            assertErrorMessageNotExist();
+            assertDisplayLoadingText();
         });
+        await act(() => utils.advanceTimersBySeconds(35));
+        assertScreen(2028, 6);
 
-        test('API call error after delay.', async () => {
-            mockApiCallWithDelay(50, APICallResult.InitForErrorThrown());
-
-            await act(() => renderComponent());
-            await waitFor(() => {
-                assertApiCall(1, [2025]);
-                assertErrorMessageNotExist();
-                assertDisplayLoadingText();
-            });
-
-            await act(() => utils.advanceTimersBySeconds(55));
-            assertAPICallErrorThrown(2025);
-        });
-
-        test('API call timeout after delay.', async () => {
-            mockApiCallWithDelay(60, APICallResult.InitForTimeout());
-
-            await act(() => renderComponent());
-            await waitFor(() => {
-                assertApiCall(1, [2025]);
-                assertErrorMessageNotExist();
-                assertDisplayLoadingText();
-            });
-
-            await act(() => utils.advanceTimersBySeconds(61));
-            assertAPICallTimeout(2025);
-        });
-
-        test('Delay on Year dropdown change.', async () => {
-            mockApiCalls(initSuccessfulAPICallResult(testData.oneRecord));
-            mockApiCallWithDelay(30, initSuccessfulAPICallResult(testData.sixRecords));
-
-            await act(async () => renderComponent());
-            await waitFor(() => {
-                assertScreen(2025, 1);
-                assertErrorMessageNotExist();
-                assertNotDisplayLoadingText();
-            });
-
-            await act(async () => fireChangeYearDropdownValueEvent(2028));
-            await waitFor(() => {
-                assertErrorMessageNotExist();
-                assertDisplayLoadingText();
-            });
-            await act(() => utils.advanceTimersBySeconds(35));
-            assertScreen(2028, 6);
-
-            assertApiCall(2, [2025, 2028]);
-            assertNotDisplayLoadingText();
-        });
+        assertApiCall(2, [2025, 2028]);
+        assertNotDisplayLoadingText();
     });
 });
 

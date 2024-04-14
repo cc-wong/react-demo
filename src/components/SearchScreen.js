@@ -37,6 +37,7 @@ export default function SearchScreen() {
 
     return (
         <div className='SearchScreen'>
+            <h1>{textConfig.title}</h1>
             {error && (
                 <div className='ErrorMessageBox' id='errorMessage'>
                     <div className='ErrorMessageHeading'>{textConfig.error.title}</div>{error}

@@ -1,0 +1,24 @@
+.LanguageSelectorButton {
+    background-color: black;
+    color: white;
+    border: 0px;
+    width: 100%;
+}
+
+.LanguageSelectorDropdown {
+    transform-origin: top right;
+    position: absolute;
+    right: 0;
+    width: 100px;
+    margin-top: 13px;
+    background-color: white;
+    color: black;
+}
+
+.LanguageSelectorItem {
+    width: 100%;
+    padding: 8px;
+    background-color: transparent;
+    border: none;
+    font-weight: bold;
+}

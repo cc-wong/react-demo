@@ -1,8 +1,15 @@
 .SearchScreen {
-    width: 100%;
+    min-height: 80vh;
     display: flex;
     flex-direction: column;
     align-items: center;
+    font-size: calc(10px + 1vmin);
+    color: black;
+}
+.SearchScreen h1 {
+    font-family: georgia, times, serif;
+    text-align: center;
+    padding: 1px;
 }
 .SearchScreen form {
     padding: 8px;

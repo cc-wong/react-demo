@@ -14,11 +14,10 @@ test('Expand and collapse selector menu.', () => {
 
     fireEvent.click(toggleButton);
     const options = screen.getAllByRole('menuitem');
-    expect(options.map((option) => option.textContent)).toEqual(['English', '中文', '日本語']);
+    expect(options.map((option) => option.textContent.trim())).toEqual(['English', '中文', '日本語']);
     expect(options.at(0)).toBeDisabled();
     expect(options.at(1)).not.toBeDisabled();
     expect(options.at(2)).not.toBeDisabled();
-    // console.log(screen.getByText('English'));
 
     fireEvent.click(toggleButton);
     expect(screen.queryByRole('menuitem')).not.toBeInTheDocument();

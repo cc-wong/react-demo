@@ -5,5 +5,22 @@
     },
     "yearDropdown": {
         "maxYearsFromCurrent": 10
-    }
+    },
+    "displayLanguages": [
+        {
+            "name": "English",
+            "locale": "en-us",
+            "countryCode": "US"
+        },
+        {
+            "name": "中文",
+            "locale": "zh-hk",
+            "countryCode": "HK"
+        },
+        {
+            "name": "日本語",
+            "locale": "ja",
+            "countryCode": "JP"
+        }
+    ]
 }

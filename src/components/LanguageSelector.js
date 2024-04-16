@@ -12,19 +12,19 @@ import config from '../conf/config.json';
  */
 export default function LanguageSelector() {
     const i18n = {
-        language: 'en-us'
+        language: 'en'
     }
 
     return (
         <Menu as="div">
             <Menu.Button className="LanguageSelectorButton"><SlGlobe /></Menu.Button>
             <Menu.Items className="LanguageSelectorDropdown">
-                {config.displayLanguages.map(({ name, locale, countryCode }) => {
+                {config.displayLanguages.map(({ name, language, countryCode }) => {
                     return (
-                        <Menu.Item key={locale}>
+                        <Menu.Item key={`lang_${language}`}>
                             <button className="LanguageSelectorItem"
-                                onClick={() => changeLanguage(locale, name)}
-                                disabled={i18n.language === locale}>
+                                onClick={() => changeLanguage(language, name)}
+                                disabled={i18n.language === language}>
                                 <ReactCountryFlag countryCode={countryCode} svg />&nbsp;{name}
                             </button>
                         </Menu.Item>
@@ -37,9 +37,9 @@ export default function LanguageSelector() {
 
 /**
  * Changes the display language. (Placeholder)
- * @param {string} code the locale code
+ * @param {string} languageCode the language code
  * @param {string} name the language name
  */
-const changeLanguage = (code, name) => {
-    console.log(`Switch to ${name} (${code}).`);
+const changeLanguage = (languageCode, name) => {
+    console.log(`Switch to ${name} (${languageCode}).`);
 }

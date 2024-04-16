@@ -10,16 +10,19 @@
         {
             "name": "English",
             "locale": "en-us",
+            "language": "en",
             "countryCode": "US"
         },
         {
             "name": "中文",
             "locale": "zh-hk",
+            "language": "zh",
             "countryCode": "HK"
         },
         {
             "name": "日本語",
             "locale": "ja",
+            "language": "ja",
             "countryCode": "JP"
         }
     ]

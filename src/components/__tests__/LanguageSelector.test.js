@@ -7,6 +7,7 @@ test('Language selector button appearance.', () => {
     const { container, toggleButton } = renderComponent();
     const icon = container.querySelector('svg', { name: 'LanguageSelectorIcon' });
     expect(toggleButton).toContainElement(icon);
+    expect(toggleButton).toHaveTextContent('Language');
 });
 
 test('Expand and collapse selector menu.', () => {

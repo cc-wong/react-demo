@@ -5,10 +5,19 @@
 
 .LanguageSelectorButton {
     display: flex;
+    align-content: center;
     background-color: black;
     color: white;
     border: 0px;
     width: 100%;
+}
+
+.LanguageSelectorLabel {
+    display: flex;
+    font-weight: 600;
+    @media screen and (max-width: 500px) {
+        display: none;
+    }
 }
 
 .LanguageSelectorDropdown {

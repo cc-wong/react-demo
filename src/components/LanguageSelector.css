@@ -1,4 +1,10 @@
+.LanguageSelector {
+    display: flex;
+    align-items: center;
+}
+
 .LanguageSelectorButton {
+    display: flex;
     background-color: black;
     color: white;
     border: 0px;
@@ -9,8 +15,8 @@
     transform-origin: top right;
     position: absolute;
     right: 0;
+    top: 45px;
     width: 100px;
-    margin-top: 13px;
     background-color: rgb(232, 232, 232);
 }
 

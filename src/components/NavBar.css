@@ -14,14 +14,63 @@
     margin: 1rem;
 }
 
+.NavHamburger {
+    display: none;
+}
+
 .NavLogo {
     display: flex;
     align-items: center;
     font-weight: bold;
-    font-size: 16px;
+    font-size: 20px;
 }
 
-.NavMenu {
+.NavContainer {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    padding: 0;
+    margin: 0;
+}
+
+.NavMenu ul {
+    display: flex;
+    list-style-type: none;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.NavMenu ul li {
+    font-weight: 500;
+}
+
+@media screen and (max-width: 850px) {
+    .NavHamburger {
+        display: flex;
+        align-items: center;
+    }
+
+    .NavMenu {
+        position: absolute;
+        left: 0;
+        top: 45px;
+        background-color: gray;
+        color: white;
+        width: 0px;
+        height: calc(100vh - 45px);
+        margin-top: 0;
+        margin-left: -25px;
+        padding-top: 5px;
+        transition: all 0.3s ease-in;
+        overflow: hidden;
+    }
+
+    .NavMenu.active {
+        width: 220px;
+    }
+
+    .NavMenu ul {
+        display: flex;
+        flex-direction: column;
+    }
 }

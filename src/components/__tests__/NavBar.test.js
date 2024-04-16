@@ -6,7 +6,6 @@ afterEach(() => cleanup());
 describe('Verify navigation bar content', () => {
   test('Logo exists.', () => {
     render(<NavBar />);
-
     const nav = screen.getByRole('navigation');
     expect(nav).toHaveTextContent('React Demo');
   });
@@ -14,10 +13,6 @@ describe('Verify navigation bar content', () => {
   test('Language selector exists.', () => {
     render(<NavBar />);
     const nav = screen.getByRole('navigation');
-
-    const languageToggleButton = nav.querySelector('button');
-    const languageIcon = nav.querySelector('svg');
-    expect(nav.querySelector('svg')).toBeInTheDocument();
-    expect(languageToggleButton).toContainElement(languageIcon);
+    expect(nav.querySelector('button', { name: 'LanguageSelectorButton' })).toBeInTheDocument();
   });
 })

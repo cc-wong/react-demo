@@ -3,9 +3,9 @@ import LanguageSelector from '../LanguageSelector';
 
 afterEach(() => cleanup());
 
-test('Verify screen content.', () => {
+test('Language selector button appearance.', () => {
     const { container, toggleButton } = renderComponent();
-    const icon = container.querySelector('svg')
+    const icon = container.querySelector('svg', { name: 'LanguageSelectorIcon' });
     expect(toggleButton).toContainElement(icon);
 });
 

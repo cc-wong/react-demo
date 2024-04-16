@@ -16,8 +16,10 @@ export default function LanguageSelector() {
     }
 
     return (
-        <Menu as="div">
-            <Menu.Button className="LanguageSelectorButton"><SlGlobe /></Menu.Button>
+        <Menu as="div" className="LanguageSelector">
+            <Menu.Button className="LanguageSelectorButton" name="LanguageSelectorButton">
+                <SlGlobe name="LanguageSelectorIcon" />
+            </Menu.Button>
             <Menu.Items className="LanguageSelectorDropdown">
                 {config.displayLanguages.map(({ name, language, countryCode }) => {
                     return (

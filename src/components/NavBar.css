@@ -34,7 +34,8 @@
 }
 
 .NavMenu ul {
-    display: flex;
+    display: none;  /* Temporarily hide until next phase(s). */
+    /* display: flex; */
     list-style-type: none;
     justify-content: space-between;
     gap: 20px;
@@ -45,10 +46,11 @@
 }
 
 @media screen and (max-width: 850px) {
-    .NavHamburger {
+    /* Temporarily hide until next phase(s). */
+    /* .NavHamburger {
         display: flex;
         align-items: center;
-    }
+    } */
 
     .NavMenu {
         position: absolute;

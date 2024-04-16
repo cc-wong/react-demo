@@ -19,7 +19,7 @@ export default function LanguageSelector() {
         <Menu as="div" className="LanguageSelector">
             <Menu.Button className="LanguageSelectorButton" name="LanguageSelectorButton">
                 <SlGlobe name="LanguageSelectorIcon" />
-                <div className='LanguageSelectorLabel'>&nbsp;Language</div>
+                <div className='LanguageSelectorLabel'>{`Language: ${i18n.language.toUpperCase()}`}</div>
             </Menu.Button>
             <Menu.Items className="LanguageSelectorDropdown">
                 {config.displayLanguages.map(({ name, language, countryCode }) => {

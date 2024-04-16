@@ -4,12 +4,17 @@
 }
 
 .LanguageSelectorButton {
-    display: flex;
-    align-content: center;
+    display: inline-flex;
+    align-items: center;
     background-color: black;
     color: white;
     border: 0px;
-    width: 100%;
+    gap: 8px;
+    padding: 4px 8px;
+}
+
+.LanguageSelectorButton:hover {
+    text-decoration: underline;
 }
 
 .LanguageSelectorLabel {
@@ -23,21 +28,31 @@
 .LanguageSelectorDropdown {
     transform-origin: top right;
     position: absolute;
-    right: 0;
+    right: 15px;
     top: 45px;
     width: 100px;
+    padding: 10px;
     background-color: rgb(232, 232, 232);
+    border-radius: 5px;
+    box-shadow: 0 4px 8px 0 gray;
+    transition: all 0.1s ease;
 }
 
 .LanguageSelectorItem {
     width: 100%;
-    padding: 8px;
+    display: flex;
+    align-items: center;
+    padding: 4px;
     background-color: transparent;
     border: none;
     font-weight: bold;
 }
 
+.LanguageSelectorItem:hover {
+    background-color: lightgray;
+}
+
 .LanguageSelectorItem:disabled {
-    background-color: gray;
-    color: white;
+    background-color: lightblue;
+    color: darkblue;
 }

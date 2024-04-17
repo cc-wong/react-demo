@@ -1,0 +1,11 @@
+{
+    "sumoSchedLookup": {
+        "title": "大相撲本場所スケジュール検索",
+        "column": {
+            "tournament": "場所",
+            "schedule": "日付"
+        },
+        "scheduleFormat": "{{day1}}<wbr> to<br> {{day15}}",
+        "dateDisplayFormat": "MMMM D (dddd)"
+    }
+}

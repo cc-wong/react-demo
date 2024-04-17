@@ -1,45 +1,19 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
+import translationEN from './locales/en/translation.json';
+import translationZH from './locales/zh/translation.json';
+import translationJA from './locales/ja/translation.json';
+
 const resources = {
     en: {
-        translation: {
-            sumoSchedLookup: {
-                title: 'Sumo Tournament Schedule Lookup',
-                column: {
-                    tournament: 'Tournament',
-                    schedule: 'Schedule'
-                },
-                scheduleFormat: '{{day1}}<wbr> to<br> {{day15}}',
-                dateDisplayFormat: 'MMMM D (dddd)'
-            }
-        }
+        translation: translationEN
     },
     zh: {
-        translation: {
-            sumoSchedLookup: {
-                title: '大相撲場地時間表查詢',
-                column: {
-                    tournament: '場地',
-                    schedule: '日期'
-                },
-                scheduleFormat: '{{day1}}<wbr> to<br> {{day15}}',
-                dateDisplayFormat: 'MMMM D (dddd)'
-            }
-        }
+        translation: translationZH
     },
     ja: {
-        translation: {
-            sumoSchedLookup: {
-                title: '大相撲本場所スケジュール検索',
-                column: {
-                    tournament: '場所',
-                    schedule: '日付'
-                },
-                scheduleFormat: '{{day1}}<wbr> to<br> {{day15}}',
-                dateDisplayFormat: 'MMMM D (dddd)'
-            }
-        }
+        translation: translationJA
     }
 }
 

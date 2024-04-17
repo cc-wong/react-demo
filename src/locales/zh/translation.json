@@ -1,0 +1,11 @@
+{
+    "sumoSchedLookup": {
+        "title": "大相撲場地時間表查詢",
+        "column": {
+            "tournament": "場地",
+            "schedule": "日期"
+        },
+        "scheduleFormat": "{{day1}}<wbr> to<br> {{day15}}",
+        "dateDisplayFormat": "MMMM D (dddd)"
+    }
+}

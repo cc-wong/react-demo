@@ -1,0 +1,11 @@
+{
+    "sumoSchedLookup": {
+        "title": "Sumo Tournament Schedule Lookup",
+        "column": {
+            "tournament": "Tournament",
+            "schedule": "Schedule"
+        },
+        "scheduleFormat": "{{day1}}<wbr> to<br> {{day15}}",
+        "dateDisplayFormat": "MMMM D (dddd)"
+    }
+}

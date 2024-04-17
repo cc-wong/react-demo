@@ -1,6 +1,7 @@
 {
     "sumoSchedLookup": {
         "title": "大相撲本場所スケジュール検索",
+        "year": "年",
         "column": {
             "tournament": "場所",
             "schedule": "日付"

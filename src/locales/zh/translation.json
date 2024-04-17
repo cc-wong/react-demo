@@ -1,6 +1,7 @@
 {
     "sumoSchedLookup": {
         "title": "大相撲場地時間表查詢",
+        "year": "年份",
         "column": {
             "tournament": "場地",
             "schedule": "日期"

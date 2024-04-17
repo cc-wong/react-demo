@@ -1,6 +1,7 @@
 {
     "sumoSchedLookup": {
         "title": "Sumo Tournament Schedule Lookup",
+        "year": "Year",
         "column": {
             "tournament": "Tournament",
             "schedule": "Schedule"

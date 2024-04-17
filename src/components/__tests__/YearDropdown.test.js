@@ -3,17 +3,36 @@ import * as utils from '../../testUtils';
 
 import YearDropdown from '../YearDropdown';
 
+import i18n from '../../i18n';
+import { I18nextProvider } from 'react-i18next';
+
 beforeAll(() => utils.mockCurrentDate('2022-03-28'));
 afterEach(() => cleanup());
 
 describe('Unit tests on the year dropdown box', () => {
+    test('Label text - English.', () => testLabel('en', 'Year'));
+    test('Label text - Chinese.', () => testLabel('zh', '年份'));
+    test('Label text - Japanese.', () => testLabel('ja', '年'));
+
+    /**
+     * Runs a test case on the label text.
+     * @param {string} languageCode the language code
+     * @param {string} expected the expected label text
+     */
+    const testLabel = (languageCode, expected) => {
+        i18n.changeLanguage(languageCode);
+        render(
+            <I18nextProvider i18n={i18n}>
+                <YearDropdown selectedYear={2022} />
+            </I18nextProvider>);
+        expect(getDropdown()).toBe(screen.getByLabelText(expected));
+    }
+
     test('Field is rendered.', () => {
         const selectedYear = 2027;
 
         render(<YearDropdown selectedYear={selectedYear} />);
-        const dropdown = getDropdown();
-        expect(dropdown).toHaveAttribute("id", "year");
-        expect(dropdown).toHaveAttribute("name", "year");
+        expect(getDropdown()).toBeInTheDocument();
 
         const options = screen.getAllByRole('option');
         expect(options.length).toBe(10 + 1);
@@ -46,11 +65,7 @@ describe('Unit tests on the year dropdown box', () => {
 });
 
 /**
- * Returns the dropdown object from the screen.
- * 
- * This function returning the object also asserts that
- * the "Year" label was implemented properly.
- * 
- * @returns the dropdown object
+ * Gets the Year dropdown box component.
+ * @returns the HTML component for the dropdown box
  */
-const getDropdown = () => screen.getByLabelText("Year");
+const getDropdown = () => screen.getByRole('combobox', { name: 'year' });

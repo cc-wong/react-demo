@@ -1,6 +1,6 @@
 import { getCurrentYear } from "../utils/DateUtils";
 import config from '../conf/config.json';
-import textConfig from '../conf/text-config.json';
+import { useTranslation } from "react-i18next";
 
 /**
  * Builds a dropdown box with items denoting the current year
@@ -14,9 +14,10 @@ import textConfig from '../conf/text-config.json';
  * @returns the dropdown box component with a label saying "Year"
  */
 export default function YearDropdown(props) {
+    const { t } = useTranslation();
     return (
         <>
-            <label htmlFor="year">{textConfig.yearDropdown.label}</label>
+            <label htmlFor="year">{t('sumoSchedLookup.year')}</label>
             &nbsp;&nbsp;
             <select id="year" name="year"
                 aria-required="true" aria-label="year"

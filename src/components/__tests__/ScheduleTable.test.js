@@ -29,16 +29,17 @@ describe('Verify screen components', () => {
 })
 
 describe('Verify table content', () => {
-    test('With records - normal case.', () => testTableWithRecords(testData.normal));
-    test('With records - invalid tournament code.', () =>
-        testTableWithRecords(testData.invalidTournamentCode));
+    test('With records - normal case - English.', () => testTableWithRecords('en', testData.normal));
+    test('With records - invalid tournament code - English.', () =>
+        testTableWithRecords('en', testData.invalidTournamentCode));
 
-    const testTableWithRecords = (data) => {
-        assertTableRecords(parseToTournament(data.dataFromApi), data.expected.length);
+    const testTableWithRecords = (languageCode, data) => {
+        i18n.changeLanguage(languageCode);
+        assertTableRecords(parseToTournament(data.dataFromApi), data.expected[languageCode].length);
 
         const cells = screen.getAllByRole('cell');
-        expect(cells.length).toBe(2 * data.expected.length);
-        data.expected.forEach((expectedText, i) =>
+        expect(cells.length).toBe(2 * data.expected[languageCode].length);
+        data.expected[languageCode].forEach((expectedText, i) =>
             assertRecordRow(cells.slice(i * 2, i * 2 + 2), expectedText));
     }
 
@@ -64,9 +65,7 @@ const renderComponent = (data) =>
  */
 const assertTableRecords = (dataFromApi, expectedRecordCount) => {
     renderComponent(dataFromApi);
-
-    const rows = screen.getAllByRole('row');
-    expect(rows.length - 1).toBe(expectedRecordCount);
+    expect(screen.getAllByRole('row').length - 1).toBe(expectedRecordCount);
 }
 
 /**

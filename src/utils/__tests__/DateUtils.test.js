@@ -14,11 +14,11 @@ describe('Get current year', () => {
 });
 
 describe('Format date', () => {
-    test('Lcale: en-us; input: Date', () =>
-        testFormatDate('en-us', new Date('2024-03-09'), 'MMMM D (dddd)', 'March 9 (Saturday)'));
+    test('Lcale: en; input: Date', () =>
+        testFormatDate('en', new Date('2024-03-09'), 'MMMM D (dddd)', 'March 9 (Saturday)'));
 
-    test('Lcale: en-us; input: string', () =>
-        testFormatDate('en-us', '2023-10-10', 'MMMM D (dddd)', 'October 10 (Tuesday)'));
+    test('Lcale: en; input: string', () =>
+        testFormatDate('en', '2023-10-10', 'MMMM D (dddd)', 'October 10 (Tuesday)'));
 
     test('Lcale: zh-hk; input: Date', () =>
         testFormatDate('zh-hk', new Date('2024-03-09'), 'MMMDo(dddd)', '3月9日(星期六)'));

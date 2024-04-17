@@ -9,6 +9,7 @@ import ScheduleTable from "./ScheduleTable";
 import * as api from '../api/ScheduleWebservice';
 import { APICallResult } from '../types/APICallResult';
 import { getCurrentYear } from '../utils/DateUtils';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Populates the search screen which includes a dropdown for the year
@@ -21,6 +22,8 @@ export default function SearchScreen() {
     const [apiData, setApiData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+
+    const {t} = useTranslation();
 
     useEffect(() => {
         setLoading(true);
@@ -37,7 +40,7 @@ export default function SearchScreen() {
 
     return (
         <div className='SearchScreen'>
-            <h1>{textConfig.title}</h1>
+            <h1>{t('sumoSchedLookup.title')}</h1>
             {error && (
                 <div className='ErrorMessageBox' id='errorMessage'>
                     <div className='ErrorMessageHeading'>{textConfig.error.title}</div>{error}

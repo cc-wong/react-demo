@@ -3,6 +3,7 @@ import textConfig from '../conf/text-config.json';
 
 import parse from 'html-react-parser';
 import { formatDate } from '../utils/DateUtils';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Builds the results table listing the tournament schedule for the chosen year.
@@ -17,23 +18,26 @@ import { formatDate } from '../utils/DateUtils';
  */
 export default function ScheduleTable(props) {
     var records = props.data === undefined || props.data === null ? [] : props.data;
+
+    const { t } = useTranslation();
     return (
         <table name="schedule" aria-label="schedule" className="ScheduleTable">
             <thead>
                 <tr>
-                    <th className="Tournament">{textConfig.scheduleTable.columnNames.TOURNAMENT}</th>
-                    <th>{textConfig.scheduleTable.columnNames.SCHEDULE}</th>
+                    <th className="Tournament">{t('sumoSchedLookup.column.tournament')}</th>
+                    <th>{t('sumoSchedLookup.column.schedule')}</th>
                 </tr>
             </thead>
             <tbody>
-                {records.map(({ code, schedule }, i) => {
-                    return (
-                        <tr key={`tournament-${i}-${code}`}>
-                            <td className="Tournament">{printName(code)}</td>
-                            <td>{parse(printSchedule(schedule))}</td>
-                        </tr>
-                    )
-                })}
+                {
+                    records.map(({ code, schedule }, i) => {
+                        return (
+                            <tr key={`tournament-${i}-${code}`}>
+                                <td className="Tournament">{printName(code)}</td>
+                                <td>{parse(printSchedule(schedule, t))}</td>
+                            </tr>
+                        )
+                    })}
             </tbody>
         </table>
     );
@@ -56,9 +60,11 @@ const printName = (code) => {
  * 
  * @param {Date[]} schedule the dates of the tournament
  * @returns {string} the display text for the Schedule column; may contain HTML tags\
- *                      see text configuration `scheduleTable.scheduleFormat` for the content format
- *                      and `scheduleTable.dateDisplayFormat` for the date format
+ *                      see text configuration `sumoSchedLookup.scheduleFormat` for the content format
+ *                      and `sumoSchedLookup.dateDisplayFormat` for the date format
  */
-const printSchedule = (schedule) => textConfig.scheduleTable.scheduleFormat
-    .replace("%DAY1%", formatDate(schedule.at(0), textConfig.scheduleTable.dateDisplayFormat))
-    .replace("%DAY15%", formatDate(schedule.at(14), textConfig.scheduleTable.dateDisplayFormat));
+const printSchedule = (schedule, t) => {
+    const dateFormat = t('sumoSchedLookup.dateDisplayFormat');
+    return t('sumoSchedLookup.scheduleFormat',
+        { 'day1': formatDate(schedule.at(0), dateFormat), 'day15': formatDate(schedule.at(14), dateFormat) });
+}

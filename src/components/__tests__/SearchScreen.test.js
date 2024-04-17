@@ -7,6 +7,9 @@ import SearchScreen from '../SearchScreen';
 import testData from './SearchScreen.test.json';
 import { APICallResult } from '../../types/APICallResult';
 
+import i18n from '../../i18n';
+import { I18nextProvider } from 'react-i18next';
+
 const api = require('../../api/ScheduleWebservice');
 const spyApi = jest.spyOn(api, 'fetchData');
 
@@ -26,14 +29,31 @@ describe('Verify screen', () => {
         await act(async () => renderComponent());
 
         await waitFor(() => {
-            const heading = screen.getByRole('heading', { level: 1 });
-            expect(heading).toHaveTextContent("Grand Sumo Tournament Schedule");
-
-            expect(screen.getByText("Year")).toBeInTheDocument();
+            expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
             expect(screen.getByRole('combobox', { name: 'year' })).toBeInTheDocument();
             expect(screen.getByRole('table', { name: 'schedule' })).toBeInTheDocument();
         });
     })
+
+    test('English title.', async () => await testPageTitle('en', 'Sumo Tournament Schedule Lookup'));
+    test('Chinese title.', async () => await testPageTitle('zh', '大相撲場地時間表查詢'));
+    test('Chinese title.', async () => await testPageTitle('ja', '大相撲本場所スケジュール検索'));
+
+    /**
+     * Runs a test case on the page title text.
+     * @param {string} languageCode the language code
+     * @param {string} expected the expected title text
+     */
+    const testPageTitle = async (languageCode, expected) => {
+        mockApiCalls(initSuccessfulAPICallResult(testData.sixRecords));
+        i18n.changeLanguage(languageCode);
+        await act(async () => renderComponent());
+
+        await waitFor(() => {
+            const heading = screen.getByRole('heading', { level: 1 });
+            expect(heading).toHaveTextContent(expected);
+        });
+    }
 })
 
 describe('On initial rendering', () => {
@@ -218,7 +238,7 @@ const mockApiCalls = (...results) => results.forEach((result) =>
 /**
  * Renders the component.
  */
-const renderComponent = () => render(<SearchScreen />);
+const renderComponent = () => render(<I18nextProvider i18n={i18n}><SearchScreen /></I18nextProvider>);
 
 /**
  * Fires an event for changing the value of the Year dropdown.

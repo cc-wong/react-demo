@@ -5,6 +5,9 @@ import App from './App';
 
 import testData from './App.test.json'
 
+import i18n from './i18n';
+import { I18nextProvider } from 'react-i18next';
+
 const spyFetch = jest.spyOn(global, 'fetch');
 
 beforeAll(() => utils.mockCurrentDate('2024-04-11'));
@@ -14,7 +17,7 @@ describe('Integration tests - Sumo Tournament Schedule Lookup', () => {
   test('Page load - Data load success.', async () => {
     mockSuccessfulAPICall(testData.input.year2024);
 
-    await act(() => render(<App />));
+    await act(() => renderComponent());
     await waitFor(() => {
       assertDropdownValue(2024);
       assertTableContent(testData.expected.year2024);
@@ -23,7 +26,7 @@ describe('Integration tests - Sumo Tournament Schedule Lookup', () => {
 
   test('Page load - API call throws error.', async () => {
     spyFetch.mockImplementationOnce(() => Promise.reject(new Error('Arbitrary error.')));
-    await act(() => render(<App />));
+    await act(() => renderComponent());
     await waitFor(() => {
       assertDropdownValue(2024);
       assertErrorMessage('Could not retrieve data (error on making API call)');
@@ -36,7 +39,7 @@ describe('Integration tests - Sumo Tournament Schedule Lookup', () => {
     timeoutError.name = 'APITimeoutError';
     utils.mockFunctionWithDelay(spyFetch, 60, timeoutError);
 
-    await act(() => render(<App />));
+    await act(() => renderComponent());
     expect(document.querySelector('#loadingText')).toHaveTextContent("Loading...");
 
     await act(() => utils.advanceTimersBySeconds(61));
@@ -52,7 +55,7 @@ describe('Integration tests - Sumo Tournament Schedule Lookup', () => {
     mockSuccessfulAPICall(testData.input.year2024);
     mockSuccessfulAPICall(testData.input.year2026);
 
-    await act(() => render(<App />));
+    await act(() => renderComponent());
     await waitFor(() => {
       assertDropdownValue(2024);
       assertTableContent(testData.expected.year2024);
@@ -66,6 +69,11 @@ describe('Integration tests - Sumo Tournament Schedule Lookup', () => {
     });
   });
 })
+
+/**
+ * Renders the component for testing.
+ */
+const renderComponent = () => render(<I18nextProvider i18n={i18n}><App /></I18nextProvider>);
 
 /**
  * Mocks a successful API call.

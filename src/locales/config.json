@@ -1,4 +1,21 @@
 {
+    "language": {
+        "en": {
+            "name": "English",
+            "localeCode": "en",
+            "countryCode": "US"
+        },
+        "zh": {
+            "name": "中文",
+            "localeCode": "zh-hk",
+            "countryCode": "HK"
+        },
+        "ja": {
+            "name": "日本語",
+            "localeCode": "ja",
+            "countryCode": "JP"
+        }
+    },
     "dateFormat": {
         "SUMO_SCHEDULE": {
             "en": "MMMM D (dddd)",

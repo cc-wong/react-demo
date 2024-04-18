@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, cleanup, queryByRole } from '@testing-library/react';
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import LanguageSelector from '../LanguageSelector';
 
 import i18n from '../../i18n';
@@ -29,14 +29,11 @@ test('Expand and collapse selector menu.', () => {
 
 test('Change language.', () => {
     const { toggleButton } = renderComponent();
-    const moment = require('moment');
-    const spyMomentLocale = jest.spyOn(moment, 'locale');
 
     fireEvent.click(toggleButton);
     fireEvent.click(screen.getAllByRole('menuitem').at(1));
     expect(toggleButton).toHaveTextContent('Language: ZH');
     expect(screen.queryByRole('menuitem')).not.toBeInTheDocument();
-    expect(spyMomentLocale).toHaveBeenCalledWith('zh-hk');
 
     fireEvent.click(toggleButton);
     const options = screen.getAllByRole('menuitem');

@@ -4,9 +4,8 @@ import { SlGlobe } from "react-icons/sl";
 import { Menu } from '@headlessui/react';
 import ReactCountryFlag from 'react-country-flag';
 
-import config from '../conf/config.json';
+import localesConfig from '../locales/config.json';
 import { useTranslation } from 'react-i18next';
-import moment from 'moment';
 
 /**
  * Renders the language selector.
@@ -18,14 +17,10 @@ export default function LanguageSelector() {
     console.debug(`Language = ${selectedLanguage}`);
 
     /**
-     * Changes the display language and locale.
+     * Changes the display language.
      * @param {string} languageCode the language code
-     * @param {string} locale the locale code
      */
-    const changeLanguageAndLocale = (languageCode, locale) => {
-        i18n.changeLanguage(languageCode);
-        moment.locale(locale);
-    }
+    const changeLanguage = (languageCode) => i18n.changeLanguage(languageCode);
 
     return (
         <Menu as="div" className="LanguageSelector">
@@ -34,12 +29,13 @@ export default function LanguageSelector() {
                 <div className='LanguageSelectorLabel'>{`Language: ${selectedLanguage.toUpperCase()}`}</div>
             </Menu.Button>
             <Menu.Items className="LanguageSelectorDropdown">
-                {config.displayLanguages.map(({ name, language, locale, countryCode }) => {
+                {Object.keys(localesConfig.language).map((languageCode) => {
+                    const { name, countryCode } = localesConfig.language[languageCode];
                     return (
-                        <Menu.Item key={`lang_${language}`}>
+                        <Menu.Item key={`lang_${languageCode}`}>
                             <button className="LanguageSelectorItem"
-                                onClick={() => changeLanguageAndLocale(language, locale)}
-                                disabled={selectedLanguage === language}>
+                                onClick={() => changeLanguage(languageCode)}
+                                disabled={selectedLanguage === languageCode}>
                                 <ReactCountryFlag countryCode={countryCode} svg />&nbsp;{name}
                             </button>
                         </Menu.Item>

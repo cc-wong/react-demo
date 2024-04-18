@@ -1,4 +1,4 @@
-import { getCurrentYear } from "../utils/DateUtils";
+import { getCurrentYear, getJapaneseYear } from "../utils/DateUtils";
 import config from '../conf/config.json';
 import { useTranslation } from "react-i18next";
 
@@ -15,9 +15,8 @@ import { useTranslation } from "react-i18next";
  */
 export default function YearDropdown(props) {
     const { t } = useTranslation();
-    console.debug(props.selectedYear + ' = ' +
-        new Intl.DateTimeFormat("ja-JP-u-ca-japanese", { year: 'numeric' })
-            .format(new Date(`${props.selectedYear}-12-31`)));
+    console.debug(`2019 = ${getJapaneseYear(2019).join('/')}\n` +
+        `${props.selectedYear} = ${getJapaneseYear(props.selectedYear).join('/')}`);
     return (
         <>
             <label htmlFor="year">{t('sumoSchedLookup.year')}</label>

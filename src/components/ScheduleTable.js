@@ -31,8 +31,8 @@ export default function ScheduleTable(props) {
                     records.map(({ code, schedule }, i) => {
                         return (
                             <tr key={`tournament-${i}-${code}`}>
-                                <td className="Tournament">{printName(code, t)}</td>
-                                <td>{parse(printSchedule(schedule, t))}</td>
+                                <td className="Tournament">{getTournamentName(code, t)}</td>
+                                <td>{parse(formatSchedule(schedule, t))}</td>
                             </tr>
                         )
                     })}
@@ -42,17 +42,17 @@ export default function ScheduleTable(props) {
 }
 
 /**
- * Prints the tournament name configured in `text-config.json` for a given code.
+ * Gets the tournament name configured by `sumoSchedLookup.tournament.<code>`
+ * in the translation configurations.
  * @param {string} code the tournament code
  * @returns the configured name; if the code is not a valid one, return the code as-is
  */
-const printName = (code, t) => t(`sumoSchedLookup.tournament.${code}`);
+const getTournamentName = (code, t) => t(`sumoSchedLookup.tournament.${code}`);
 
 /**
- * Prints the schedule of a tournament.
- * 
+ * Formats the schedule of a tournament for display.
  * @param {Date[]} schedule the dates of the tournament
  * @returns {string} the display text for the Schedule column; may contain HTML tags
  */
-const printSchedule = (schedule, t) => t('sumoSchedLookup.scheduleFormat',
+const formatSchedule = (schedule, t) => t('sumoSchedLookup.scheduleFormat',
     { 'day1': schedule.at(0), 'day15': schedule.at(14) });

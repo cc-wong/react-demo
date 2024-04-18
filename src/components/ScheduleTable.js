@@ -2,7 +2,6 @@ import './ScheduleTable.css';
 import textConfig from '../conf/text-config.json';
 
 import parse from 'html-react-parser';
-import { formatDate } from '../utils/DateUtils';
 import { useTranslation } from 'react-i18next';
 
 /**
@@ -59,12 +58,7 @@ const printName = (code) => {
  * Prints the schedule of a tournament.
  * 
  * @param {Date[]} schedule the dates of the tournament
- * @returns {string} the display text for the Schedule column; may contain HTML tags\
- *                      see text configuration `sumoSchedLookup.scheduleFormat` for the content format
- *                      and `sumoSchedLookup.dateDisplayFormat` for the date format
+ * @returns {string} the display text for the Schedule column; may contain HTML tags
  */
-const printSchedule = (schedule, t) => {
-    const dateFormat = t('sumoSchedLookup.dateDisplayFormat');
-    return t('sumoSchedLookup.scheduleFormat',
-        { 'day1': formatDate(schedule.at(0), dateFormat), 'day15': formatDate(schedule.at(14), dateFormat) });
-}
+const printSchedule = (schedule, t) => t('sumoSchedLookup.scheduleFormat',
+    { 'day1': schedule.at(0), 'day15': schedule.at(14) });

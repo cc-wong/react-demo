@@ -29,10 +29,22 @@ describe('Verify screen components', () => {
 })
 
 describe('Verify table content', () => {
-    test('With records - normal case - English.', () => testTableWithRecords('en', testData.normal));
-    test('With records - invalid tournament code - English.', () =>
-        testTableWithRecords('en', testData.invalidTournamentCode));
+    test('With records - normal case - English.', () => testNormalCase('en'));
+    test('With records - normal case - Chinese.', () => testNormalCase('zh'));
+    test('With records - normal case - Japanese.', () => testNormalCase('ja'));
+    test('With records - invalid tournament code - English.', () => testInvalidTournamentCode('en'));
+    test('With records - invalid tournament code - Chinese.', () => testInvalidTournamentCode('zh'));
+    test('With records - invalid tournament code - Japanese.', () => testInvalidTournamentCode('ja'));
 
+    const testNormalCase = (languageCode) => testTableWithRecords(languageCode, testData.normal);
+    const testInvalidTournamentCode = (languageCode) =>
+        testTableWithRecords(languageCode, testData.invalidTournamentCode);
+
+    /**
+     * Runs a test case expecting a table with records.
+     * @param {string} languageCode the language code
+     * @param {any} data test data
+     */
     const testTableWithRecords = (languageCode, data) => {
         i18n.changeLanguage(languageCode);
         assertTableRecords(parseToTournament(data.dataFromApi), data.expected[languageCode].length);

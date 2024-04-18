@@ -1,4 +1,13 @@
 {
+    "loading": "Loading...",
+    "error": {
+        "heading": "ERROR",
+        "message": {
+            "UnsuccessfulResponse": "Could not retrieve data (returned status code {{statusCode}})",
+            "ErrorThrown": "Could not retrieve data (error on making API call)",
+            "Timeout": "Request timed out. Please try again."
+        }
+    },
     "sumoSchedLookup": {
         "title": "大相撲場地時間表查詢",
         "year": "年份",

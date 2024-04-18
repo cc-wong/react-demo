@@ -1,15 +1,13 @@
 import './SearchScreen.css';
 
-import textConfig from '../conf/text-config.json';
-
 import { useEffect, useState } from "react";
+import { useTranslation } from 'react-i18next';
 
 import YearDropdown from "./YearDropdown";
 import ScheduleTable from "./ScheduleTable";
 import * as api from '../api/ScheduleWebservice';
 import { APICallResult } from '../types/APICallResult';
 import { getCurrentYear } from '../utils/DateUtils';
-import { useTranslation } from 'react-i18next';
 
 /**
  * Populates the search screen which includes a dropdown for the year
@@ -23,7 +21,7 @@ export default function SearchScreen() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const {t} = useTranslation();
+    const { t } = useTranslation();
 
     useEffect(() => {
         setLoading(true);
@@ -32,18 +30,18 @@ export default function SearchScreen() {
                 setApiData(result.schedule);
                 setError(null);
             } else {
-                setError(getAPIErrorMessage(result));
+                setError(getAPIErrorMessage(result, t));
                 setApiData([]);
             }
         }).finally(() => setLoading(false));
-    }, [year]);
+    }, [year, t]);
 
     return (
         <div className='SearchScreen'>
             <h1>{t('sumoSchedLookup.title')}</h1>
             {error && (
                 <div className='ErrorMessageBox' id='errorMessage'>
-                    <div className='ErrorMessageHeading'>{textConfig.error.title}</div>{error}
+                    <div className='ErrorMessageHeading'>{t('error.heading')}</div>{error}
                 </div>
             )}
             <form name='pickYear'>
@@ -51,7 +49,7 @@ export default function SearchScreen() {
                     onChangeEvent={(event) => setYear(event.target.value)} />
             </form>
             {loading && (
-                <div className='LoadingText' id='loadingText'>{textConfig.loading}</div>
+                <div className='LoadingText' id='loadingText'>{t('loading')}</div>
             )}
             <ScheduleTable data={apiData} />
         </div>
@@ -62,14 +60,16 @@ export default function SearchScreen() {
  * Builds the error message to display on-screen for API call failures.
  * 
  * @param {APICallResult} result the API call result object
+ * @param {*} t the translation function
  * @returns {string} the message configured by `error.messages.<result.error.type>`
  */
-const getAPIErrorMessage = (result) => {
-    var message = textConfig.error.messages[result.error.type];
+const getAPIErrorMessage = (result, t) => {
+    let keyValues = {};
     switch (result.error.type) {
         case APICallResult.FailType.UnsuccessfulResponse:
-            return message.replace("%STATUS_CODE%", result.error.statusCode);
+            keyValues = { statusCode: result.error.statusCode };
+            break;
         default:
-            return message;
     }
+    return t(`error.message.${result.error.type}`, keyValues);
 }

@@ -14,6 +14,7 @@ const api = require('../../api/ScheduleWebservice');
 const spyApi = jest.spyOn(api, 'fetchData');
 
 beforeAll(() => utils.mockCurrentDate('2025-10-10'));
+beforeEach(() => i18n.changeLanguage('en'));  // Use English unless otherwise stated.
 afterEach(() => cleanup());
 
 /**
@@ -263,33 +264,53 @@ const assertApiCall = (times, years) => {
  * Asserts the screen for a test case with unsuccessful API response.
  * @param {number} statusCode the response status code
  * @param {number} expectedYear the expected selected value in the Year dropdown box
+ * @param {string} language the language code; default `en` if not provided
  */
-const assertUnsuccessfulAPIResponse = (statusCode, expectedYear) =>
-    assertScreenWithError(expectedYear, `Could not retrieve data (returned status code ${statusCode})`);
+const assertUnsuccessfulAPIResponse = (statusCode, expectedYear, language = 'en') =>
+    assertScreenWithError(expectedYear, language, `Could not retrieve data (returned status code ${statusCode})`);
 
 /**
  * Asserts the screen for a test case where the API call throws (non-timeout) error.
  * @param {number} expectedYear the expected selected value in the Year dropdown box
+ * @param {string} language the language code; default `en` if not provided
  */
-const assertAPICallErrorThrown = (expectedYear) =>
-    assertScreenWithError(expectedYear, 'Could not retrieve data (error on making API call)');
+const assertAPICallErrorThrown = (expectedYear, language = 'en') =>
+    assertScreenWithError(expectedYear, language, 'Could not retrieve data (error on making API call)');
 
 /**
  * Asserts the screen for a test case with API call timeout.
  * @param {number} expectedYear the expected selected value in the Year dropdown box
+ * @param {string} language the language code; default `en` if not provided
  */
-const assertAPICallTimeout = (expectedYear) =>
-    assertScreenWithError(expectedYear, 'Request timed out. Please try again.');
+const assertAPICallTimeout = (expectedYear, language = 'en') =>
+    assertScreenWithError(expectedYear, language, 'Request timed out. Please try again.');
 
 /**
  * Asserts the screen for a test case with an error message displaying due to an unsuccessful API call.
  * @param {number} expectedYear the expected selected value in the Year dropdown box
+ * @param {string} language the language code
  * @param {string} message the expected message displayed in the error box
  */
-const assertScreenWithError = (expectedYear, message) => {
-    assertErrorMessageBox(message);
+const assertScreenWithError = (expectedYear, language, message) => {
+    const errorMessageBox = document.querySelector('#errorMessage');
+    expect(errorMessageBox).toBeInTheDocument();
+    expect(errorMessageBox.innerHTML)
+        .toMatch(new RegExp(`${getExpectedErrorHeading(language)}.*${utils.escapeRegex(message)}`));
+
     assertScreen(expectedYear, 0);
     assertNotDisplayLoadingText();
+}
+
+/**
+ * Gets the expected error heading.
+ * @param {string} language the language code
+ * @returns the error heading for the language
+ */
+const getExpectedErrorHeading = (language) => {
+    switch (language) {
+        default:
+            return 'ERROR';
+    }
 }
 
 /**
@@ -304,27 +325,29 @@ const assertScreen = (expectedYear, recordCount) => {
 }
 
 /**
- * Asserts that the error message box is present in the screen.
- * 
- * @param {string} message the expected error message text excluding the heading
- */
-const assertErrorMessageBox = (message) => {
-    const errorMessageBox = document.querySelector('#errorMessage');
-    expect(errorMessageBox).toBeInTheDocument();
-    expect(errorMessageBox.innerHTML).toMatch(new RegExp(`ERROR.*${utils.escapeRegex(message)}`));
-}
-
-/**
  * Asserts that the error message box is not present in the screen.
  */
 const assertErrorMessageNotExist = () => expect(document.querySelector('#errorMessage')).toBeNull();
 /**
  * Asserts that the "Loading..." text is on the screen.
+ * @param {string} language the language code; default `en` if not provided
  */
-const assertDisplayLoadingText = () => {
+const assertDisplayLoadingText = (language = 'en') => {
     const loadingTextDiv = document.querySelector('#loadingText');
     expect(loadingTextDiv).toBeInTheDocument();
-    expect(loadingTextDiv).toHaveTextContent("Loading...");
+    expect(loadingTextDiv).toHaveTextContent(getExpectedLoadingText(language));
+}
+
+/**
+ * Gets the expected Loading text.
+ * @param {string} language the language code
+ * @returns the expected Loading text for the language
+ */
+const getExpectedLoadingText = (language) => {
+    switch (language) {
+        default:
+            return 'Loading...';
+    }
 }
 
 /**

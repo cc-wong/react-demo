@@ -16,11 +16,13 @@
             "countryCode": "JP"
         }
     },
-    "dateFormat": {
-        "SUMO_SCHEDULE": {
-            "en": "MMMM D (dddd)",
-            "zh": "MMMDo(dddd)",
-            "ja": "MMMDo(dddd)"
+    "formatOptions": {
+        "MONTH_DAY": {
+            "month": "long",
+            "day": "numeric"
+        },
+        "WEEKDAY": {
+            "weekday": "long"
         }
     }
 }

@@ -1,20 +1,7 @@
-import * as dateUtils from './utils/DateUtils';
-
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
 import localesConfig from './locales/config.json';
-
-import moment from 'moment';
-/**
- * A locale must be imported explicitly to include it
- * since Create React App excludes moment locales by default.
- * References:
- * - https://stackoverflow.com/questions/49788259/moment-js-change-locale-not-working
- * - https://github.com/jmblog/how-to-optimize-momentjs-with-webpack
- */
-import 'moment/locale/zh-hk';
-import 'moment/locale/ja';
 
 const resources = {
     en: {
@@ -38,13 +25,12 @@ i18n.use(initReactI18next).init({
     },
 });
 /**
- * Formats a date according to the locale corresponding to the currently selected language
- * with the format string as defined by `dateFormat.<options.format>.<lng>` in `locales/config.json`.
+ * Formats a date/time according to the locale corresponding to the currently selected language
+ * with options as defined by `formatOptions.<options.format>` in `locales/config.json`.
  */
-i18n.services.formatter.add('formatDate', (value, lng, options) => {
-    moment.locale(localesConfig.language[lng].localeCode);
-    const format = localesConfig.dateFormat[options.format][lng];
-    return dateUtils.formatDate(value, format);
+i18n.services.formatter.add('formatDateTime', (value, lng, options) => {
+    const formatOptions = localesConfig.formatOptions[options.format];
+    return Intl.DateTimeFormat(localesConfig.language[lng].localeCode, formatOptions).format(value);
 });
 
 export default i18n;

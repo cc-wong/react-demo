@@ -6,6 +6,8 @@
             "tournament": "Tournament",
             "schedule": "Schedule"
         },
-        "scheduleFormat": "{{day1,formatDate(format:'SUMO_SCHEDULE')}}<wbr> to<br> {{day15,formatDate(format:'SUMO_SCHEDULE')}}"
+        "scheduleFormat": "$t(sumoSchedLookup.day1)<wbr> to<br> $t(sumoSchedLookup.day15)",
+        "day1": "{{day1, formatDateTime(format:'MONTH_DAY')}} ({{day1, formatDateTime(format:'WEEKDAY')}})",
+        "day15": "{{day15, formatDateTime(format:'MONTH_DAY')}} ({{day15, formatDateTime(format:'WEEKDAY')}})"
     }
 }

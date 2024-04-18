@@ -270,32 +270,86 @@
         ]
     },
     "expected": {
-        "year2024": [
-            {
-                "tournament": "January (Hatsu)",
-                "schedule": "January 14 (Sunday) to January 28 (Sunday)"
-            },
-            {
-                "tournament": "March (Haru/Spring)",
-                "schedule": "March 10 (Sunday) to March 24 (Sunday)"
-            },
-            {
-                "tournament": "May (Natsu/Summer)",
-                "schedule": "May 12 (Sunday) to May 26 (Sunday)"
-            },
-            {
-                "tournament": "July (Nagoya)",
-                "schedule": "July 14 (Sunday) to July 28 (Sunday)"
-            },
-            {
-                "tournament": "September (Aki/Autumn)",
-                "schedule": "September 8 (Sunday) to September 22 (Sunday)"
-            },
-            {
-                "tournament": "November (Kyushu)",
-                "schedule": "November 10 (Sunday) to November 24 (Sunday)"
-            }
-        ],
+        "year2024": {
+            "en": [
+                {
+                    "tournament": "January (Hatsu)",
+                    "schedule": "January 14 (Sunday) to January 28 (Sunday)"
+                },
+                {
+                    "tournament": "March (Haru/Spring)",
+                    "schedule": "March 10 (Sunday) to March 24 (Sunday)"
+                },
+                {
+                    "tournament": "May (Natsu/Summer)",
+                    "schedule": "May 12 (Sunday) to May 26 (Sunday)"
+                },
+                {
+                    "tournament": "July (Nagoya)",
+                    "schedule": "July 14 (Sunday) to July 28 (Sunday)"
+                },
+                {
+                    "tournament": "September (Aki/Autumn)",
+                    "schedule": "September 8 (Sunday) to September 22 (Sunday)"
+                },
+                {
+                    "tournament": "November (Kyushu)",
+                    "schedule": "November 10 (Sunday) to November 24 (Sunday)"
+                }
+            ],
+            "zh": [
+                {
+                    "tournament": "一月場所(初場所)",
+                    "schedule": "1月14日(星期日) 至 1月28日(星期日)"
+                },
+                {
+                    "tournament": "三月場所(春場所)",
+                    "schedule": "3月10日(星期日) 至 3月24日(星期日)"
+                },
+                {
+                    "tournament": "五月場所(夏場所)",
+                    "schedule": "5月12日(星期日) 至 5月26日(星期日)"
+                },
+                {
+                    "tournament": "七月場所(名古屋場所)",
+                    "schedule": "7月14日(星期日) 至 7月28日(星期日)"
+                },
+                {
+                    "tournament": "九月場所(秋場所)",
+                    "schedule": "9月8日(星期日) 至 9月22日(星期日)"
+                },
+                {
+                    "tournament": "十一月場所(九州場所)",
+                    "schedule": "11月10日(星期日) 至 11月24日(星期日)"
+                }
+            ],
+            "ja": [
+                {
+                    "tournament": "一月場所(初場所)",
+                    "schedule": "1月14日(日曜日) 〜 1月28日(日曜日)"
+                },
+                {
+                    "tournament": "三月場所(春場所)",
+                    "schedule": "3月10日(日曜日) 〜 3月24日(日曜日)"
+                },
+                {
+                    "tournament": "五月場所(夏場所)",
+                    "schedule": "5月12日(日曜日) 〜 5月26日(日曜日)"
+                },
+                {
+                    "tournament": "七月場所(名古屋場所)",
+                    "schedule": "7月14日(日曜日) 〜 7月28日(日曜日)"
+                },
+                {
+                    "tournament": "九月場所(秋場所)",
+                    "schedule": "9月8日(日曜日) 〜 9月22日(日曜日)"
+                },
+                {
+                    "tournament": "十一月場所(九州場所)",
+                    "schedule": "11月10日(日曜日) 〜 11月24日(日曜日)"
+                }
+            ]
+        },
         "year2026": [
             {
                 "tournament": "January (Hatsu)",

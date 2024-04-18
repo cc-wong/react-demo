@@ -1,5 +1,4 @@
 import './ScheduleTable.css';
-import textConfig from '../conf/text-config.json';
 
 import parse from 'html-react-parser';
 import { useTranslation } from 'react-i18next';
@@ -32,7 +31,7 @@ export default function ScheduleTable(props) {
                     records.map(({ code, schedule }, i) => {
                         return (
                             <tr key={`tournament-${i}-${code}`}>
-                                <td className="Tournament">{printName(code)}</td>
+                                <td className="Tournament">{printName(code, t)}</td>
                                 <td>{parse(printSchedule(schedule, t))}</td>
                             </tr>
                         )
@@ -45,14 +44,9 @@ export default function ScheduleTable(props) {
 /**
  * Prints the tournament name configured in `text-config.json` for a given code.
  * @param {string} code the tournament code
- * @returns the configured name; if the code is not a valid one,
- *          print a warning in the console and return the code
+ * @returns the configured name; if the code is not a valid one, return the code as-is
  */
-const printName = (code) => {
-    if (code in textConfig.tournamentNameMap) return textConfig.tournamentNameMap[code];
-    console.warn(`Unrecognized tournament code: ${code}`);
-    return code;
-}
+const printName = (code, t) => t(`sumoSchedLookup.tournament.${code}`);
 
 /**
  * Prints the schedule of a tournament.

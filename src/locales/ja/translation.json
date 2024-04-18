@@ -6,6 +6,14 @@
             "tournament": "場所",
             "schedule": "日付"
         },
+        "tournament": {
+            "HATSU": "一月場所(初場所)",
+            "HARU": "三月場所(春場所)",
+            "NATSU": "五月場所(夏場所)",
+            "NAGOYA": "七月場所(名古屋場所)",
+            "AKI": "九月場所(秋場所)",
+            "KYUSHU": "十一月場所(九州場所)"
+        },
         "scheduleFormat": "$t(sumoSchedLookup.day1) 〜 $t(sumoSchedLookup.day15)",
         "day1": "{{day1, formatDateTime(format:'MONTH_DAY')}}({{day1, formatDateTime(format:'WEEKDAY')}})",
         "day15": "{{day15, formatDateTime(format:'MONTH_DAY')}}({{day15, formatDateTime(format:'WEEKDAY')}})"

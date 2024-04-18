@@ -17,10 +17,10 @@ export default function LanguageSelector() {
     console.debug(`Language = ${selectedLanguage}`);
 
     /**
-     * Changes the display language.
-     * @param {string} languageCode the language code
+     * Handles a language change event.
+     * @param {*} event the event object
      */
-    const changeLanguage = (languageCode) => i18n.changeLanguage(languageCode);
+    const handleChangeLanguage = (event) => i18n.changeLanguage(event.target.value);
 
     return (
         <Menu as="div" className="LanguageSelector">
@@ -34,7 +34,8 @@ export default function LanguageSelector() {
                     return (
                         <Menu.Item key={`lang_${languageCode}`}>
                             <button className="LanguageSelectorItem"
-                                onClick={() => changeLanguage(languageCode)}
+                                value={languageCode}
+                                onClick={handleChangeLanguage}
                                 disabled={selectedLanguage === languageCode}>
                                 <ReactCountryFlag countryCode={countryCode} svg />&nbsp;{name}
                             </button>

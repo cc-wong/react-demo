@@ -19,8 +19,8 @@
     "dateFormat": {
         "SUMO_SCHEDULE": {
             "en": "MMMM D (dddd)",
-            "zh": "MMMM D (dddd)",
-            "ja": "MMMM D (dddd)"
+            "zh": "MMMDo(dddd)",
+            "ja": "MMMDo(dddd)"
         }
     }
 }

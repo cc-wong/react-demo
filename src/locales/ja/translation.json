@@ -6,6 +6,6 @@
             "tournament": "場所",
             "schedule": "日付"
         },
-        "scheduleFormat": "{{day1,formatDate(format:'SUMO_SCHEDULE')}}<wbr> to<br> {{day15,formatDate(format:'SUMO_SCHEDULE')}}"
+        "scheduleFormat": "{{day1,formatDate(format:'SUMO_SCHEDULE')}} 〜 {{day15,formatDate(format:'SUMO_SCHEDULE')}}"
     }
 }

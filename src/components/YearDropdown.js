@@ -15,6 +15,9 @@ import { useTranslation } from "react-i18next";
  */
 export default function YearDropdown(props) {
     const { t } = useTranslation();
+    console.debug(props.selectedYear + ' = ' +
+        new Intl.DateTimeFormat("ja-JP-u-ca-japanese", { year: 'numeric' })
+            .format(new Date(`${props.selectedYear}-12-31`)));
     return (
         <>
             <label htmlFor="year">{t('sumoSchedLookup.year')}</label>

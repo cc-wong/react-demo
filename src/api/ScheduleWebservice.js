@@ -56,9 +56,12 @@ const initTimeout = () => {
 const getResponseBody = async (response) => {
     console.debug(`Returned status code: ${response.status} (ok: ${response.ok})`);
     if (!response.ok) {
+        console.debug(response);
+        const message = await response.text();
         console.error('Unsuccessful response!\n' +
-            `Status code: ${response.status}; message: ${response.json()}`);
-        return { statusCode: response.status };
+            `Status code: ${response.status} (${response.statusText})\n` +
+            `Message: ${message}`);
+        return { statusCode: response.status, statusText: response.statusText, reason: message };
     }
     return response.json();
 }
@@ -71,7 +74,7 @@ const getResponseBody = async (response) => {
  */
 const parseResponseBody = (json) => json.result ?
     APICallResult.InitForSuccessfulResponse(parseToTournament(json.result)) :
-    APICallResult.InitForUnsuccessfulResponse(json.statusCode);
+    APICallResult.InitForUnsuccessfulResponse(json);
 
 /**
  * Parses the response body of a successful API call into `Tournament` objects.
@@ -90,7 +93,7 @@ const parseToTournament = (json) => json.map(({ basho, dates }) =>
 const handleError = (error) => {
     console.error(`Error thrown:\n${error}`);
     console.debug(`Error name: ${error.name}\nIs DOMException? ${error instanceof DOMException}`);
-    return isTimeout(error) ? APICallResult.InitForTimeout() : APICallResult.InitForErrorThrown();
+    return isTimeout(error) ? APICallResult.InitForTimeout() : APICallResult.InitForErrorThrown(error);
 }
 
 /**

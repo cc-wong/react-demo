@@ -138,14 +138,14 @@ describe('API unsuccessful response', () => {
      */
     const testInitialRendering = async (language) => {
         i18n.changeLanguage(language);
-        mockApiCalls(APICallResult.InitForUnsuccessfulResponse(400));
+        mockApiCalls(initUnsuccessfulAPICallResult(400, 'BAD REQUEST', 'Test reason.'));
         renderComponent();
         await waitFor(() => assertUnsuccessfulAPIResponse(400, 2025, language));
         assertApiCall(1, [2025]);
     }
 
     test('API call delay on initial rendering.', async () => {
-        mockApiCallWithDelay(20, APICallResult.InitForUnsuccessfulResponse(400));
+        mockApiCallWithDelay(20, initUnsuccessfulAPICallResult(400, 'BAD REQUEST', 'Test reason.'));
 
         await act(() => renderComponent());
         await waitFor(() => {
@@ -159,7 +159,7 @@ describe('API unsuccessful response', () => {
     });
 
     test('Failure on initial rendering, success on year value change.', async () => {
-        mockApiCalls(APICallResult.InitForUnsuccessfulResponse(400));
+        mockApiCalls(initUnsuccessfulAPICallResult(400, 'BAD REQUEST', 'Test reason.'));
         mockApiCallWithDelay(3, initSuccessfulAPICallResult(testData.sixRecords));
 
         await act(async () => renderComponent());
@@ -176,7 +176,7 @@ describe('API unsuccessful response', () => {
 
     test('Success on initial rendering, failure on year value change.', async () => {
         mockApiCalls(initSuccessfulAPICallResult(testData.sixRecords),
-            APICallResult.InitForUnsuccessfulResponse(400));
+            initUnsuccessfulAPICallResult(400, 'BAD REQUEST', 'Test reason.'));
 
         await act(async () => renderComponent());
         await waitFor(() => assertErrorMessageNotExist());
@@ -219,14 +219,14 @@ describe('API call throws error', () => {
      */
     const testInitialRendering = async (language) => {
         i18n.changeLanguage(language);
-        mockApiCalls(APICallResult.InitForErrorThrown());
+        mockApiCalls(APICallResult.InitForErrorThrown(new Error('Test Thrown Error.')));
         renderComponent();
         await waitFor(() => assertAPICallErrorThrown(2025, language));
         assertApiCall(1, [2025]);
     }
 
     test('API call delay on initial rendering.', async () => {
-        mockApiCallWithDelay(50, APICallResult.InitForErrorThrown());
+        mockApiCallWithDelay(50, APICallResult.InitForErrorThrown(new Error('Test Thrown Error.')));
 
         await act(() => renderComponent());
         await waitFor(() => {
@@ -240,7 +240,7 @@ describe('API call throws error', () => {
     });
 
     test('Failure on initial rendering, success on year value change.', async () => {
-        mockApiCalls(APICallResult.InitForErrorThrown());
+        mockApiCalls(APICallResult.InitForErrorThrown(new Error('Test Thrown Error.')));
         mockApiCallWithDelay(3, initSuccessfulAPICallResult(testData.sixRecords));
 
         await act(async () => renderComponent());
@@ -257,7 +257,7 @@ describe('API call throws error', () => {
 
     test('Success on initial rendering, failure on year value change.', async () => {
         mockApiCalls(initSuccessfulAPICallResult(testData.sixRecords),
-            APICallResult.InitForErrorThrown());
+            APICallResult.InitForErrorThrown(new Error('Test Thrown Error.')));
 
         await act(async () => renderComponent());
         await waitFor(() => assertErrorMessageNotExist());
@@ -341,6 +341,16 @@ describe('API call timeout', () => {
  */
 const initSuccessfulAPICallResult = (data) =>
     APICallResult.InitForSuccessfulResponse(utils.parseToTournament(data));
+
+/**
+ * Initializes a result object for an unsuccessful API call.
+ * @param {number} statusCode the response status code
+ * @param {string} statusText the status text corresponding to `statusCode`, eg. BAD REQUEST for 400
+ * @param {string} message the error/failure message from the response body
+ * @returns the new result object
+ */
+const initUnsuccessfulAPICallResult = (statusCode, statusText, message) =>
+    APICallResult.InitForUnsuccessfulResponse({ statusCode: statusCode, statusText: statusText, reason: message });
 
 /**
  * Mocks an API call with a given amount of time in delay.

@@ -44,9 +44,9 @@ describe('Integration tests - Sumo Tournament Schedule Lookup', () => {
 
   test('Page load - Unsuccessful response - English.', async () =>
     testAPIUnsuccessfulResponse('en', 'System error!', 'Could not retrieve data (returned status code 400)'));
-  test('Page load - nsuccessful response - Chinese.', async () =>
+  test('Page load - Unsuccessful response - Chinese.', async () =>
     testAPIUnsuccessfulResponse('zh', '系統發生錯誤！', 'Could not retrieve data (returned status code 400)'));
-  test('Page load - nsuccessful response - Japanese.', async () =>
+  test('Page load - Unsuccessful response - Japanese.', async () =>
     testAPIUnsuccessfulResponse('ja', 'システムエラーが発生しました!', 'Could not retrieve data (returned status code 400)'));
 
   /**
@@ -60,7 +60,8 @@ describe('Integration tests - Sumo Tournament Schedule Lookup', () => {
     spyFetch.mockImplementationOnce(() => Promise.resolve({
       ok: false,
       status: 400,
-      json: () => ('Bad request.'),
+      statusText: 'BAD REQUEST',
+      text: () => ('Test Unsuccessful Response.'),
     }));
     await act(() => renderComponent());
     await waitFor(() => {

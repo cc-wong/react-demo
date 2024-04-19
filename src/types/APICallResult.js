@@ -34,8 +34,12 @@ export class APICallResult {
     schedule;
 
     /**
+     * Data type for API call failure details.
+     * @typedef {{type: string; statusCode: number; statusText: string; reason: string|Error}} ErrorData
+     */
+    /**
      * Error details if the API call failed.
-     * @type {{type: string; statusCode: number}}
+     * @type {ErrorData}
      */
     error;
 
@@ -44,7 +48,7 @@ export class APICallResult {
      * 
      * Please use one of the static methods to initialize an instance instead.
      * @param {boolean} success whether the API call was successful
-     * @param {{schedule: Tournament[]; error: {type: string; statusCode: number}}} result 
+     * @param {{schedule: Tournament[]; error: {ErrorData}}} result 
      *           data returned by the API call or error details of the failure
      */
     constructor(success, { schedule = [], error = {} }) {
@@ -65,15 +69,20 @@ export class APICallResult {
 
     /**
      * Initializes a result object for an unsuccessful API call.
-     * @param {number} statusCode the status code returned from the API call
+     * @param {Object} response the massaged API response
+     * @param {number} response.statusCode the response status code
+     * @param {string} response.statusText the status text corresponding to `statusCode`
+     * @param {string} response.reason the failure/error message from the response body
      * @returns a new object where `success` is `false`, `error.type` is `UnsuccessfulResponse`
-     *      and `error.statusCode` is `statusCode`
+     *      and the remaining fields are set according to the values in `response`
      */
-    static InitForUnsuccessfulResponse(statusCode) {
+    static InitForUnsuccessfulResponse({ statusCode, statusText, reason }) {
         return new APICallResult(false, {
             error: {
                 type: APICallResult.FailType.UnsuccessfulResponse,
-                statusCode: statusCode
+                statusCode: statusCode,
+                statusText: statusText,
+                reason: reason
             }
         });
     }
@@ -90,11 +99,12 @@ export class APICallResult {
 
     /**
      * Initializes a result object for an API call timeout.
+     * @param {Error} error the error thrown by the API call
      * @returns a new object where `success` is `false` and `error.type` is `ErrorThrown`
      */
-    static InitForErrorThrown() {
+    static InitForErrorThrown(error) {
         return new APICallResult(false, {
-            error: { type: APICallResult.FailType.ErrorThrown }
+            error: { type: APICallResult.FailType.ErrorThrown, reason: error }
         });
     }
 }

@@ -51,17 +51,21 @@ describe('Unsuccessful API calls', () => {
         mockApiCall({
             ok: false,
             status: 400,
-            json: () => ("Bad request."),
+            statusText: 'BAD REQUEST',
+            text: () => ('Test Unsuccessful Response.'),
         });
         testUnsuccessfulAPICall({
             type: APICallResult.FailType.UnsuccessfulResponse,
-            statusCode: 400
+            statusCode: 400,
+            statusText: 'BAD REQUEST',
+            reason: 'Test Unsuccessful Response.'
         })
     });
 
     test('Error thrown.', async () => {
-        spyFetch.mockRejectedValueOnce(new TypeError("Load failed"));
-        testUnsuccessfulAPICall({ type: APICallResult.FailType.ErrorThrown });
+        const error = new TypeError("Load failed!!");
+        spyFetch.mockRejectedValueOnce(error);
+        testUnsuccessfulAPICall({ type: APICallResult.FailType.ErrorThrown, reason: error });
     });
 
     /**

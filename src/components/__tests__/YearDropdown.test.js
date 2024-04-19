@@ -9,10 +9,10 @@ import { I18nextProvider } from 'react-i18next';
 beforeAll(() => utils.mockCurrentDate('2022-03-28'));
 afterEach(() => cleanup());
 
-describe('Unit tests on the year dropdown box', () => {
-    test('Label text - English.', () => testLabel('en', 'Year'));
-    test('Label text - Chinese.', () => testLabel('zh', '年份'));
-    test('Label text - Japanese.', () => testLabel('ja', '年'));
+describe('Verify screen', () => {
+    test('Label text is correct - English.', () => testLabel('en', 'Year'));
+    test('Label text is correct - Chinese.', () => testLabel('zh', '年份'));
+    test('Label text is correct - Japanese.', () => testLabel('ja', '年'));
 
     /**
      * Runs a test case on the label text.
@@ -49,10 +49,9 @@ describe('Unit tests on the year dropdown box', () => {
             }
         });
     });
+});
 
-    /**
-     * Mock onChange event for the dropdown box.
-     */
+describe('Actions on the dropdown box', () => {
     test('onChange event called on value change.', () => {
         const mockOnChangeEvent = jest.fn();
         render(<YearDropdown onChangeEvent={mockOnChangeEvent} />);

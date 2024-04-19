@@ -24,11 +24,11 @@ export default function SearchScreen() {
     const { t } = useTranslation();
 
     useEffect(() => {
+        setError(null);
         setLoading(true);
         api.fetchData(year).then((result) => {
             if (result.success) {
                 setApiData(result.schedule);
-                setError(null);
             } else {
                 setError(getAPIErrorMessage(result, t));
                 setApiData([]);

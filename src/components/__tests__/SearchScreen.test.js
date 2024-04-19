@@ -36,9 +36,9 @@ describe('Verify screen', () => {
         });
     })
 
-    test('English title.', async () => await testPageTitle('en', 'Sumo Tournament Schedule Lookup'));
-    test('Chinese title.', async () => await testPageTitle('zh', '大相撲場地時間表查詢'));
-    test('Chinese title.', async () => await testPageTitle('ja', '大相撲本場所スケジュール検索'));
+    test('English title is correct.', async () => await testPageTitle('en', 'Sumo Tournament Schedule Lookup'));
+    test('Chinese title is correct.', async () => await testPageTitle('zh', '大相撲場地時間表查詢'));
+    test('Chinese title is correct.', async () => await testPageTitle('ja', '大相撲本場所スケジュール検索'));
 
     /**
      * Runs a test case on the page title text.
@@ -57,8 +57,8 @@ describe('Verify screen', () => {
     }
 })
 
-describe('On initial rendering', () => {
-    test('Normal screen render (API call successful).', async () => {
+describe('Happy path (API calls successful)', () => {
+    test('No API call delay on intial rendering.', async () => {
         mockApiCalls(initSuccessfulAPICallResult(testData.sixRecords));
         renderComponent();
 
@@ -69,25 +69,7 @@ describe('On initial rendering', () => {
         });
     });
 
-    test('API call returns unsuccessful response.', async () => {
-        mockApiCalls(APICallResult.InitForUnsuccessfulResponse(400));
-        renderComponent();
-
-        await waitFor(() => assertUnsuccessfulAPIResponse(400, 2025));
-        assertApiCall(1, [2025]);
-    });
-
-    test('Error thrown on API call.', async () => {
-        mockApiCalls(APICallResult.InitForErrorThrown());
-        renderComponent();
-
-        await waitFor(() => assertAPICallErrorThrown(2025));
-        assertApiCall(1, [2025]);
-    });
-});
-
-describe('Year dropdown value changed', () => {
-    test('Successful API data retrieval (happy path).', async () => {
+    test('Change Year dropdown value.', async () => {
         mockApiCalls(initSuccessfulAPICallResult(testData.oneRecord),
             initSuccessfulAPICallResult(testData.sixRecords));
 
@@ -102,39 +84,9 @@ describe('Year dropdown value changed', () => {
         assertApiCall(2, [2025, 2028]);
     });
 
-    test('API call failed on initial rendering but successful on year value change.', async () => {
-        mockApiCalls(APICallResult.InitForUnsuccessfulResponse(400),
-            initSuccessfulAPICallResult(testData.sixRecords));
-
-        await act(async () => renderComponent());
-        await waitFor(() => assertUnsuccessfulAPIResponse(400, 2025));
-
-        await act(async () => fireChangeYearDropdownValueEvent(2030));
-        await waitFor(() => assertErrorMessageNotExist());
-        assertScreen(2030, 6);
-
-        assertApiCall(2, [2025, 2030]);
-    });
-
-    test('API call failure on year value change.', async () => {
-        mockApiCalls(initSuccessfulAPICallResult(testData.sixRecords),
-            APICallResult.InitForErrorThrown());
-        await act(async () => renderComponent());
-        await waitFor(() => assertErrorMessageNotExist());
-        assertScreen(2025, 6);
-
-        await act(async () => fireChangeYearDropdownValueEvent(2026));
-        await waitFor(() => assertAPICallErrorThrown(2026));
-
-        assertApiCall(2, [2025, 2026]);
-    });
-});
-
-describe('Network delay on API call', () => {
-    test('Delay on initial rendering - English.', async () => testInitialRenderingDelay('en'));
-    test('Delay on initial rendering - Chinese.', async () => testInitialRenderingDelay('zh'));
-    test('Delay on initial rendering - Japanese.', async () => testInitialRenderingDelay('ja'));
-
+    test('API call delay on initial rendering - English.', async () => testInitialRenderingDelay('en'));
+    test('API call delay on initial rendering - Chinese.', async () => testInitialRenderingDelay('zh'));
+    test('API call delay on initial rendering - Japanese.', async () => testInitialRenderingDelay('ja'));
     /**
      * Runs a test case with a API call delay on initial rendering.
      * @param {string} language the language code
@@ -155,62 +107,7 @@ describe('Network delay on API call', () => {
         assertNotDisplayLoadingText();
     }
 
-    test('Unsuccessful response after delay.', async () => {
-        mockApiCallWithDelay(20, APICallResult.InitForUnsuccessfulResponse(400));
-
-        await act(() => renderComponent());
-        await waitFor(() => {
-            assertApiCall(1, [2025]);
-            assertErrorMessageNotExist();
-            assertDisplayLoadingText();
-        });
-
-        await act(() => utils.advanceTimersBySeconds(21));
-        assertUnsuccessfulAPIResponse(400, 2025);
-    });
-
-    test('API call error after delay.', async () => {
-        mockApiCallWithDelay(50, APICallResult.InitForErrorThrown());
-
-        await act(() => renderComponent());
-        await waitFor(() => {
-            assertApiCall(1, [2025]);
-            assertErrorMessageNotExist();
-            assertDisplayLoadingText();
-        });
-
-        await act(() => utils.advanceTimersBySeconds(55));
-        assertAPICallErrorThrown(2025);
-    });
-
-    test('API call timeout after delay - English.', async () =>
-        testAPICallTimeout('en', 'Request timed out. Please try again.'));
-    test('API call timeout after delay - Chinese.', async () =>
-        testAPICallTimeout('zh', 'API 通訊已逾時，請重新嘗試。'));
-    test('API call timeout after delay - Japanese.', async () =>
-        testAPICallTimeout('ja', 'APIサービスでタイムアウトが発生しました。もう一度お試しください。'));
-
-    /**
-     * Runs a test case on API call timeout.
-     * @param {string} language the language code
-     * @param {string} errorMessage the expected error message
-     */
-    const testAPICallTimeout = async (language, errorMessage) => {
-        i18n.changeLanguage(language);
-        mockApiCallWithDelay(60, APICallResult.InitForTimeout());
-
-        await act(() => renderComponent());
-        await waitFor(() => {
-            assertApiCall(1, [2025]);
-            assertErrorMessageNotExist();
-            assertDisplayLoadingText(language);
-        });
-
-        await act(() => utils.advanceTimersBySeconds(61));
-        assertScreenWithError(2025, language, errorMessage);
-    }
-
-    test('Delay on Year dropdown change.', async () => {
+    test('API call delay on Year dropdown change.', async () => {
         mockApiCalls(initSuccessfulAPICallResult(testData.oneRecord));
         mockApiCallWithDelay(30, initSuccessfulAPICallResult(testData.sixRecords));
 
@@ -232,6 +129,156 @@ describe('Network delay on API call', () => {
         assertApiCall(2, [2025, 2028]);
         assertNotDisplayLoadingText();
     });
+})
+
+describe('API unsuccessful response', () => {
+    test('No API call delay on initial rendering.', async () => {
+        mockApiCalls(APICallResult.InitForUnsuccessfulResponse(400));
+        renderComponent();
+
+        await waitFor(() => assertUnsuccessfulAPIResponse(400, 2025));
+        assertApiCall(1, [2025]);
+    });
+
+    test('API call delay on initial rendering.', async () => {
+        mockApiCallWithDelay(20, APICallResult.InitForUnsuccessfulResponse(400));
+
+        await act(() => renderComponent());
+        await waitFor(() => {
+            assertApiCall(1, [2025]);
+            assertErrorMessageNotExist();
+            assertDisplayLoadingText();
+        });
+
+        await act(() => utils.advanceTimersBySeconds(21));
+        assertUnsuccessfulAPIResponse(400, 2025);
+    });
+
+    test('Failure on initial rendering, success on year value change.', async () => {
+        mockApiCalls(APICallResult.InitForUnsuccessfulResponse(400));
+        mockApiCallWithDelay(3, initSuccessfulAPICallResult(testData.sixRecords));
+
+        await act(async () => renderComponent());
+        await waitFor(() => assertUnsuccessfulAPIResponse(400, 2025));
+
+        await act(async () => fireChangeYearDropdownValueEvent(2030));
+        await waitFor(() => assertErrorMessageNotExist());
+        await act(() => utils.advanceTimersBySeconds(4));
+        await waitFor(() => assertErrorMessageNotExist());
+        assertScreen(2030, 6);
+
+        assertApiCall(2, [2025, 2030]);
+    });
+
+    test('Success on initial rendering, failure on year value change.', async () => {
+        mockApiCalls(initSuccessfulAPICallResult(testData.sixRecords),
+            APICallResult.InitForUnsuccessfulResponse(400));
+
+        await act(async () => renderComponent());
+        await waitFor(() => assertErrorMessageNotExist());
+        assertScreen(2025, 6);
+
+        await act(async () => fireChangeYearDropdownValueEvent(2026));
+        await waitFor(() => assertUnsuccessfulAPIResponse(400, 2026));
+
+        assertApiCall(2, [2025, 2026]);
+    });
+})
+
+describe('API call throws error', () => {
+    test('No API call delay on initial rendering.', async () => {
+        mockApiCalls(APICallResult.InitForErrorThrown());
+        renderComponent();
+
+        await waitFor(() => assertAPICallErrorThrown(2025));
+        assertApiCall(1, [2025]);
+    });
+
+    test('API call delay on initial rendering.', async () => {
+        mockApiCallWithDelay(50, APICallResult.InitForErrorThrown());
+
+        await act(() => renderComponent());
+        await waitFor(() => {
+            assertApiCall(1, [2025]);
+            assertErrorMessageNotExist();
+            assertDisplayLoadingText();
+        });
+
+        await act(() => utils.advanceTimersBySeconds(55));
+        assertAPICallErrorThrown(2025);
+    });
+
+    test('Failure on initial rendering, success on year value change.', async () => {
+        mockApiCalls(APICallResult.InitForErrorThrown());
+        mockApiCallWithDelay(3, initSuccessfulAPICallResult(testData.sixRecords));
+
+        await act(async () => renderComponent());
+        await waitFor(() => assertAPICallErrorThrown(2025));
+
+        await act(async () => fireChangeYearDropdownValueEvent(2030));
+        await waitFor(() => assertErrorMessageNotExist());
+        await act(() => utils.advanceTimersBySeconds(4));
+        await waitFor(() => assertErrorMessageNotExist());
+        assertScreen(2030, 6);
+
+        assertApiCall(2, [2025, 2030]);
+    });
+
+    test('Success on initial rendering, failure on year value change.', async () => {
+        mockApiCalls(initSuccessfulAPICallResult(testData.sixRecords),
+            APICallResult.InitForErrorThrown());
+
+        await act(async () => renderComponent());
+        await waitFor(() => assertErrorMessageNotExist());
+        assertScreen(2025, 6);
+
+        await act(async () => fireChangeYearDropdownValueEvent(2026));
+        await waitFor(() => assertAPICallErrorThrown(2026));
+
+        assertApiCall(2, [2025, 2026]);
+    });
+});
+
+describe('API call timeout', () => {
+    const errorMessageEN = 'Request timed out. Please try again.';
+    test('On initial rendering - English.', async () => testAPICallTimeout('en', errorMessageEN));
+    test('On initial rendering - Chinese.', async () =>
+        testAPICallTimeout('zh', 'API 通訊已逾時，請重新嘗試。'));
+    test('On initial rendering - Japanese.', async () =>
+        testAPICallTimeout('ja', 'APIサービスでタイムアウトが発生しました。もう一度お試しください。'));
+
+    test('Failure on initial rendering, success on year value change.', async () => {
+        await testAPICallTimeout('en', errorMessageEN);
+
+        mockApiCallWithDelay(3, initSuccessfulAPICallResult(testData.sixRecords));
+        await act(async () => fireChangeYearDropdownValueEvent(2030));
+        await waitFor(() => assertErrorMessageNotExist());
+        await act(() => utils.advanceTimersBySeconds(4));
+        await waitFor(() => assertErrorMessageNotExist());
+        assertScreen(2030, 6);
+
+        assertApiCall(2, [2025, 2030]);
+    });
+
+    /**
+     * Runs a test case on API call timeout.
+     * @param {string} language the language code
+     * @param {string} errorMessage the expected error message
+     */
+    const testAPICallTimeout = async (language, errorMessage) => {
+        i18n.changeLanguage(language);
+        mockApiCallWithDelay(60, APICallResult.InitForTimeout());
+
+        await act(() => renderComponent());
+        await waitFor(() => {
+            assertApiCall(1, [2025]);
+            assertErrorMessageNotExist();
+            assertDisplayLoadingText(language);
+        });
+
+        await act(() => utils.advanceTimersBySeconds(61));
+        assertScreenWithError(2025, language, errorMessage);
+    }
 });
 
 /**

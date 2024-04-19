@@ -42,12 +42,40 @@ describe('Integration tests - Sumo Tournament Schedule Lookup', () => {
     });
   }
 
+  test('Page load - Unsuccessful response - English.', async () =>
+    testAPIUnsuccessfulResponse('en', 'System error!', 'Could not retrieve data (returned status code 400)'));
+  test('Page load - nsuccessful response - Chinese.', async () =>
+    testAPIUnsuccessfulResponse('zh', '系統發生錯誤！', 'Could not retrieve data (returned status code 400)'));
+  test('Page load - nsuccessful response - Japanese.', async () =>
+    testAPIUnsuccessfulResponse('ja', 'システムエラーが発生しました!', 'Could not retrieve data (returned status code 400)'));
+
+  /**
+   * Runs a test case where the API call returns an unsuccessful response.
+   * @param {string} language the language code
+   * @param {string} errorHeader the expected error message header
+   * @param {string} errorBody the expected error message body
+   */
+  const testAPIUnsuccessfulResponse = async (language, errorHeader, errorBody) => {
+    i18n.changeLanguage(language);
+    spyFetch.mockImplementationOnce(() => Promise.resolve({
+      ok: false,
+      status: 400,
+      json: () => ('Bad request.'),
+    }));
+    await act(() => renderComponent());
+    await waitFor(() => {
+      assertDropdownValue(2024);
+      assertErrorMessage(errorHeader, errorBody);
+      assertTableContent();
+    });
+  }
+
   test('Page load - API call throws error - English.', async () =>
-    testAPICallErrorThrown('en', 'ERROR', 'Could not retrieve data (error on making API call)'));
+    testAPICallErrorThrown('en', 'System error!', 'Could not retrieve data (error on making API call)'));
   test('Page load - API call throws error - Chinese.', async () =>
-    testAPICallErrorThrown('zh', '發生錯誤', 'Could not retrieve data (error on making API call)'));
+    testAPICallErrorThrown('zh', '系統發生錯誤！', 'Could not retrieve data (error on making API call)'));
   test('Page load - API call throws error - Japanese.', async () =>
-    testAPICallErrorThrown('ja', 'エラー', 'Could not retrieve data (error on making API call)'));
+    testAPICallErrorThrown('ja', 'システムエラーが発生しました!', 'Could not retrieve data (error on making API call)'));
 
   /**
    * Runs a test case where the API call throws an error with message "Arbitrary error.".

@@ -4,11 +4,11 @@
         "heading": "發生錯誤",
         "message": {
             "UnsuccessfulResponse": {
-                "header": "發生錯誤",
+                "header": "系統發生錯誤！",
                 "body": "Could not retrieve data (returned status code {{statusCode}})"
             },
             "ErrorThrown": {
-                "header": "發生錯誤",
+                "header": "系統發生錯誤！",
                 "body": "Could not retrieve data (error on making API call)"
             },
             "Timeout": {

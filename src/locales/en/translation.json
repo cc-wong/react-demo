@@ -4,11 +4,11 @@
         "heading": "ERROR",
         "message": {
             "UnsuccessfulResponse": {
-                "header": "ERROR",
+                "header": "System error!",
                 "body": "Could not retrieve data (returned status code {{statusCode}})"
             },
             "ErrorThrown": {
-                "header": "ERROR",
+                "header": "System error!",
                 "body": "Could not retrieve data (error on making API call)"
             },
             "Timeout": {

@@ -195,13 +195,13 @@ describe('API unsuccessful response', () => {
      * @param {string} language the language code; default `en` if not provided
      */
     const assertUnsuccessfulAPIResponse = (statusCode, expectedYear, language = 'en') => {
-        var [header, body] = ['ERROR', `Could not retrieve data (returned status code ${statusCode})`];
+        var [header, body] = ['System error!', `Could not retrieve data (returned status code ${statusCode})`];
         switch (language) {
             case 'zh':
-                [header, body] = ['發生錯誤', `Could not retrieve data (returned status code ${statusCode})`];
+                [header, body] = ['系統發生錯誤！', `Could not retrieve data (returned status code ${statusCode})`];
                 break;
             case 'ja':
-                [header, body] = ['エラー', `Could not retrieve data (returned status code ${statusCode})`];
+                [header, body] = ['システムエラーが発生しました!', `Could not retrieve data (returned status code ${statusCode})`];
                 break;
             default:
         }
@@ -275,13 +275,13 @@ describe('API call throws error', () => {
      * @param {string} language the language code; default `en` if not provided
      */
     const assertAPICallErrorThrown = (expectedYear, language = 'en') => {
-        var [header, body] = ['ERROR', 'Could not retrieve data (error on making API call)'];
+        var [header, body] = ['System error!', 'Could not retrieve data (error on making API call)'];
         switch (language) {
             case 'zh':
-                [header, body] = ['發生錯誤', 'Could not retrieve data (error on making API call)'];
+                [header, body] = ['系統發生錯誤！', 'Could not retrieve data (error on making API call)'];
                 break;
             case 'ja':
-                [header, body] = ['エラー', 'Could not retrieve data (error on making API call)'];
+                [header, body] = ['システムエラーが発生しました!', 'Could not retrieve data (error on making API call)'];
                 break;
             default:
         }

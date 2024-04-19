@@ -42,8 +42,8 @@ export default function SearchScreen() {
             <h1>{t('sumoSchedLookup.title')}</h1>
             {error && (
                 <div className='ErrorMessageBox' id='errorMessage'>
-                    <div className='ErrorMessageHeading'>{t('error.heading')}</div>
-                    {parse(error)}
+                    <div className='ErrorMessageHeading'>{error.header}</div>
+                    {parse(error.body)}
                 </div>
             )}
             <form name='pickYear'>
@@ -63,15 +63,18 @@ export default function SearchScreen() {
  * 
  * @param {APICallResult} result the API call result object
  * @param {*} t the translation function
- * @returns {string} the message configured by `error.messages.<result.error.type>`
+ * @returns {{header: string; body: string}} the error message header and body to display
  */
 const getAPIErrorMessage = (result, t) => {
-    let keyValues = {};
+    let bodyKeys = {};
     switch (result.error.type) {
         case APICallResult.FailType.UnsuccessfulResponse:
-            keyValues = { statusCode: result.error.statusCode };
+            bodyKeys = { statusCode: result.error.statusCode };
             break;
         default:
     }
-    return t(`error.message.${result.error.type}`, keyValues);
+    return {
+        header: t(`error.message.${result.error.type}.header`),
+        body: t(`error.message.${result.error.type}.body`, bodyKeys)
+    };
 }

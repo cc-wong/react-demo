@@ -3,9 +3,18 @@
     "error": {
         "heading": "發生錯誤",
         "message": {
-            "UnsuccessfulResponse": "Could not retrieve data (returned status code {{statusCode}})",
-            "ErrorThrown": "Could not retrieve data (error on making API call)",
-            "Timeout": "API 通訊已逾時，請重新嘗試。"
+            "UnsuccessfulResponse": {
+                "header": "發生錯誤",
+                "body": "Could not retrieve data (returned status code {{statusCode}})"
+            },
+            "ErrorThrown": {
+                "header": "發生錯誤",
+                "body": "Could not retrieve data (error on making API call)"
+            },
+            "Timeout": {
+                "header": "發生逾時錯誤！",
+                "body": "請重新嘗試。"
+            }
         }
     },
     "sumoSchedLookup": {

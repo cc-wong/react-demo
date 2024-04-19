@@ -43,42 +43,44 @@ describe('Integration tests - Sumo Tournament Schedule Lookup', () => {
   }
 
   test('Page load - API call throws error - English.', async () =>
-    testAPICallErrorThrown('en', 'Could not retrieve data (error on making API call)'));
+    testAPICallErrorThrown('en', 'ERROR', 'Could not retrieve data (error on making API call)'));
   test('Page load - API call throws error - Chinese.', async () =>
-    testAPICallErrorThrown('zh', 'Could not retrieve data (error on making API call)'));
+    testAPICallErrorThrown('zh', '發生錯誤', 'Could not retrieve data (error on making API call)'));
   test('Page load - API call throws error - Japanese.', async () =>
-    testAPICallErrorThrown('ja', 'Could not retrieve data (error on making API call)'));
+    testAPICallErrorThrown('ja', 'エラー', 'Could not retrieve data (error on making API call)'));
 
   /**
    * Runs a test case where the API call throws an error with message "Arbitrary error.".
    * @param {string} language the language code
-   * @param {*} errorMessage the expected error message
+   * @param {string} errorHeader the expected error message header
+   * @param {string} errorBody the expected error message body
    */
-  const testAPICallErrorThrown = async (language, errorMessage) => {
+  const testAPICallErrorThrown = async (language, errorHeader, errorBody) => {
     i18n.changeLanguage(language);
     spyFetch.mockImplementationOnce(() => Promise.reject(new Error('Arbitrary error.')));
     await act(() => renderComponent());
     await waitFor(() => {
       assertDropdownValue(2024);
-      assertErrorMessage(errorMessage);
+      assertErrorMessage(errorHeader, errorBody);
       assertTableContent();
     });
   }
 
   test('Page load - API call timeout - English.', async () =>
-    testAPICallTimeout('en', 'Loading...', 'Request timed out. Please try again.'));
+    testAPICallTimeout('en', 'Loading...', 'Timeout error!', 'Please try again.'));
   test('Page load - API call timeout - Chinese.', async () =>
-    testAPICallTimeout('zh', '載入中...', 'API 通訊已逾時，請重新嘗試。'));
+    testAPICallTimeout('zh', '載入中...', '發生逾時錯誤！', '請重新嘗試。'));
   test('Page load - API call timeout - Japanese.', async () =>
-    testAPICallTimeout('ja', 'ロード中...', 'APIサービスでタイムアウトが発生しました。もう一度お試しください。'));
+    testAPICallTimeout('ja', 'ロード中...', 'タイムアウトが発生しました!', 'もう一度お試しください。'));
 
   /**
    * Runs a test case where the API call times out.
    * @param {string} language the language code
    * @param {string} loadingText the expected loading text
-   * @param {string} errorMessage the expected error message
+   * @param {string} errorHeader the expected error message header
+   * @param {string} errorBody the expected error message body
    */
-  const testAPICallTimeout = async (language, loadingText, errorMessage) => {
+  const testAPICallTimeout = async (language, loadingText, errorHeader, errorBody) => {
     i18n.changeLanguage(language);
     var timeoutError = new Error('API call timed out!');
     timeoutError.name = 'APITimeoutError';
@@ -90,7 +92,7 @@ describe('Integration tests - Sumo Tournament Schedule Lookup', () => {
     await act(() => utils.advanceTimersBySeconds(61));
     await waitFor(() => {
       assertDropdownValue(2024);
-      assertErrorMessage(errorMessage);
+      assertErrorMessage(errorHeader, errorBody);
       expect(document.querySelector('#loadingText')).toBeNull();
       assertTableContent();
     });
@@ -157,9 +159,10 @@ const assertTableContent = (tableContent = []) => {
 /**
  * Asserts the error message displayed.
  * 
- * @param {string} message the expected error message
+ * @param {string} header the expected message header
+ * @param {string} body the expected message body
  */
-const assertErrorMessage = (message) => {
+const assertErrorMessage = (header, body) => {
   const errorMessageBox = document.querySelector('#errorMessage');
-  expect(errorMessageBox.textContent).toMatch(new RegExp(utils.escapeRegex(message)));
+  expect(errorMessageBox.textContent).toMatch(new RegExp(utils.escapeRegex(header + body)));
 }

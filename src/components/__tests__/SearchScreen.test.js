@@ -194,8 +194,19 @@ describe('API unsuccessful response', () => {
      * @param {number} expectedYear the expected selected value in the Year dropdown box
      * @param {string} language the language code; default `en` if not provided
      */
-    const assertUnsuccessfulAPIResponse = (statusCode, expectedYear, language = 'en') =>
-        assertScreenWithError(expectedYear, language, `Could not retrieve data (returned status code ${statusCode})`);
+    const assertUnsuccessfulAPIResponse = (statusCode, expectedYear, language = 'en') => {
+        var [header, body] = ['ERROR', `Could not retrieve data (returned status code ${statusCode})`];
+        switch (language) {
+            case 'zh':
+                [header, body] = ['發生錯誤', `Could not retrieve data (returned status code ${statusCode})`];
+                break;
+            case 'ja':
+                [header, body] = ['エラー', `Could not retrieve data (returned status code ${statusCode})`];
+                break;
+            default:
+        }
+        assertScreenWithError(expectedYear, header, body);
+    }
 })
 
 describe('API call throws error', () => {
@@ -263,17 +274,28 @@ describe('API call throws error', () => {
      * @param {number} expectedYear the expected selected value in the Year dropdown box
      * @param {string} language the language code; default `en` if not provided
      */
-    const assertAPICallErrorThrown = (expectedYear, language = 'en') =>
-        assertScreenWithError(expectedYear, language, 'Could not retrieve data (error on making API call)');
+    const assertAPICallErrorThrown = (expectedYear, language = 'en') => {
+        var [header, body] = ['ERROR', 'Could not retrieve data (error on making API call)'];
+        switch (language) {
+            case 'zh':
+                [header, body] = ['發生錯誤', 'Could not retrieve data (error on making API call)'];
+                break;
+            case 'ja':
+                [header, body] = ['エラー', 'Could not retrieve data (error on making API call)'];
+                break;
+            default:
+        }
+        assertScreenWithError(expectedYear, header, body);
+    }
 });
 
 describe('API call timeout', () => {
     test('On initial rendering - English.', async () =>
-        testAPICallTimeout('en', 'Request timed out. Please try again.'));
+        testAPICallTimeout('en', 'Timeout error!', 'Please try again.'));
     test('On initial rendering - Chinese.', async () =>
-        testAPICallTimeout('zh', 'API 通訊已逾時，請重新嘗試。'));
+        testAPICallTimeout('zh', '發生逾時錯誤！', '請重新嘗試。'));
     test('On initial rendering - Japanese.', async () =>
-        testAPICallTimeout('ja', 'APIサービスでタイムアウトが発生しました。<br>もう一度お試しください。'));
+        testAPICallTimeout('ja', 'タイムアウトが発生しました!', 'もう一度お試しください。'));
 
     test('Failure on initial rendering, success on year value change.', async () => {
         await testAPICallTimeout('en');
@@ -291,11 +313,12 @@ describe('API call timeout', () => {
 
     /**
      * Runs a test case on API call timeout.
-     * @param {string} language the language code
-     * @param {string} errorMessage
-     *      the expected error message; message text assertion is skipped if not provided
+     * @param {string} errorHeader
+     *      the expected error message header; message text assertion is skipped if not provided
+     * @param {string} errorBody
+     *      the expected error message body; message text assertion is skipped if not provided
      */
-    const testAPICallTimeout = async (language, errorMessage = null) => {
+    const testAPICallTimeout = async (language, errorHeader = null, errorBody = null) => {
         i18n.changeLanguage(language);
         mockApiCallWithDelay(60, APICallResult.InitForTimeout());
 
@@ -307,7 +330,7 @@ describe('API call timeout', () => {
         });
 
         await act(() => utils.advanceTimersBySeconds(61));
-        errorMessage && assertScreenWithError(2025, language, errorMessage);
+        errorHeader && errorBody && assertScreenWithError(2025, errorHeader, errorBody);
     }
 });
 
@@ -362,31 +385,17 @@ const assertApiCall = (times, years) => {
 /**
  * Asserts the screen for a test case with an error message displaying due to an unsuccessful API call.
  * @param {number} expectedYear the expected selected value in the Year dropdown box
- * @param {string} language the language code
- * @param {string} message
- *      the expected message displayed in the error box, HTML tags for line breaks, etc. included
+ * @param {string} messageHeader the expected error message header
+ * @param {string} message the expected message body, HTML tags for line breaks, etc. included
  */
-const assertScreenWithError = (expectedYear, language, message) => {
+const assertScreenWithError = (expectedYear, messageHeader, messageBody) => {
     const errorMessageBox = document.querySelector('#errorMessage');
     expect(errorMessageBox).toBeInTheDocument();
     expect(errorMessageBox.innerHTML)
-        .toMatch(new RegExp(`${getExpectedErrorHeading(language)}.*${utils.escapeRegex(message)}`));
+        .toMatch(new RegExp(`${utils.escapeRegex(messageHeader)}.*${utils.escapeRegex(messageBody)}`));
 
     assertScreen(expectedYear, 0);
     assertNotDisplayLoadingText();
-}
-
-/**
- * Gets the expected error heading.
- * @param {string} language the language code
- * @returns the error heading for the language
- */
-const getExpectedErrorHeading = (language) => {
-    switch (language) {
-        case 'zh': return '發生錯誤';
-        case 'ja': return 'エラー';
-        default: return 'ERROR';
-    }
 }
 
 /**

@@ -3,9 +3,18 @@
     "error": {
         "heading": "エラー",
         "message": {
-            "UnsuccessfulResponse": "Could not retrieve data (returned status code {{statusCode}})",
-            "ErrorThrown": "Could not retrieve data (error on making API call)",
-            "Timeout": "APIサービスでタイムアウトが発生しました。<br>もう一度お試しください。"
+            "UnsuccessfulResponse": {
+                "header": "エラー",
+                "body": "Could not retrieve data (returned status code {{statusCode}})"
+            },
+            "ErrorThrown": {
+                "header": "エラー",
+                "body": "Could not retrieve data (error on making API call)"
+            },
+            "Timeout": {
+                "header": "タイムアウトが発生しました!",
+                "body": "もう一度お試しください。"
+            }
         }
     },
     "sumoSchedLookup": {

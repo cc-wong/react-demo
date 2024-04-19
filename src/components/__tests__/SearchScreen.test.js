@@ -28,7 +28,6 @@ describe('Verify screen', () => {
     test('Screen components are rendered.', async () => {
         mockApiCalls(initSuccessfulAPICallResult(testData.sixRecords));
         await act(async () => renderComponent());
-
         await waitFor(() => {
             expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
             expect(screen.getByRole('combobox', { name: 'year' })).toBeInTheDocument();
@@ -49,7 +48,6 @@ describe('Verify screen', () => {
         mockApiCalls(initSuccessfulAPICallResult(testData.sixRecords));
         i18n.changeLanguage(languageCode);
         await act(async () => renderComponent());
-
         await waitFor(() => {
             const heading = screen.getByRole('heading', { level: 1 });
             expect(heading).toHaveTextContent(expected);
@@ -61,7 +59,6 @@ describe('Happy path (API calls successful)', () => {
     test('No API call delay on intial rendering.', async () => {
         mockApiCalls(initSuccessfulAPICallResult(testData.sixRecords));
         renderComponent();
-
         await waitFor(() => {
             assertApiCall(1, [2025]);
             assertScreen(2025, 6);
@@ -132,13 +129,20 @@ describe('Happy path (API calls successful)', () => {
 })
 
 describe('API unsuccessful response', () => {
-    test('No API call delay on initial rendering.', async () => {
+    test('No API call delay on initial rendering - English.', async () => await testInitialRendering('en'));
+    test('No API call delay on initial rendering - Chinese.', async () => await testInitialRendering('zh'));
+    test('No API call delay on initial rendering - Japanese.', async () => await testInitialRendering('ja'));
+    /**
+     * Runs a test case with an unsuccessful API response on initial rendering.
+     * @param {string} language the language code
+     */
+    const testInitialRendering = async (language) => {
+        i18n.changeLanguage(language);
         mockApiCalls(APICallResult.InitForUnsuccessfulResponse(400));
         renderComponent();
-
-        await waitFor(() => assertUnsuccessfulAPIResponse(400, 2025));
+        await waitFor(() => assertUnsuccessfulAPIResponse(400, 2025, language));
         assertApiCall(1, [2025]);
-    });
+    }
 
     test('API call delay on initial rendering.', async () => {
         mockApiCallWithDelay(20, APICallResult.InitForUnsuccessfulResponse(400));
@@ -183,16 +187,33 @@ describe('API unsuccessful response', () => {
 
         assertApiCall(2, [2025, 2026]);
     });
+
+    /**
+     * Asserts the screen for a test case with unsuccessful API response.
+     * @param {number} statusCode the response status code
+     * @param {number} expectedYear the expected selected value in the Year dropdown box
+     * @param {string} language the language code; default `en` if not provided
+     */
+    const assertUnsuccessfulAPIResponse = (statusCode, expectedYear, language = 'en') =>
+        assertScreenWithError(expectedYear, language, `Could not retrieve data (returned status code ${statusCode})`);
+
 })
 
 describe('API call throws error', () => {
-    test('No API call delay on initial rendering.', async () => {
+    test('No API call delay on initial rendering - English.', async () => await testInitialRendering('en'));
+    test('No API call delay on initial rendering - Chinese.', async () => await testInitialRendering('zh'));
+    test('No API call delay on initial rendering - Japanese.', async () => await testInitialRendering('ja'));
+    /**
+     * Runs a test case where the API call throws error on initial rendering.
+     * @param {string} language the language code
+     */
+    const testInitialRendering = async (language) => {
+        i18n.changeLanguage(language);
         mockApiCalls(APICallResult.InitForErrorThrown());
         renderComponent();
-
-        await waitFor(() => assertAPICallErrorThrown(2025));
+        await waitFor(() => assertAPICallErrorThrown(2025, language));
         assertApiCall(1, [2025]);
-    });
+    }
 
     test('API call delay on initial rendering.', async () => {
         mockApiCallWithDelay(50, APICallResult.InitForErrorThrown());
@@ -237,18 +258,27 @@ describe('API call throws error', () => {
 
         assertApiCall(2, [2025, 2026]);
     });
+
+    /**
+     * Asserts the screen for a test case where the API call throws (non-timeout) error.
+     * @param {number} expectedYear the expected selected value in the Year dropdown box
+     * @param {string} language the language code; default `en` if not provided
+     */
+    const assertAPICallErrorThrown = (expectedYear, language = 'en') =>
+        assertScreenWithError(expectedYear, language, 'Could not retrieve data (error on making API call)');
 });
 
 describe('API call timeout', () => {
-    const errorMessageEN = 'Request timed out. Please try again.';
-    test('On initial rendering - English.', async () => testAPICallTimeout('en', errorMessageEN));
+    test('On initial rendering - English.', async () =>
+        testAPICallTimeout('en', 'Request timed out. Please try again.'));
     test('On initial rendering - Chinese.', async () =>
         testAPICallTimeout('zh', 'API 通訊已逾時，請重新嘗試。'));
     test('On initial rendering - Japanese.', async () =>
         testAPICallTimeout('ja', 'APIサービスでタイムアウトが発生しました。もう一度お試しください。'));
 
     test('Failure on initial rendering, success on year value change.', async () => {
-        await testAPICallTimeout('en', errorMessageEN);
+        await testAPICallTimeout('en');
+        expect(document.querySelector('#errorMessage')).toBeInTheDocument();
 
         mockApiCallWithDelay(3, initSuccessfulAPICallResult(testData.sixRecords));
         await act(async () => fireChangeYearDropdownValueEvent(2030));
@@ -263,9 +293,10 @@ describe('API call timeout', () => {
     /**
      * Runs a test case on API call timeout.
      * @param {string} language the language code
-     * @param {string} errorMessage the expected error message
+     * @param {string} errorMessage
+     *      the expected error message; message text assertion is skipped if not provided
      */
-    const testAPICallTimeout = async (language, errorMessage) => {
+    const testAPICallTimeout = async (language, errorMessage = null) => {
         i18n.changeLanguage(language);
         mockApiCallWithDelay(60, APICallResult.InitForTimeout());
 
@@ -277,7 +308,7 @@ describe('API call timeout', () => {
         });
 
         await act(() => utils.advanceTimersBySeconds(61));
-        assertScreenWithError(2025, language, errorMessage);
+        errorMessage && assertScreenWithError(2025, language, errorMessage);
     }
 });
 
@@ -328,23 +359,6 @@ const assertApiCall = (times, years) => {
     expect(spyApi).toHaveBeenCalledTimes(times);
     years.forEach((year) => expect(spyApi).toHaveBeenCalledWith(year.toString()));
 }
-
-/**
- * Asserts the screen for a test case with unsuccessful API response.
- * @param {number} statusCode the response status code
- * @param {number} expectedYear the expected selected value in the Year dropdown box
- * @param {string} language the language code; default `en` if not provided
- */
-const assertUnsuccessfulAPIResponse = (statusCode, expectedYear, language = 'en') =>
-    assertScreenWithError(expectedYear, language, `Could not retrieve data (returned status code ${statusCode})`);
-
-/**
- * Asserts the screen for a test case where the API call throws (non-timeout) error.
- * @param {number} expectedYear the expected selected value in the Year dropdown box
- * @param {string} language the language code; default `en` if not provided
- */
-const assertAPICallErrorThrown = (expectedYear, language = 'en') =>
-    assertScreenWithError(expectedYear, language, 'Could not retrieve data (error on making API call)');
 
 /**
  * Asserts the screen for a test case with an error message displaying due to an unsuccessful API call.

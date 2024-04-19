@@ -196,7 +196,6 @@ describe('API unsuccessful response', () => {
      */
     const assertUnsuccessfulAPIResponse = (statusCode, expectedYear, language = 'en') =>
         assertScreenWithError(expectedYear, language, `Could not retrieve data (returned status code ${statusCode})`);
-
 })
 
 describe('API call throws error', () => {
@@ -274,7 +273,7 @@ describe('API call timeout', () => {
     test('On initial rendering - Chinese.', async () =>
         testAPICallTimeout('zh', 'API 通訊已逾時，請重新嘗試。'));
     test('On initial rendering - Japanese.', async () =>
-        testAPICallTimeout('ja', 'APIサービスでタイムアウトが発生しました。もう一度お試しください。'));
+        testAPICallTimeout('ja', 'APIサービスでタイムアウトが発生しました。<br>もう一度お試しください。'));
 
     test('Failure on initial rendering, success on year value change.', async () => {
         await testAPICallTimeout('en');
@@ -364,7 +363,8 @@ const assertApiCall = (times, years) => {
  * Asserts the screen for a test case with an error message displaying due to an unsuccessful API call.
  * @param {number} expectedYear the expected selected value in the Year dropdown box
  * @param {string} language the language code
- * @param {string} message the expected message displayed in the error box
+ * @param {string} message
+ *      the expected message displayed in the error box, HTML tags for line breaks, etc. included
  */
 const assertScreenWithError = (expectedYear, language, message) => {
     const errorMessageBox = document.querySelector('#errorMessage');

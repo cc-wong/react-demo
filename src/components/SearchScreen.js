@@ -1,5 +1,6 @@
 import './SearchScreen.css';
 
+import parse from 'html-react-parser';
 import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
 
@@ -41,7 +42,8 @@ export default function SearchScreen() {
             <h1>{t('sumoSchedLookup.title')}</h1>
             {error && (
                 <div className='ErrorMessageBox' id='errorMessage'>
-                    <div className='ErrorMessageHeading'>{t('error.heading')}</div>{error}
+                    <div className='ErrorMessageHeading'>{t('error.heading')}</div>
+                    {parse(error)}
                 </div>
             )}
             <form name='pickYear'>

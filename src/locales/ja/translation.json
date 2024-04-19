@@ -5,7 +5,7 @@
         "message": {
             "UnsuccessfulResponse": "Could not retrieve data (returned status code {{statusCode}})",
             "ErrorThrown": "Could not retrieve data (error on making API call)",
-            "Timeout": "APIサービスでタイムアウトが発生しました。もう一度お試しください。"
+            "Timeout": "APIサービスでタイムアウトが発生しました。<br>もう一度お試しください。"
         }
     },
     "sumoSchedLookup": {

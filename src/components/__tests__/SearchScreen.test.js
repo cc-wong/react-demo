@@ -186,9 +186,9 @@ describe('Network delay on API call', () => {
     test('API call timeout after delay - English.', async () =>
         testAPICallTimeout('en', 'Request timed out. Please try again.'));
     test('API call timeout after delay - Chinese.', async () =>
-        testAPICallTimeout('zh', 'Request timed out. Please try again.'));
+        testAPICallTimeout('zh', 'API 通訊已逾時，請重新嘗試。'));
     test('API call timeout after delay - Japanese.', async () =>
-        testAPICallTimeout('ja', 'Request timed out. Please try again.'));
+        testAPICallTimeout('ja', 'APIサービスでタイムアウトが発生しました。もう一度お試しください。'));
 
     /**
      * Runs a test case on API call timeout.

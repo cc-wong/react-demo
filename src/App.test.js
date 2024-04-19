@@ -68,9 +68,9 @@ describe('Integration tests - Sumo Tournament Schedule Lookup', () => {
   test('Page load - API call timeout - English.', async () =>
     testAPICallTimeout('en', 'Loading...', 'Request timed out. Please try again.'));
   test('Page load - API call timeout - Chinese.', async () =>
-    testAPICallTimeout('zh', '載入中...', 'Request timed out. Please try again.'));
+    testAPICallTimeout('zh', '載入中...', 'API 通訊已逾時，請重新嘗試。'));
   test('Page load - API call timeout - Japanese.', async () =>
-    testAPICallTimeout('ja', 'ロード中...', 'Request timed out. Please try again.'));
+    testAPICallTimeout('ja', 'ロード中...', 'APIサービスでタイムアウトが発生しました。もう一度お試しください。'));
 
   /**
    * Runs a test case where the API call times out.

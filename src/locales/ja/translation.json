@@ -1,7 +1,7 @@
 {
-    "loading": "Loading...",
+    "loading": "ロード中...",
     "error": {
-        "heading": "ERROR",
+        "heading": "エラー",
         "message": {
             "UnsuccessfulResponse": "Could not retrieve data (returned status code {{statusCode}})",
             "ErrorThrown": "Could not retrieve data (error on making API call)",

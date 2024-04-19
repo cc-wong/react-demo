@@ -131,20 +131,29 @@ describe('Year dropdown value changed', () => {
 });
 
 describe('Network delay on API call', () => {
-    test('Delay on initial rendering.', async () => {
+    test('Delay on initial rendering - English.', async () => testInitialRenderingDelay('en'));
+    test('Delay on initial rendering - Chinese.', async () => testInitialRenderingDelay('zh'));
+    test('Delay on initial rendering - Japanese.', async () => testInitialRenderingDelay('ja'));
+
+    /**
+     * Runs a test case with a API call delay on initial rendering.
+     * @param {string} language the language code
+     */
+    const testInitialRenderingDelay = async (language) => {
+        i18n.changeLanguage(language);
         mockApiCallWithDelay(30, initSuccessfulAPICallResult(testData.sixRecords));
 
         await act(() => renderComponent());
         await waitFor(() => {
             assertApiCall(1, [2025]);
             assertErrorMessageNotExist();
-            assertDisplayLoadingText();
+            assertDisplayLoadingText(language);
         });
 
         await act(() => utils.advanceTimersBySeconds(35));
         assertScreen(2025, 6);
         assertNotDisplayLoadingText();
-    });
+    }
 
     test('Unsuccessful response after delay.', async () => {
         mockApiCallWithDelay(20, APICallResult.InitForUnsuccessfulResponse(400));
@@ -174,19 +183,32 @@ describe('Network delay on API call', () => {
         assertAPICallErrorThrown(2025);
     });
 
-    test('API call timeout after delay.', async () => {
+    test('API call timeout after delay - English.', async () =>
+        testAPICallTimeout('en', 'Request timed out. Please try again.'));
+    test('API call timeout after delay - Chinese.', async () =>
+        testAPICallTimeout('zh', 'Request timed out. Please try again.'));
+    test('API call timeout after delay - Japanese.', async () =>
+        testAPICallTimeout('ja', 'Request timed out. Please try again.'));
+
+    /**
+     * Runs a test case on API call timeout.
+     * @param {string} language the language code
+     * @param {string} errorMessage the expected error message
+     */
+    const testAPICallTimeout = async (language, errorMessage) => {
+        i18n.changeLanguage(language);
         mockApiCallWithDelay(60, APICallResult.InitForTimeout());
 
         await act(() => renderComponent());
         await waitFor(() => {
             assertApiCall(1, [2025]);
             assertErrorMessageNotExist();
-            assertDisplayLoadingText();
+            assertDisplayLoadingText(language);
         });
 
         await act(() => utils.advanceTimersBySeconds(61));
-        assertAPICallTimeout(2025);
-    });
+        assertScreenWithError(2025, language, errorMessage);
+    }
 
     test('Delay on Year dropdown change.', async () => {
         mockApiCalls(initSuccessfulAPICallResult(testData.oneRecord));
@@ -278,14 +300,6 @@ const assertAPICallErrorThrown = (expectedYear, language = 'en') =>
     assertScreenWithError(expectedYear, language, 'Could not retrieve data (error on making API call)');
 
 /**
- * Asserts the screen for a test case with API call timeout.
- * @param {number} expectedYear the expected selected value in the Year dropdown box
- * @param {string} language the language code; default `en` if not provided
- */
-const assertAPICallTimeout = (expectedYear, language = 'en') =>
-    assertScreenWithError(expectedYear, language, 'Request timed out. Please try again.');
-
-/**
  * Asserts the screen for a test case with an error message displaying due to an unsuccessful API call.
  * @param {number} expectedYear the expected selected value in the Year dropdown box
  * @param {string} language the language code
@@ -308,8 +322,9 @@ const assertScreenWithError = (expectedYear, language, message) => {
  */
 const getExpectedErrorHeading = (language) => {
     switch (language) {
-        default:
-            return 'ERROR';
+        case 'zh': return '發生錯誤';
+        case 'ja': return 'エラー';
+        default: return 'ERROR';
     }
 }
 
@@ -345,8 +360,9 @@ const assertDisplayLoadingText = (language = 'en') => {
  */
 const getExpectedLoadingText = (language) => {
     switch (language) {
-        default:
-            return 'Loading...';
+        case 'zh': return '載入中...';
+        case 'ja': return 'ロード中...';
+        default: return 'Loading...';
     }
 }
 

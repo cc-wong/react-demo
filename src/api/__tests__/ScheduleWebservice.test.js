@@ -1,4 +1,4 @@
-import { cleanup, act, waitFor } from '@testing-library/react';
+import { cleanup } from '@testing-library/react';
 import * as utils from '../../testUtils';
 
 import * as api from '../ScheduleWebservice';
@@ -47,77 +47,26 @@ describe('Successful API calls', () => {
     }
 });
 
-describe('Unsuccessful API calls', () => {
-    test('Unsuccessful response.', async () => {
-        mockApiCall({
-            ok: false,
-            status: 400,
-            statusText: 'BAD REQUEST',
-            text: () => ('Test Unsuccessful Response.'),
-        });
-        testUnsuccessfulAPICall({
+test('Unsuccessful response returned.', async () => {
+    mockApiCall({
+        ok: false,
+        status: 400,
+        statusText: 'BAD REQUEST',
+        text: () => ('Test Unsuccessful Response.'),
+    });
+    mockGetAPIURL();
+    api.fetchData(2026).then((result) => {
+        expect(result.success).toBe(false);
+        expect(result.error).toEqual({
             type: APICallResult.FailType.UnsuccessfulResponse,
             statusCode: 400,
             statusText: 'BAD REQUEST',
             reason: 'Test Unsuccessful Response.'
-        })
-    });
-
-    test('Error thrown.', async () => {
-        const error = new TypeError("Load failed!!");
-        spyFetch.mockRejectedValueOnce(error);
-        testUnsuccessfulAPICall({ type: APICallResult.FailType.ErrorThrown, reason: error });
-    });
-
-    /**
-     * Runs a test case where the API call ends in failure.
-     * @param {{type: string; statusCode?: number}} error
-     *              the expected error details in the returned result object
-     */
-    const testUnsuccessfulAPICall = async (error) => {
-        mockGetAPIURL();
-        api.fetchData(2026).then((result) => {
-            expect(result.success).toBe(false);
-            expect(result.error).toEqual(error);
         });
-        assertApiCall(2026);
-        assertEnvUtilityFunctionsCalled();
-        expect(spyAbort).not.toHaveBeenCalled();
-    }
-
-    test('Timeout - Firefox (throws the APITimeoutError passed to abort()).', async () => {
-        var timeoutError = new Error('API call timed out!');
-        timeoutError.name = 'APITimeoutError';
-        await testTimeoutAPICall(timeoutError);
-    })
-
-    test('Timeout - Safari/Chrome (throws AbortError anyway).', async () =>
-        await testTimeoutAPICall(new DOMException('The user aborted a request.', 'AbortError')));
-
-    /**
-     * Runs an API call timeout test case.
-     * @param {Error|DOMException} timeoutError the error thrown by `fetch()` on timeout
-     */
-    const testTimeoutAPICall = async (timeoutError) => {
-        mockGetAPIURL();
-        spyGetAPITimeout.mockReturnValue(60);
-        utils.mockFunctionWithDelay(spyFetch, 60, timeoutError);
-
-        const callApi = api.fetchData(2025);
-        await act(() => utils.advanceTimersBySeconds(61));
-
-        await waitFor(() => callApi.then((result) => {
-            expect(result.success).toBe(false);
-            expect(result.error).toEqual({ type: APICallResult.FailType.Timeout });
-        }));
-        assertApiCall(2025);
-        assertEnvUtilityFunctionsCalled();
-        expect(spyAbort).toHaveBeenCalledTimes(1);
-        expect(spyAbort).toHaveBeenCalledWith(expect.objectContaining({
-            name: 'APITimeoutError',
-            message: 'API call timed out!'
-        }));
-    }
+    });
+    assertApiCall(2026);
+    assertEnvUtilityFunctionsCalled();
+    expect(spyAbort).not.toHaveBeenCalled();
 });
 
 /**

@@ -138,14 +138,14 @@ describe('API unsuccessful response', () => {
      */
     const testInitialRendering = async (language) => {
         i18n.changeLanguage(language);
-        mockApiCalls(initUnsuccessfulAPICallResult(400, 'BAD REQUEST', 'Test reason.'));
+        mockApiCalls(initUnsuccessfulAPICallResult(400, 'BAD REQUEST', 'Test reason 1.'));
         renderComponent();
-        await waitFor(() => assertUnsuccessfulAPIResponse(400, 2025, language));
+        await waitFor(() => assertUnsuccessfulAPIResponse(400, 'BAD REQUEST', 'Test reason 1.', 2025, language));
         assertApiCall(1, [2025]);
     }
 
     test('API call delay on initial rendering.', async () => {
-        mockApiCallWithDelay(20, initUnsuccessfulAPICallResult(400, 'BAD REQUEST', 'Test reason.'));
+        mockApiCallWithDelay(20, initUnsuccessfulAPICallResult(400, 'BAD REQUEST', 'Test reason 2.'));
 
         await act(() => renderComponent());
         await waitFor(() => {
@@ -155,15 +155,15 @@ describe('API unsuccessful response', () => {
         });
 
         await act(() => utils.advanceTimersBySeconds(21));
-        assertUnsuccessfulAPIResponse(400, 2025);
+        assertUnsuccessfulAPIResponse(400, 'BAD REQUEST', 'Test reason 2.', 2025);
     });
 
     test('Failure on initial rendering, success on year value change.', async () => {
-        mockApiCalls(initUnsuccessfulAPICallResult(400, 'BAD REQUEST', 'Test reason.'));
+        mockApiCalls(initUnsuccessfulAPICallResult(400, 'BAD REQUEST', 'Test reason 3.'));
         mockApiCallWithDelay(3, initSuccessfulAPICallResult(testData.sixRecords));
 
         await act(async () => renderComponent());
-        await waitFor(() => assertUnsuccessfulAPIResponse(400, 2025));
+        await waitFor(() => assertUnsuccessfulAPIResponse(400, 'BAD REQUEST', 'Test reason 3.', 2025));
 
         await act(async () => fireChangeYearDropdownValueEvent(2030));
         await waitFor(() => assertErrorMessageNotExist());
@@ -176,14 +176,14 @@ describe('API unsuccessful response', () => {
 
     test('Success on initial rendering, failure on year value change.', async () => {
         mockApiCalls(initSuccessfulAPICallResult(testData.sixRecords),
-            initUnsuccessfulAPICallResult(400, 'BAD REQUEST', 'Test reason.'));
+            initUnsuccessfulAPICallResult(400, 'BAD REQUEST', 'Test reason 4.'));
 
         await act(async () => renderComponent());
         await waitFor(() => assertErrorMessageNotExist());
         assertScreen(2025, 6);
 
         await act(async () => fireChangeYearDropdownValueEvent(2026));
-        await waitFor(() => assertUnsuccessfulAPIResponse(400, 2026));
+        await waitFor(() => assertUnsuccessfulAPIResponse(400, 'BAD REQUEST', 'Test reason 4.', 2026));
 
         assertApiCall(2, [2025, 2026]);
     });
@@ -191,17 +191,19 @@ describe('API unsuccessful response', () => {
     /**
      * Asserts the screen for a test case with unsuccessful API response.
      * @param {number} statusCode the response status code
+     * @param {string} statusText the response status text
+     * @param {string} message the failure message from the response
      * @param {number} expectedYear the expected selected value in the Year dropdown box
      * @param {string} language the language code; default `en` if not provided
      */
-    const assertUnsuccessfulAPIResponse = (statusCode, expectedYear, language = 'en') => {
-        var [header, body] = ['System error!', `Could not retrieve data (returned status code ${statusCode})`];
+    const assertUnsuccessfulAPIResponse = (statusCode, statusText, message, expectedYear, language = 'en') => {
+        var [header, body] = ['System error!', `${statusCode} ${statusText} - ${message}`];
         switch (language) {
             case 'zh':
-                [header, body] = ['系統發生錯誤！', `Could not retrieve data (returned status code ${statusCode})`];
+                [header, body] = ['系統發生錯誤！', `${statusCode} ${statusText} - ${message}`];
                 break;
             case 'ja':
-                [header, body] = ['システムエラーが発生しました!', `Could not retrieve data (returned status code ${statusCode})`];
+                [header, body] = ['システムエラーが発生しました!', `${statusCode} ${statusText} - ${message}`];
                 break;
             default:
         }
@@ -219,14 +221,14 @@ describe('API call throws error', () => {
      */
     const testInitialRendering = async (language) => {
         i18n.changeLanguage(language);
-        mockApiCalls(APICallResult.InitForErrorThrown(new Error('Test Thrown Error.')));
+        mockApiCalls(APICallResult.InitForErrorThrown(new Error('Test Thrown Error 1.')));
         renderComponent();
-        await waitFor(() => assertAPICallErrorThrown(2025, language));
+        await waitFor(() => assertAPICallErrorThrown(2025, 'Error: Test Thrown Error 1.', language));
         assertApiCall(1, [2025]);
     }
 
     test('API call delay on initial rendering.', async () => {
-        mockApiCallWithDelay(50, APICallResult.InitForErrorThrown(new Error('Test Thrown Error.')));
+        mockApiCallWithDelay(50, APICallResult.InitForErrorThrown(new Error('Test Thrown Error 2.')));
 
         await act(() => renderComponent());
         await waitFor(() => {
@@ -236,15 +238,15 @@ describe('API call throws error', () => {
         });
 
         await act(() => utils.advanceTimersBySeconds(55));
-        assertAPICallErrorThrown(2025);
+        assertAPICallErrorThrown(2025, 'Error: Test Thrown Error 2.');
     });
 
     test('Failure on initial rendering, success on year value change.', async () => {
-        mockApiCalls(APICallResult.InitForErrorThrown(new Error('Test Thrown Error.')));
+        mockApiCalls(APICallResult.InitForErrorThrown(new Error('Test Thrown Error 3.')));
         mockApiCallWithDelay(3, initSuccessfulAPICallResult(testData.sixRecords));
 
         await act(async () => renderComponent());
-        await waitFor(() => assertAPICallErrorThrown(2025));
+        await waitFor(() => assertAPICallErrorThrown(2025, 'Error: Test Thrown Error 3.'));
 
         await act(async () => fireChangeYearDropdownValueEvent(2030));
         await waitFor(() => assertErrorMessageNotExist());
@@ -257,35 +259,36 @@ describe('API call throws error', () => {
 
     test('Success on initial rendering, failure on year value change.', async () => {
         mockApiCalls(initSuccessfulAPICallResult(testData.sixRecords),
-            APICallResult.InitForErrorThrown(new Error('Test Thrown Error.')));
+            APICallResult.InitForErrorThrown(new Error('Test Thrown Error 4.')));
 
         await act(async () => renderComponent());
         await waitFor(() => assertErrorMessageNotExist());
         assertScreen(2025, 6);
 
         await act(async () => fireChangeYearDropdownValueEvent(2026));
-        await waitFor(() => assertAPICallErrorThrown(2026));
+        await waitFor(() => assertAPICallErrorThrown(2026, 'Error: Test Thrown Error 4.'));
 
         assertApiCall(2, [2025, 2026]);
     });
 
     /**
      * Asserts the screen for a test case where the API call throws (non-timeout) error.
-     * @param {number} expectedYear the expected selected value in the Year dropdown box
+     * @param {number} year the expected selected value in the Year dropdown box
+     * @param {string} errorBody the expected error message body
      * @param {string} language the language code; default `en` if not provided
      */
-    const assertAPICallErrorThrown = (expectedYear, language = 'en') => {
-        var [header, body] = ['System error!', 'Could not retrieve data (error on making API call)'];
+    const assertAPICallErrorThrown = (year, errorBody, language = 'en') => {
+        var [header, body] = ['System error!', errorBody];
         switch (language) {
             case 'zh':
-                [header, body] = ['系統發生錯誤！', 'Could not retrieve data (error on making API call)'];
+                [header, body] = ['系統發生錯誤！', errorBody];
                 break;
             case 'ja':
-                [header, body] = ['システムエラーが発生しました!', 'Could not retrieve data (error on making API call)'];
+                [header, body] = ['システムエラーが発生しました!', errorBody];
                 break;
             default:
         }
-        assertScreenWithError(expectedYear, header, body);
+        assertScreenWithError(year, header, body);
     }
 });
 

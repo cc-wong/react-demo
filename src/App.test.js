@@ -43,14 +43,15 @@ describe('Integration tests - Sumo Tournament Schedule Lookup', () => {
   }
 
   test('Page load - Unsuccessful response - English.', async () =>
-    testAPIUnsuccessfulResponse('en', 'System error!', 'Could not retrieve data (returned status code 400)'));
+    testAPIUnsuccessfulResponse('en', 'System error!', '400 BAD REQUEST - Test Unsuccessful Response.'));
   test('Page load - Unsuccessful response - Chinese.', async () =>
-    testAPIUnsuccessfulResponse('zh', '系統發生錯誤！', 'Could not retrieve data (returned status code 400)'));
+    testAPIUnsuccessfulResponse('zh', '系統發生錯誤！', '400 BAD REQUEST - Test Unsuccessful Response.'));
   test('Page load - Unsuccessful response - Japanese.', async () =>
-    testAPIUnsuccessfulResponse('ja', 'システムエラーが発生しました!', 'Could not retrieve data (returned status code 400)'));
+    testAPIUnsuccessfulResponse('ja', 'システムエラーが発生しました!', '400 BAD REQUEST - Test Unsuccessful Response.'));
 
   /**
-   * Runs a test case where the API call returns an unsuccessful response.
+   * Runs a test case where the API call returns an response with status code 400 (BAD REQUEST)
+   * and failure message "Test Unsuccessful Response.".
    * @param {string} language the language code
    * @param {string} errorHeader the expected error message header
    * @param {string} errorBody the expected error message body
@@ -72,14 +73,14 @@ describe('Integration tests - Sumo Tournament Schedule Lookup', () => {
   }
 
   test('Page load - API call throws error - English.', async () =>
-    testAPICallErrorThrown('en', 'System error!', 'Could not retrieve data (error on making API call)'));
+    testAPICallErrorThrown('en', 'System error!', 'Error: Arbitrary error.'));
   test('Page load - API call throws error - Chinese.', async () =>
-    testAPICallErrorThrown('zh', '系統發生錯誤！', 'Could not retrieve data (error on making API call)'));
+    testAPICallErrorThrown('zh', '系統發生錯誤！', 'Error: Arbitrary error.'));
   test('Page load - API call throws error - Japanese.', async () =>
-    testAPICallErrorThrown('ja', 'システムエラーが発生しました!', 'Could not retrieve data (error on making API call)'));
+    testAPICallErrorThrown('ja', 'システムエラーが発生しました!', 'Error: Arbitrary error.'));
 
   /**
-   * Runs a test case where the API call throws an error with message "Arbitrary error.".
+   * Runs a test case where the API call throws an `Error` with message "Arbitrary error.".
    * @param {string} language the language code
    * @param {string} errorHeader the expected error message header
    * @param {string} errorBody the expected error message body

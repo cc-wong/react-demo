@@ -69,7 +69,14 @@ const getAPIErrorMessage = (result, t) => {
     let bodyKeys = {};
     switch (result.error.type) {
         case APICallResult.FailType.UnsuccessfulResponse:
-            bodyKeys = { statusCode: result.error.statusCode };
+            bodyKeys = {
+                statusCode: result.error.statusCode,
+                statusText: result.error.statusText,
+                message: result.error.reason
+            };
+            break;
+        case APICallResult.FailType.ErrorThrown:
+            bodyKeys.error = result.error.reason;
             break;
         default:
     }

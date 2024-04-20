@@ -5,11 +5,11 @@
         "message": {
             "UnsuccessfulResponse": {
                 "header": "系統發生錯誤！",
-                "body": "Could not retrieve data (returned status code {{statusCode}})"
+                "body": "{{statusCode}} {{statusText}} - {{message}}"
             },
             "ErrorThrown": {
                 "header": "系統發生錯誤！",
-                "body": "Could not retrieve data (error on making API call)"
+                "body": "{{error}}"
             },
             "Timeout": {
                 "header": "發生逾時錯誤！",

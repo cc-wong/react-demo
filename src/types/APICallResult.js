@@ -28,10 +28,9 @@ export class APICallResult {
     success;
 
     /**
-     * The tournament schedule for the given year if the API call was successful.
-     * @type Tournament[]
+     * Parsed data from the response of a successful API call.
      */
-    schedule;
+    responseData;
 
     /**
      * Data type for API call failure details.
@@ -48,23 +47,23 @@ export class APICallResult {
      * 
      * Please use one of the static methods to initialize an instance instead.
      * @param {boolean} success whether the API call was successful
-     * @param {{schedule: Tournament[]; error: {ErrorData}}} result 
+     * @param {{responseData: any; error: {ErrorData}}} result 
      *           data returned by the API call or error details of the failure
      */
-    constructor(success, { schedule = [], error = {} }) {
+    constructor(success, { responseData = null, error = {} }) {
         this.success = success;
-        this.schedule = schedule;
+        this.responseData = responseData;
         this.error = error;
     }
 
     /**
      * Initializes a result object for a successful API call.
-     * @param {Tournament[]} schedule the tournament schedule returned from the API call
+     * @param {*} data the data from the API call response
      * @returns {APICallResult}
-     *          a new object where `success` is `true` and the value of `schedule` is set to `schedule`
+     *          a new object where `success` is `true` and `responseData` is set to `data`
      */
-    static InitForSuccessfulResponse(schedule) {
-        return new APICallResult(true, { schedule: schedule });
+    static InitForSuccessfulResponse(data) {
+        return new APICallResult(true, { responseData: data });
     }
 
     /**

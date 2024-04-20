@@ -29,7 +29,7 @@ export default function SearchScreen() {
         setLoading(true);
         api.fetchData(year).then((result) => {
             if (result.success) {
-                setApiData(result.schedule);
+                setApiData(result.responseData);
             } else {
                 setError(getAPIErrorMessage(result, t));
                 setApiData([]);

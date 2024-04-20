@@ -22,22 +22,24 @@ afterEach(() => cleanup());
 describe('Successful API calls', () => {
     test('Year parameter value is a number.', async () => runHappyPathTestCase(2024));
     test('Year parameter value is a string.', async () => runHappyPathTestCase("2024"));
+    test('API call returns empty result set.', async () => runHappyPathTestCase(2024, testData.emptySet));
 
     /**
      * Runs a happy path test case.
      * @param {number|string} year the year parameter value
+     * @param {*} dataSet the test data set
      */
-    const runHappyPathTestCase = (year) => {
+    const runHappyPathTestCase = (year, dataSet = testData.fullSet) => {
         mockGetAPIURL();
         mockApiCall({
             ok: true,
             status: 200,
-            json: () => (testData.data),
+            json: () => (dataSet.data),
         });
 
         api.fetchData(year).then((result) => {
             expect(result.success).toBe(true);
-            expect(result.schedule).toEqual(utils.parseToTournament(testData.expected));
+            expect(result.responseData).toEqual(utils.parseToTournament(dataSet.expected));
         });
         assertApiCall(year);
         assertEnvUtilityFunctionsCalled();

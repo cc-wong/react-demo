@@ -8,20 +8,19 @@ import config from '../conf/config.json';
 export const getAppVersionNumber = () => process.env.REACT_APP_VERSION;
 
 /**
- * Returns the API URL configured by the environment variables and configuration file,
- * and sets the `year` argument to a given value.
- * 
- * @param {number|string} year the value of the `year` argument
- * @returns the API URL
- * @throws `TypeError` if `REACT_APP_API_BASE_URL` is missing or empty
+ * Returns the API URL configured by the environment variables and configuration file.
+ * @param {string} keySuffix the suffix for the configuration and environment variable keys
+ * @returns {string} the API URL as configured by `config.api.urlFormat.<keySuffix>`,
+ *          where `%API_BASE_URL%` is replaced by the base URL configured by
+ *          environment variable `REACT_APP_API_BASE_URL_<keySuffix>`
+ * @throws `TypeError` if `REACT_APP_API_BASE_URL_<keySuffix>` is missing or empty
  */
-export const getAPIURL = (year) => {
-    if (!process.env.REACT_APP_API_BASE_URL) {
-        throw new TypeError('REACT_APP_API_BASE_URL must be provided!');
+export const getAPIURL = (keySuffix) => {
+    const baseUrlEnvKey = `REACT_APP_API_BASE_URL_${keySuffix}`;
+    if (!process.env[baseUrlEnvKey]) {
+        throw new TypeError(`${baseUrlEnvKey} must be provided!`);
     }
-    return config.api.urlFormat
-        .replace('%API_BASE_URL%', process.env.REACT_APP_API_BASE_URL)
-        .replace('%YEAR%', year.toString());
+    return config.api.urlFormat[keySuffix].replace('%API_BASE_URL%', process.env[baseUrlEnvKey]);
 }
 
 /**

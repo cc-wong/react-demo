@@ -29,29 +29,21 @@ test('Get app version number.', () => {
 })
 
 describe('Get API URL', () => {
-    const fixture = environmentFixture('REACT_APP_API_BASE_URL');
+    const fixture = environmentFixture('REACT_APP_API_BASE_URL_SUMOSCHEDULE');
 
     afterEach(() => fixture.restore());
 
-    describe('Environment variable REACT_APP_API_BASE_URL is present', () => {
-        test('"year" value is a number.', () => {
-            fixture.mock("https://my-api-host.net");
-            expect(envUtils.getAPIURL(2024))
-                .toBe("https://my-api-host.net/getSumoHonbashoSchedule?year=2024");
-        });
-        test('"year" value is a string.', () => {
-            fixture.mock("https://my-api-host.net");
-            expect(envUtils.getAPIURL("2024"))
-                .toBe("https://my-api-host.net/getSumoHonbashoSchedule?year=2024");
-        });
-    })
+    test('Environment variable for base URL is present.', () => {
+        fixture.mock('https://my-api-host.net');
+        expect(callFunction()).toBe('https://my-api-host.net/getSumoHonbashoSchedule?year=%YEAR%');
+    });
 
-    test('Environment variable REACT_APP_API_BASE_URL missing.', () => {
+    test('Environment variable for base URL missing.', () => {
         fixture.delete();
         assertThrowException();
     });
 
-    test('Environment variable REACT_APP_API_BASE_URL is empty.', () => {
+    test('Environment variable for base URL is empty.', () => {
         fixture.mock('');
         assertThrowException();
     });
@@ -59,8 +51,10 @@ describe('Get API URL', () => {
     /**
      * Asserts that an exception is thrown.
      */
-    const assertThrowException = () => expect(() => { envUtils.getAPIURL(2024); })
-        .toThrow("REACT_APP_API_BASE_URL must be provided!");
+    const assertThrowException = () => expect(() => callFunction())
+        .toThrow('REACT_APP_API_BASE_URL_SUMOSCHEDULE must be provided!');
+
+    const callFunction = () => envUtils.getAPIURL('SUMOSCHEDULE');
 })
 
 test('Get API timeout in seconds.', () => {

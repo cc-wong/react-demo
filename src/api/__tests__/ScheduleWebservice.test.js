@@ -6,7 +6,6 @@ import { APICallResult } from '../../types/APICallResult';
 
 import testData from './ScheduleWebservice.test.json';
 
-const mockApiUrl = "http://my-api-host.net/getSumoHonbashoSchedule?year=";
 const spyFetch = jest.spyOn(global, 'fetch');
 const spyAbort = jest.spyOn(AbortController.prototype, 'abort');
 
@@ -29,7 +28,7 @@ describe('Successful API calls', () => {
      * @param {number|string} year the year parameter value
      */
     const runHappyPathTestCase = (year) => {
-        mockGetAPIURL(year);
+        mockGetAPIURL();
         mockApiCall({
             ok: true,
             status: 200,
@@ -41,7 +40,7 @@ describe('Successful API calls', () => {
             expect(result.schedule).toEqual(utils.parseToTournament(testData.expected));
         });
         assertApiCall(year);
-        assertEnvUtilityFunctionsCalled(year);
+        assertEnvUtilityFunctionsCalled();
         expect(spyAbort).not.toHaveBeenCalled();
     }
 });
@@ -74,13 +73,13 @@ describe('Unsuccessful API calls', () => {
      *              the expected error details in the returned result object
      */
     const testUnsuccessfulAPICall = async (error) => {
-        mockGetAPIURL(2026);
+        mockGetAPIURL();
         api.fetchData(2026).then((result) => {
             expect(result.success).toBe(false);
             expect(result.error).toEqual(error);
         });
         assertApiCall(2026);
-        assertEnvUtilityFunctionsCalled(2026);
+        assertEnvUtilityFunctionsCalled();
         expect(spyAbort).not.toHaveBeenCalled();
     }
 
@@ -98,7 +97,7 @@ describe('Unsuccessful API calls', () => {
      * @param {Error|DOMException} timeoutError the error thrown by `fetch()` on timeout
      */
     const testTimeoutAPICall = async (timeoutError) => {
-        mockGetAPIURL(2025);
+        mockGetAPIURL();
         spyGetAPITimeout.mockReturnValue(60);
         utils.mockFunctionWithDelay(spyFetch, 60, timeoutError);
 
@@ -110,7 +109,7 @@ describe('Unsuccessful API calls', () => {
             expect(result.error).toEqual({ type: APICallResult.FailType.Timeout });
         }));
         assertApiCall(2025);
-        assertEnvUtilityFunctionsCalled(2025);
+        assertEnvUtilityFunctionsCalled();
         expect(spyAbort).toHaveBeenCalledTimes(1);
         expect(spyAbort).toHaveBeenCalledWith(expect.objectContaining({
             name: 'APITimeoutError',
@@ -120,19 +119,18 @@ describe('Unsuccessful API calls', () => {
 });
 
 /**
- * Mocks getting the API URL from the environment utility function.
- * @param {number|string} year the year argument in the API call
- */
-const mockGetAPIURL = (year) => spyGetAPIURL.mockReturnValue(mockApiUrl + year.toString());
-
-/**
  * Asserts that the environment utility functions related to the API have been called.
- * @param {number|string} year the expected year argument for getting the API URL
  */
-const assertEnvUtilityFunctionsCalled = (year) => {
-    expect(spyGetAPIURL).toHaveBeenCalledWith(year);
+const assertEnvUtilityFunctionsCalled = () => {
+    expect(spyGetAPIURL).toHaveBeenCalledWith('SUMOSCHEDULE');
     expect(spyGetAPITimeout).toHaveBeenCalled();
 }
+
+const mockApiUrl = "http://my-api-host.net/getSumoHonbashoSchedule?year=";
+/**
+ * Mocks getting the API URL from the environment utility function.
+ */
+const mockGetAPIURL = () => spyGetAPIURL.mockReturnValue(`${mockApiUrl}%YEAR%`);
 
 /**
  * Mocks an API call that returns a response.

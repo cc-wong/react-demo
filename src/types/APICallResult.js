@@ -71,7 +71,8 @@ export class APICallResult {
      * @param {Object} response the massaged API response
      * @param {number} response.statusCode the response status code
      * @param {string} response.statusText the status text corresponding to `statusCode`
-     * @param {string} response.reason the failure/error message from the response body
+     * @param {string} response.reason
+     *      the response body, which would usually include the failure/error message
      * @returns a new object where `success` is `false`, `error.type` is `UnsuccessfulResponse`
      *      and the remaining fields are set according to the values in `response`
      */

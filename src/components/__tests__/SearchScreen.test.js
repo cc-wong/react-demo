@@ -353,7 +353,14 @@ const initSuccessfulAPICallResult = (data) =>
  * @returns the new result object
  */
 const initUnsuccessfulAPICallResult = (statusCode, statusText, message) =>
-    APICallResult.InitForUnsuccessfulResponse({ statusCode: statusCode, statusText: statusText, reason: message });
+    APICallResult.InitForUnsuccessfulResponse({
+        statusCode: statusCode,
+        statusText: statusText,
+        reason: {
+            code: statusCode,
+            message: message
+        }
+    });
 
 /**
  * Mocks an API call with a given amount of time in delay.

@@ -62,7 +62,10 @@ describe('Integration tests - Sumo Tournament Schedule Lookup', () => {
       ok: false,
       status: 400,
       statusText: 'BAD REQUEST',
-      text: () => ('Test Unsuccessful Response.'),
+      json: () => ({
+        code: 400,
+        message: 'Test Unsuccessful Response.'
+      }),
     }));
     await act(() => renderComponent());
     await waitFor(() => {

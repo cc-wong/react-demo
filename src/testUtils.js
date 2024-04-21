@@ -1,4 +1,5 @@
 import { Tournament } from "./types/Tournament";
+import { APICallResult } from "./types/APICallResult";
 
 /**
  * Regex escape function.
@@ -34,6 +35,104 @@ export const mockFunctionWithDelay = (spyFunction, seconds, valueOrError) =>
     spyFunction.mockImplementationOnce(() => new Promise((resolve, reject) => setTimeout(() => {
         valueOrError instanceof Error ? reject(valueOrError) : resolve(valueOrError)
     }, seconds * 1000)));
+
+/**
+ * Gets a spy instance of the global `fetch()` function.
+ * @returns the spy instance
+ */
+export const spyOnFetch = () => jest.spyOn(global, 'fetch');
+
+/**
+ * Mocks global function `fetch()` to return a successful response.
+ * @param {*} jsonBody the JSON response body
+ */
+export const mockFetchSuccessfulResponse = (jsonBody) =>
+    mockFunctionToReturnValue(spyOnFetch(), mockFetch(true, 200, 'OK', jsonBody));
+
+/**
+ * Mocks global function `fetch()` to return an unsuccessful response.
+ * @param {number} statusCode the status code
+ * @param {string} statusText the status text
+ * @param {*} jsonBody the JSON response body
+ */
+export const mockFetchUnsuccessfulResponse = (statusCode, statusText, jsonBody) =>
+    mockFunctionToReturnValue(spyOnFetch(), mockFetch(false, statusCode, statusText, jsonBody));
+
+/**
+ * Mocks global function `fetch()` to return a response.
+ * @param {boolean} isOk the value of field `ok`
+ * @param {number} statusCode the status code
+ * @param {string} statusText the status text
+ * @param {*} jsonBody the JSON response body
+ */
+const mockFetch = (isOk, statusCode, statusText, jsonBody) => mockFunctionToReturnValue(spyOnFetch(), {
+    ok: isOk,
+    status: statusCode,
+    statusText: statusText,
+    json: () => (jsonBody),
+});
+
+/**
+ * Asserts the API call result on a successful call.
+ * @param {APICallResult} result the API call result object to check
+ * @param {*} responseData the expected response data
+ */
+export const assertAPISuccessfulResponse = (result, responseData) => {
+    expect(result.success).toBe(true);
+    expect(result.responseData).toEqual(responseData);
+}
+
+/**
+ *  Asserts the API call result on a call that returns an unsuccessful response.
+ * @param {APICallResult} result the result object to check
+ * @param {number} statusCode the expected status code
+ * @param {string} statusText the expected status text
+ * @param {*} reason the expected reason data
+ */
+export const assertAPIUnsuccessfulResponse = (result, statusCode, statusText, reason) => {
+    expect(result.success).toBe(false);
+    expect(result.error).toEqual(initUnsuccessfulResponseErrorData(statusCode, statusText, reason));
+}
+
+/**
+ * Initialize the error data of an unsuccessful response API call result.
+ * @param {number} statusCode the status code
+ * @param {string} statusText the status text
+ * @param {*} reason the reason data
+ * @returns a JSON object for the data to be set to `APICallResult.error`
+ */
+export const initUnsuccessfulResponseErrorData = (statusCode, statusText, reason) => {
+    return {
+        type: APICallResult.FailType.UnsuccessfulResponse,
+        statusCode: statusCode,
+        statusText: statusText,
+        reason: reason
+    };
+}
+
+/**
+ * Asserts that a call has been made to a given API.
+ * @param {string} url the API URL
+ */
+export const assertApiCall = (url) => expect(global.fetch).toHaveBeenCalledWith(url,
+    expect.objectContaining({ signal: expect.any(AbortSignal) }));
+
+/**
+ * Mocks getting the API URL from the environment utility function.
+ * @param {string} url the URL (format) to return
+ * @returns the spy object on function `EnvironmentUtils.getAPIURL()`
+ */
+export const mockGetAPIURL = (url) => {
+    const spy = jest.spyOn(require('./utils/EnvironmentUtils'), 'getAPIURL');
+    spy.mockReturnValue(url);
+    return spy;
+}
+
+/**
+ * Asserts that the API call has not been aborted.
+ */
+export const assertAPICallNotAborted = () =>
+    expect(jest.spyOn(AbortController.prototype, 'abort')).not.toHaveBeenCalled();
 
 /**
  * Simulates the advancement of time in a test case

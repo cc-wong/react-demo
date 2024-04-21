@@ -60,11 +60,14 @@ const getResponseBody = async (response) => {
     console.debug(`Returned status code: ${response.status} (ok: ${response.ok})`);
     if (!response.ok) {
         console.debug(response);
-        const message = await response.text();
+        const reason = await response.json();
         console.error('Unsuccessful response!\n' +
             `Status code: ${response.status} (${response.statusText})\n` +
-            `Message: ${message}`);
-        return { unsuccessful: true, statusCode: response.status, statusText: response.statusText, reason: message };
+            `Response body: ${JSON.stringify(reason)}`);
+        return {
+            unsuccessful: true,
+            statusCode: response.status, statusText: response.statusText, reason: reason
+        };
     }
     return response.json();
 }

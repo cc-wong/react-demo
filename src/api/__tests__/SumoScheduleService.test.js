@@ -1,9 +1,9 @@
 import { cleanup } from '@testing-library/react';
 import * as utils from '../../testUtils';
 
-import * as api from '../ScheduleWebservice';
+import * as api from '../SumoScheduleService';
 
-import testData from './ScheduleWebservice.test.json';
+import testData from './SumoScheduleService.test.json';
 
 afterEach(() => cleanup());
 

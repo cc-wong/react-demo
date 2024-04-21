@@ -1,4 +1,4 @@
-import './SearchScreen.css';
+import './SumoScheduleLookup.css';
 
 import parse from 'html-react-parser';
 import { useEffect, useState } from "react";
@@ -6,17 +6,15 @@ import { useTranslation } from 'react-i18next';
 
 import YearDropdown from "./YearDropdown";
 import ScheduleTable from "./ScheduleTable";
-import * as api from '../api/ScheduleWebservice';
+import * as api from '../api/SumoScheduleService';
 import { APICallResult } from '../types/APICallResult';
 import { getCurrentYear } from '../utils/DateUtils';
 
 /**
- * Populates the search screen which includes a dropdown for the year
- * and the results table.
- * 
+ * Component for the Grand Sumo Schedule Lookup module.
  * @returns a wrapper component including the dropdown and table
  */
-export default function SearchScreen() {
+export default function SumoScheduleLookup() {
     const [year, setYear] = useState(getCurrentYear().toString());
     const [apiData, setApiData] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -38,7 +36,7 @@ export default function SearchScreen() {
     }, [year, t]);
 
     return (
-        <div className='SearchScreen'>
+        <div className='SumoScheduleLookup'>
             <h1>{t('sumoSchedLookup.title')}</h1>
             {error && (
                 <div className='ErrorMessageBox' id='errorMessage'>

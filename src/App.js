@@ -1,7 +1,7 @@
 import './App.css';
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import SearchScreen from './components/SearchScreen';
+import SumoScheduleLookup from './components/SumoScheduleLookup';
 import NavBar from './components/NavBar';
 import * as envUtils from './utils/EnvironmentUtils';
 
@@ -15,7 +15,7 @@ export default function App() {
       <NavBar />
       <main className='MainContent'>
         <Routes>
-          <Route path="/" element={<SearchScreen />} />
+          <Route path="/" element={<SumoScheduleLookup />} />
         </Routes>
       </main>
     </Router>

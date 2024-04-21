@@ -2,15 +2,15 @@ import { render, screen, cleanup, fireEvent, waitFor } from '@testing-library/re
 import { act } from 'react-dom/test-utils';
 import * as utils from '../../testUtils';
 
-import SearchScreen from '../SearchScreen';
+import SumoScheduleLookup from '../SumoScheduleLookup';
 
-import testData from './SearchScreen.test.json';
+import testData from './SumoScheduleLookup.test.json';
 import { APICallResult } from '../../types/APICallResult';
 
 import i18n from '../../i18n';
 import { I18nextProvider } from 'react-i18next';
 
-const api = require('../../api/ScheduleWebservice');
+const api = require('../../api/SumoScheduleService');
 const spyApi = jest.spyOn(api, 'fetchData');
 
 beforeAll(() => utils.mockCurrentDate('2025-10-10'));
@@ -381,7 +381,7 @@ const mockApiCalls = (...results) => results.forEach((result) =>
 /**
  * Renders the component.
  */
-const renderComponent = () => render(<I18nextProvider i18n={i18n}><SearchScreen /></I18nextProvider>);
+const renderComponent = () => render(<I18nextProvider i18n={i18n}><SumoScheduleLookup /></I18nextProvider>);
 
 /**
  * Fires an event for changing the value of the Year dropdown.

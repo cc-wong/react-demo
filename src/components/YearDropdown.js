@@ -14,9 +14,7 @@ import { useTranslation } from "react-i18next";
  * @returns the dropdown box component with a label saying "Year"
  */
 export default function YearDropdown(props) {
-    const { t } = useTranslation();
-    console.debug(`2019 = ${getJapaneseYear(2019).join('/')}\n` +
-        `${props.selectedYear} = ${getJapaneseYear(props.selectedYear).join('/')}`);
+    const { t, i18n } = useTranslation();
     return (
         <>
             <label htmlFor="year">{t('sumoSchedLookup.year')}</label>
@@ -25,7 +23,7 @@ export default function YearDropdown(props) {
                 aria-required="true" aria-label="year"
                 defaultValue={props.selectedYear}
                 onChange={props.onChangeEvent}>
-                {buildDropdownOptions()}
+                {buildDropdownOptions(i18n.language)}
             </select>
         </>
     );
@@ -33,16 +31,21 @@ export default function YearDropdown(props) {
 
 /**
  * Builds the dropdown box options.
- * 
+ * @param {string} language the current language code
  * @returns {any[]} a list of `<option>` elements for years from (current year)
- *                  to (current year + `yearDropdown.maxYearsFromCurrent`)
+ *                  to (current year + `yearDropdown.maxYearsFromCurrent`);
+ *                  if the current language is Japanese, the option label will
+ *                  also include the corresponding Japanese year
  */
-const buildDropdownOptions = () => {
+const buildDropdownOptions = (language) => {
     var options = [];
     var year = getCurrentYear();
     var i = config.yearDropdown.maxYearsFromCurrent + 1;
     while (i--) {
-        options.push(<option key={`year-${year.toString()}`} value={year}>{year}</option>);
+        options.push(
+            <option key={`year-${year.toString()}`} value={year}>
+                {language === 'ja' ? `${getJapaneseYear(year).join('/')} (${year})` : year}
+            </option>);
         year++;
     }
     return options;

@@ -418,7 +418,8 @@ const assertScreenWithError = (expectedYear, messageHeader, messageBody) => {
  * @param {number} recordCount the expected number of records in the results table
  */
 const assertScreen = (expectedYear, recordCount) => {
-    expect(screen.getByRole('option', { name: expectedYear }).selected).toBe(true);
+    screen.getAllByRole('option').forEach((option) =>
+        expect(option.selected).toBe(option.value === expectedYear.toString()));
     expect(screen.getAllByRole('row').length).toBe(recordCount + 1);
 }
 

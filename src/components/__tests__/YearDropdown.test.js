@@ -6,7 +6,7 @@ import YearDropdown from '../YearDropdown';
 import i18n from '../../i18n';
 import { I18nextProvider } from 'react-i18next';
 
-beforeAll(() => utils.mockCurrentDate('2022-03-28'));
+beforeEach(() => utils.mockCurrentDate('2022-03-28'));
 afterEach(() => cleanup());
 
 describe('Verify screen', () => {
@@ -28,7 +28,24 @@ describe('Verify screen', () => {
         expect(getDropdown()).toBe(screen.getByLabelText(expected));
     }
 
-    test('Field is rendered.', () => {
+    const optionsTextDefault = ['2018',
+        '2019', '2020', '2021', '2022', '2023',
+        '2024', '2025', '2026', '2027', '2028'];
+    const optionsTextJapanese = ['平成30年 (2018)',
+        '平成31年/令和元年 (2019)', '令和2年 (2020)', '令和3年 (2021)', '令和4年 (2022)', '令和5年 (2023)',
+        '令和6年 (2024)', '令和7年 (2025)', '令和8年 (2026)', '令和9年 (2027)', '令和10年 (2028)'];
+
+    test('Field is rendered - English.', () => testFieldRendered('en', optionsTextDefault));
+    test('Field is rendered - Chinese.', () => testFieldRendered('zh', optionsTextDefault));
+    test('Field is rendered - Japanese.', () => testFieldRendered('ja', optionsTextJapanese));
+    /**
+     * Tests that the dropdown box is rendered correctly.
+     * @param {string} language the language code
+     * @param {string[]} optionsText the expected texts of the dropdown options
+     */
+    const testFieldRendered = (language, optionsText) => {
+        i18n.changeLanguage(language);
+        utils.mockCurrentDate('2018-03-28')
         const selectedYear = 2027;
 
         render(<YearDropdown selectedYear={selectedYear} />);
@@ -36,10 +53,10 @@ describe('Verify screen', () => {
 
         const options = screen.getAllByRole('option');
         expect(options.length).toBe(10 + 1);
+        expect(options.map((option) => option.innerHTML)).toEqual(optionsText);
         options.map((option, i) => {
-            var year = 2022 + i;
+            var year = 2018 + i;
             expect(option).toHaveAttribute("value", year.toString());
-            expect(option).toHaveTextContent(year.toString());
             try {
                 expect(option.selected).toBe(year === selectedYear);
             } catch (e) {
@@ -48,7 +65,7 @@ describe('Verify screen', () => {
                 );
             }
         });
-    });
+    }
 });
 
 describe('Actions on the dropdown box', () => {

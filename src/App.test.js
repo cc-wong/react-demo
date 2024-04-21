@@ -168,8 +168,8 @@ const mockSuccessfulAPICall = (schedule) => utils.mockFunctionToReturnValue(spyF
  * Asserts the selected value of the Year dropdown box.
  * @param {number} year the expected selected year
  */
-const assertDropdownValue = (year) =>
-  expect(screen.getByRole('option', { name: year }).selected).toBe(true);
+const assertDropdownValue = (year) => screen.getAllByRole('option').forEach((option) =>
+  expect(option.selected).toBe(option.value === year.toString()));
 
 /**
  * Asserts the schedules table content.

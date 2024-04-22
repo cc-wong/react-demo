@@ -7,6 +7,7 @@ import YearDropdown from "./sumo/YearDropdown";
 import ScheduleTable from "./sumo/ScheduleTable";
 import ErrorMessageBox from './common/ErrorMessageBox';
 import { getAPIErrorMessage } from './common/ErrorMessageBox';
+import LoadingText from './common/LoadingText';
 
 import * as api from '../api/SumoScheduleService';
 import { APICallResult } from '../types/APICallResult';
@@ -46,9 +47,7 @@ export default function SumoScheduleLookup() {
                 <YearDropdown selectedYear={year}
                     onChangeEvent={(event) => setYear(event.target.value)} />
             </form>
-            {loading && (
-                <div className='LoadingText' id='loadingText'>{t('loading')}</div>
-            )}
+            <LoadingText isLoading={loading} />
             <ScheduleTable data={apiData} />
         </div>
     );

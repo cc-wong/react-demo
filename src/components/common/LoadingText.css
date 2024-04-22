@@ -1,0 +1,7 @@
+.LoadingText {
+    padding: 8px;
+    font-size: calc(12px + 1vmin);
+    font-weight: bold;
+    font-style: italic;
+    color: blue;
+}

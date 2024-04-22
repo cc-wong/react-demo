@@ -96,7 +96,7 @@ describe('Happy path (API calls successful)', () => {
         await waitFor(() => {
             assertApiCall(1, [2025]);
             assertErrorMessageNotExist();
-            assertDisplayLoadingText(language);
+            assertDisplayLoadingText();
         });
 
         await act(() => utils.advanceTimersBySeconds(35));
@@ -349,7 +349,7 @@ describe('API call timeout', () => {
         await waitFor(() => {
             assertApiCall(1, [2025]);
             assertErrorMessageNotExist();
-            assertDisplayLoadingText(language);
+            assertDisplayLoadingText();
         });
 
         await act(() => utils.advanceTimersBySeconds(61));
@@ -454,30 +454,13 @@ const assertScreen = (expectedYear, recordCount) => {
  * Asserts that the error message box is not present in the screen.
  */
 const assertErrorMessageNotExist = () => expect(document.querySelector('#errorMessage')).toBeNull();
-/**
- * Asserts that the "Loading..." text is on the screen.
- * @param {string} language the language code; default `en` if not provided
- */
-const assertDisplayLoadingText = (language = 'en') => {
-    const loadingTextDiv = document.querySelector('#loadingText');
-    expect(loadingTextDiv).toBeInTheDocument();
-    expect(loadingTextDiv).toHaveTextContent(getExpectedLoadingText(language));
-}
 
 /**
- * Gets the expected Loading text.
- * @param {string} language the language code
- * @returns the expected Loading text for the language
+ * Asserts that the loading text is on the screen.
  */
-const getExpectedLoadingText = (language) => {
-    switch (language) {
-        case 'zh': return '載入中...';
-        case 'ja': return 'ロード中...';
-        default: return 'Loading...';
-    }
-}
+const assertDisplayLoadingText = () => expect(document.querySelector('#loadingText')).toBeInTheDocument();
 
 /**
- * Asserts that the "Loading..." text is not on the screen.
+ * Asserts that the loading text is not on the screen.
  */
 const assertNotDisplayLoadingText = () => expect(document.querySelector('#loadingText')).toBeNull();

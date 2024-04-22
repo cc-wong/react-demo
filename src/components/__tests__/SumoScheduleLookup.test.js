@@ -314,6 +314,26 @@ describe('API call timeout', () => {
         assertApiCall(2, [2025, 2030]);
     });
 
+    test('Click reload button - English.', async () => await testReload('en', 'RELOAD'));
+    test('Click reload button - Chinese.', async () => await testReload('zh', '重載'));
+    test('Click reload button - Japanese.', async () => await testReload('ja', '再読込'));
+    /**
+     * Runs a test case on clicking the reload button in the error message box.
+     * @param {string} language the language code
+     * @param {string} buttonText the expected reload button text
+     */
+    const testReload = async (language, buttonText) => {
+        await testAPICallTimeout(language);
+        expect(document.querySelector('#errorMessage')).toBeInTheDocument();
+
+        mockApiCalls(initSuccessfulAPICallResult(testData.sixRecords));
+        await act(async () => fireEvent.click(screen.getByRole('button', { name: buttonText })));
+        await waitFor(() => assertErrorMessageNotExist());
+        assertScreen(2025, 6);
+
+        assertApiCall(2, [2025, 2025]);
+    }
+
     /**
      * Runs a test case on API call timeout.
      * @param {string} errorHeader

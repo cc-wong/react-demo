@@ -25,6 +25,7 @@
     font-style: italic;
     color: blue;
 }
+
 .ErrorMessageBox {
     width: 70%;
     max-width: 470px;
@@ -33,9 +34,17 @@
     background-color: rgb(250, 218, 223);
     border: 1px solid darkred;
 }
-.ErrorMessageHeading {
+.ErrorMessageBox .Header {
     width: 100%;
     padding-bottom: 8px;
     font-weight: bold;
     color: rgb(75, 0, 0);
+}
+.ErrorMessageBox .Reload {
+    margin-top: 8px;
+    border: 2px solid darkred;
+    background-color: rgb(233, 210, 213);
+    font-size: calc(9px + 1vmin);
+    color: darkred;
+    padding: 2px 8px;
 }

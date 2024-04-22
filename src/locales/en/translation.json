@@ -15,7 +15,8 @@
                 "header": "Timeout error!",
                 "body": "Please try again."
             }
-        }
+        },
+        "reload": "RELOAD"
     },
     "sumoSchedLookup": {
         "title": "Sumo Tournament Schedule Lookup",

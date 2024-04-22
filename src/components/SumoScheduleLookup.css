@@ -14,12 +14,6 @@
 .SumoScheduleLookup form {
     padding: 8px;
 }
-.SumoScheduleLookup label, select, option {
-    font-size: 16px;
-}
-.SumoScheduleLookup label {
-    font-weight: bold;
-}
 .LoadingText {
     padding: 8px;
     font-size: calc(12px + 1vmin);

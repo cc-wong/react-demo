@@ -1,3 +1,5 @@
+import './YearDropdown.css';
+
 import { getCurrentYear, getJapaneseYear } from "../../utils/DateUtils";
 import config from '../../conf/config.json';
 import { useTranslation } from "react-i18next";
@@ -16,7 +18,7 @@ import { useTranslation } from "react-i18next";
 export default function YearDropdown(props) {
     const { t, i18n } = useTranslation();
     return (
-        <>
+        <div className="YearDropdown">
             <label htmlFor="year">{t('sumoSchedLookup.year')}</label>
             &nbsp;&nbsp;
             <select id="year" name="year"
@@ -25,7 +27,7 @@ export default function YearDropdown(props) {
                 onChange={props.onChangeEvent}>
                 {buildDropdownOptions(i18n.language)}
             </select>
-        </>
+        </div>
     );
 }
 

@@ -20,7 +20,7 @@ export default function SumoScheduleLookup() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
 
     useEffect(() => {
         setError(null);
@@ -37,7 +37,7 @@ export default function SumoScheduleLookup() {
 
     return (
         <div className='SumoScheduleLookup'>
-            <h1>{t('sumoSchedLookup.title')}</h1>
+            <h1 className={`title-${i18n.language}`}>{t('sumoSchedLookup.title')}</h1>
             {error && (
                 <div className='ErrorMessageBox' id='errorMessage'>
                     <div className='ErrorMessageHeading'>{error.header}</div>

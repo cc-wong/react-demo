@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import LanguageSelector from '../LanguageSelector';
 
-import i18n from '../../i18n';
+import i18n from '../../../i18n';
 import { I18nextProvider } from 'react-i18next';
 
 afterEach(() => cleanup());

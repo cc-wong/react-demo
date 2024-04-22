@@ -1,9 +1,9 @@
 import { render, screen, cleanup } from '@testing-library/react';
-import { parseToTournament } from '../../testUtils';
+import { parseToTournament } from '../../../testUtils';
 
 import ScheduleTable from '../ScheduleTable';
 
-import i18n from '../../i18n';
+import i18n from '../../../i18n';
 import { I18nextProvider } from 'react-i18next';
 
 import testData from './ScheduleTable.test.json';

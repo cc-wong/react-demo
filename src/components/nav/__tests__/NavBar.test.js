@@ -1,7 +1,7 @@
 import { render, screen, cleanup } from '@testing-library/react';
 import NavBar from '../NavBar';
 
-import i18n from '../../i18n';
+import i18n from '../../../i18n';
 import { I18nextProvider } from 'react-i18next';
 
 afterEach(() => cleanup());

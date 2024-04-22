@@ -1,9 +1,9 @@
 import { render, screen, cleanup, fireEvent } from '@testing-library/react';
-import * as utils from '../../testUtils';
+import * as utils from '../../../testUtils';
 
 import YearDropdown from '../YearDropdown';
 
-import i18n from '../../i18n';
+import i18n from '../../../i18n';
 import { I18nextProvider } from 'react-i18next';
 
 beforeEach(() => utils.mockCurrentDate('2022-03-28'));

@@ -1,5 +1,5 @@
-import { getCurrentYear, getJapaneseYear } from "../utils/DateUtils";
-import config from '../conf/config.json';
+import { getCurrentYear, getJapaneseYear } from "../../utils/DateUtils";
+import config from '../../conf/config.json';
 import { useTranslation } from "react-i18next";
 
 /**

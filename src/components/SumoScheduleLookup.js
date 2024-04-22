@@ -4,8 +4,8 @@ import parse from 'html-react-parser';
 import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
 
-import YearDropdown from "./YearDropdown";
-import ScheduleTable from "./ScheduleTable";
+import YearDropdown from "./sumo/YearDropdown";
+import ScheduleTable from "./sumo/ScheduleTable";
 import * as api from '../api/SumoScheduleService';
 import { APICallResult } from '../types/APICallResult';
 import { getCurrentYear } from '../utils/DateUtils';

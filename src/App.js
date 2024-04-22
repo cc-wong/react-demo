@@ -2,7 +2,7 @@ import './App.css';
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import SumoScheduleLookup from './components/SumoScheduleLookup';
-import NavBar from './components/NavBar';
+import NavBar from './components/nav/NavBar';
 import * as envUtils from './utils/EnvironmentUtils';
 
 /**

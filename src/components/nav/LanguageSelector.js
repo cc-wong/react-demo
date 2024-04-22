@@ -4,7 +4,7 @@ import { SlGlobe } from "react-icons/sl";
 import { Menu } from '@headlessui/react';
 import ReactCountryFlag from 'react-country-flag';
 
-import localesConfig from '../locales/config.json';
+import localesConfig from '../../locales/config.json';
 import { useTranslation } from 'react-i18next';
 
 /**

@@ -37,7 +37,7 @@ describe('Verify screen', () => {
 
     test('English title is correct.', async () => await testPageTitle('en', 'Sumo Tournament Schedule Lookup'));
     test('Chinese title is correct.', async () => await testPageTitle('zh', '大相撲場地時間表查詢'));
-    test('Chinese title is correct.', async () => await testPageTitle('ja', '大相撲本場所スケジュール検索'));
+    test('Chinese title is correct.', async () => await testPageTitle('ja', '大相撲本場所日程検索'));
 
     /**
      * Runs a test case on the page title text.

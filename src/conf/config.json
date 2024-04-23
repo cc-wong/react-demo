@@ -7,5 +7,15 @@
     },
     "yearDropdown": {
         "maxYearsFromCurrent": 10
-    }
+    },
+    "about": [
+        {
+            "label": "appVersion",
+            "text": "v{{VERSION}}"
+        },
+        {
+            "label": "author",
+            "text": "Cecilia Wong"
+        }
+    ]
 }

@@ -18,6 +18,12 @@
         },
         "reload": "再読込"
     },
+    "about": {
+        "label": {
+            "appVersion": "バージョン番号",
+            "author": "著者"
+        }
+    },
     "sumoSchedLookup": {
         "title": "大相撲本場所日程検索",
         "year": "年",

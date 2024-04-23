@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { FaBars } from 'react-icons/fa';
+import { NavLink } from 'react-router-dom';
 
 import LanguageSelector from './LanguageSelector';
 
@@ -24,8 +25,8 @@ export default function NavBar() {
                     {appLogo()}
                     <div className={`NavMenu ${showMenu ? 'active' : ''}`}>
                         <ul>
-                            <li>Sumo Tournament Lookup</li>
-                            <li>Airport-to-HKI (TBC)</li>
+                            <li><NavLink to="/">Sumo Schedule Lookup</NavLink></li>
+                            <li><NavLink to="/about">About</NavLink></li>
                         </ul>
                     </div>
                 </div>

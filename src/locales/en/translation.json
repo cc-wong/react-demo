@@ -18,6 +18,12 @@
         },
         "reload": "RELOAD"
     },
+    "about": {
+        "label": {
+            "appVersion": "Version",
+            "author": "Author"
+        }
+    },
     "sumoSchedLookup": {
         "title": "Sumo Tournament Schedule Lookup",
         "year": "Year",

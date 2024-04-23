@@ -18,6 +18,12 @@
         },
         "reload": "重載"
     },
+    "about": {
+        "label": {
+            "appVersion": "版本",
+            "author": "作者"
+        }
+    },
     "sumoSchedLookup": {
         "title": "大相撲場地時間表查詢",
         "year": "年份",

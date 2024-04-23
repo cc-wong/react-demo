@@ -1,0 +1,29 @@
+.About {
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(12px + 1vmin);
+}
+
+.About td {
+    vertical-align: center;
+}
+
+.About .Label,
+.Colon {
+    font-weight: bold;
+}
+
+.About .Label {
+    text-align: right;
+}
+
+.About .Colon {
+    text-align: center;
+}
+
+.About .Text {
+    text-align: left;
+}

@@ -1,5 +1,42 @@
 import { Tournament } from "./types/Tournament";
 import { APICallResult } from "./types/APICallResult";
+import { screen } from "@testing-library/react";
+
+/**
+ * Initializes a fixture for an environment variable.
+ * 
+ * @param {*} key the environment variable key
+ * @see Mocking environment variables: <https://greenonsoftware.com/courses/react-testing-spellbook/mastering-unit-testing/mocking-environment-variables/>
+ */
+export const environmentFixture = (key) => {
+    const initValue = process.env[key];
+
+    return {
+        mock: (value) => {
+            process.env[key] = value;
+        },
+        restore: () => {
+            process.env[key] = initValue;
+        },
+        delete: () => {
+            delete process.env[key];
+        }
+    }
+}
+
+/**
+ * Asserts the text in the non-header rows of a table, ie. the `<td>` elements.
+ * @param {string[][]} expected
+ *      the expected text in each row and column; expects an array of `rowCount` x `colCount` items
+ * @param {number} rowCount expected row count
+ * @param {number} colCount expected column count
+ */
+export const assertTableCells = (expected, rowCount, colCount) => {
+    const cells = screen.getAllByRole('cell');
+    expect(cells.length).toBe(rowCount * colCount);
+    expected.forEach((rowContent, r) => cells.slice(r * colCount, r * colCount + colCount)
+        .forEach((cell, c) => expect(cell.innerHTML).toEqual(rowContent.at(c))));
+}
 
 /**
  * Regex escape function.

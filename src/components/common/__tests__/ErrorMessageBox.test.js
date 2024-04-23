@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react"
+import { render, screen } from "@testing-library/react"
 import * as utils from '../../../testUtils';
 import { APICallResult } from "../../../types/APICallResult";
 
@@ -78,27 +78,42 @@ describe('ErrorMessageBox component', () => {
             displayRefresh: true
         };
 
-        test('Language = English.', () => runTest('en', 'Timeout error!', 'Please try again.', 'RELOAD'));
-        test('Language = Chinese.', () => runTest('zh', '發生逾時錯誤！', '請重新嘗試。', '重載'));
-        test('Language = Japanese.', () =>
-            runTest('ja', 'タイムアウトが発生しました!', 'もう一度お試しください。', '再読込'));
+        /**
+         * Expected reload button label by language.
+         */
+        const reloadButtonLabel = {
+            'en': 'RELOAD',
+            'zh': '重載',
+            'ja': '再読込'
+        }
+
+        test('Language = English.', () => testDisplayed('en', 'Timeout error!', 'Please try again.'));
+        test('Language = Chinese.', () => testDisplayed('zh', '發生逾時錯誤！', '請重新嘗試。'));
+        test('Language = Japanese.', () => testDisplayed('ja', 'タイムアウトが発生しました!', 'もう一度お試しください。'));
         /**
          * Runs a test case on displaying the error message box for API timeout.
          * @param {*} language the language code
          * @param {string} headerText the expected message header text
          * @param {string} bodyText the expected message body text
-         * @param {*} reloadLabel the expected text on the Reload button
          */
-        const runTest = (language, headerText, bodyText, reloadLabel) => {
+        const testDisplayed = (language, headerText, bodyText) => {
             testBoxDisplayed(language, error, headerText, bodyText);
-            expect(screen.getByRole('button')).toHaveTextContent(reloadLabel);
+            expect(screen.getByRole('button')).toHaveTextContent(reloadButtonLabel[language]);
         }
 
-        test('Click "RELOAD" button.', () => {
+        test('Click "RELOAD" button - English.', () => testClickReload('en'));
+        test('Click "RELOAD" button - Chinese.', () => testClickReload('zh'));
+        test('Click "RELOAD" button - Japanese.', () => testClickReload('ja'));
+        /**
+         * Runs a test case on clicking the "RELOAD" button.
+         * @param {string} language the language code
+         */
+        const testClickReload = (language) => {
+            i18n.changeLanguage(language);
             render(<ErrorMessageBox error={error} reloadEvent={mockReloadEvent} />);
-            fireEvent.click(screen.getByRole('button'));
+            utils.fireClickButtonEvent(reloadButtonLabel[language]);
             expect(mockReloadEvent.mock.calls).toHaveLength(1);
-        })
+        }
     })
 
     /**

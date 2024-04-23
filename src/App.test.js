@@ -8,9 +8,7 @@ import testData from './App.test.json'
 import i18n from './i18n';
 import { I18nextProvider } from 'react-i18next';
 
-const spyFetch = jest.spyOn(global, 'fetch');
-
-beforeAll(() => utils.mockCurrentDate('2024-04-11'));
+beforeEach(() => utils.mockCurrentDate('2024-04-11'));
 afterEach(() => cleanup());
 
 describe('Integration tests - Sumo Tournament Schedule Lookup', () => {
@@ -22,7 +20,7 @@ describe('Integration tests - Sumo Tournament Schedule Lookup', () => {
     await testDataLoadSuccess('en');
 
     mockSuccessfulAPICall(testData.input.year2024);
-    await act(() => fireEvent.click(screen.getByRole('button', { name: 'Language: EN' })));
+    await act(() => utils.fireClickButtonEvent('Language: EN'));
     await act(() => fireEvent.click(screen.getByRole('menuitem', { name: '日本語' })));
     await waitFor(() => assertTableContent(testData.expected.year2024.ja));
   });
@@ -58,15 +56,10 @@ describe('Integration tests - Sumo Tournament Schedule Lookup', () => {
    */
   const testAPIUnsuccessfulResponse = async (language, errorHeader, errorBody) => {
     i18n.changeLanguage(language);
-    spyFetch.mockImplementationOnce(() => Promise.resolve({
-      ok: false,
-      status: 400,
-      statusText: 'BAD REQUEST',
-      json: () => ({
-        code: 400,
-        message: 'Test Unsuccessful Response.'
-      }),
-    }));
+    utils.mockFetchUnsuccessfulResponse(400, 'BAD REQUEST', {
+      code: 400,
+      message: 'Test Unsuccessful Response.'
+    });
     await act(() => renderComponent());
     await waitFor(() => {
       assertDropdownValue(2024);
@@ -90,7 +83,7 @@ describe('Integration tests - Sumo Tournament Schedule Lookup', () => {
    */
   const testAPICallErrorThrown = async (language, errorHeader, errorBody) => {
     i18n.changeLanguage(language);
-    spyFetch.mockImplementationOnce(() => Promise.reject(new Error('Arbitrary error.')));
+    utils.mockFetchThrowError(new Error('Arbitrary error.'));
     await act(() => renderComponent());
     await waitFor(() => {
       assertDropdownValue(2024);
@@ -117,7 +110,7 @@ describe('Integration tests - Sumo Tournament Schedule Lookup', () => {
     i18n.changeLanguage(language);
     var timeoutError = new Error('API call timed out!');
     timeoutError.name = 'APITimeoutError';
-    utils.mockFunctionWithDelay(spyFetch, 60, timeoutError);
+    utils.mockFunctionWithDelay(utils.spyOnFetch(), 60, timeoutError);
 
     await act(() => renderComponent());
     expect(document.querySelector('#loadingText')).toHaveTextContent(loadingText);
@@ -142,8 +135,7 @@ describe('Integration tests - Sumo Tournament Schedule Lookup', () => {
       assertTableContent(testData.expected.year2024.en);
     });
 
-    await act(() =>
-      fireEvent.change(screen.getByRole('combobox', { name: 'year' }), { target: { value: 2026 } }));
+    await act(() => utils.fireChangeDropdownValueEvent(utils.getDropdownBoxElement('year'), 2026));
     await waitFor(() => {
       assertDropdownValue(2026);
       assertTableContent(testData.expected.year2026);
@@ -161,12 +153,7 @@ const renderComponent = () => render(<I18nextProvider i18n={i18n}><App /></I18ne
  * Mocks a successful API call.
  * @param {any[]} schedule the tournament schedule to be returned
  */
-const mockSuccessfulAPICall = (schedule) => utils.mockFunctionToReturnValue(spyFetch, {
-  ok: true,
-  status: 200,
-  json: () => ({ result: schedule }),
-});
-
+const mockSuccessfulAPICall = (schedule) => utils.mockFetchSuccessfulResponse(({ result: schedule }));
 /**
  * Asserts the selected value of the Year dropdown box.
  * @param {number} year the expected selected year
@@ -179,19 +166,13 @@ const assertDropdownValue = (year) => screen.getAllByRole('option').forEach((opt
  * @param {{tournament: string; schedule: string}[]} tableContent the expected table content
  */
 const assertTableContent = (tableContent = []) => {
-  expect(screen.getAllByRole('row').length).toBe(tableContent.length + 1);
-  if (tableContent.length > 0) {
-    const cells = screen.getAllByRole('cell');
-    tableContent.forEach((row, i) => {
-      expect(cells.at(i * 2)).toHaveTextContent(row.tournament);
-      expect(cells.at(i * 2 + 1)).toHaveTextContent(row.schedule);
-    })
-  }
+  utils.assertTableRowCount(tableContent.length, true);
+  utils.assertTableCells(tableContent.map(({ tournament, schedule }) => [tournament, schedule]),
+    tableContent.length, 2, false);
 }
 
 /**
  * Asserts the error message displayed.
- * 
  * @param {string} header the expected message header
  * @param {string} body the expected message body
  */

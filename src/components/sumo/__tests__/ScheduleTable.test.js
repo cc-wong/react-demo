@@ -1,5 +1,5 @@
 import { render, screen, cleanup } from '@testing-library/react';
-import { parseToTournament } from '../../../testUtils';
+import { parseToTournament, assertTableRowCount, assertTableCells } from '../../../testUtils';
 
 import ScheduleTable from '../ScheduleTable';
 
@@ -48,11 +48,8 @@ describe('Verify table content', () => {
     const testTableWithRecords = (languageCode, data) => {
         i18n.changeLanguage(languageCode);
         assertTableRecords(parseToTournament(data.dataFromApi), data.expected[languageCode].length);
-
-        const cells = screen.getAllByRole('cell');
-        expect(cells.length).toBe(2 * data.expected[languageCode].length);
-        data.expected[languageCode].forEach((expectedText, i) =>
-            assertRecordRow(cells.slice(i * 2, i * 2 + 2), expectedText));
+        assertTableCells(data.expected[languageCode].map(({ tournament, schedule }) => [tournament, schedule]),
+            data.expected[languageCode].length, 2);
     }
 
     describe('With no records.', () => {
@@ -77,15 +74,5 @@ const renderComponent = (data) =>
  */
 const assertTableRecords = (dataFromApi, expectedRecordCount) => {
     renderComponent(dataFromApi);
-    expect(screen.getAllByRole('row').length - 1).toBe(expectedRecordCount);
-}
-
-/**
- * Verifies a given record row.
- * @param {any[]} rowCells  the cells of the row to check
- * @param {{tournament: string; schedule: string}} text the expected text of the columns 
- */
-const assertRecordRow = (rowCells, { tournament, schedule }) => {
-    expect(rowCells.at(0)).toHaveTextContent(tournament);
-    expect(rowCells.at(1)).toHaveTextContent(schedule);
+    assertTableRowCount(expectedRecordCount, true);
 }

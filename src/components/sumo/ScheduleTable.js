@@ -15,9 +15,9 @@ import { useTranslation } from 'react-i18next';
  * @returns the table component with name `schedule`
  */
 export default function ScheduleTable(props) {
-    var records = props.data === undefined || props.data === null ? [] : props.data;
+    var records = (props.data === undefined || props.data === null) ? [] : props.data;
 
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     return (
         <table name="schedule" aria-label="schedule" className="ScheduleTable">
             <thead>
@@ -26,28 +26,22 @@ export default function ScheduleTable(props) {
                     <th>{t('sumoSchedLookup.column.schedule')}</th>
                 </tr>
             </thead>
-            <tbody>
-                {
-                    records.map(({ code, schedule }, i) => {
-                        return (
-                            <tr key={`tournament-${i}-${code}`}>
-                                <td className="Tournament">{getTournamentName(code, t)}</td>
-                                <td>{parse(formatSchedule(schedule, t))}</td>
-                            </tr>
-                        )
-                    })}
-            </tbody>
+            <tbody>{
+                records.map(({ code, schedule }, i) => {
+                    const tournamentKey = `sumoSchedLookup.tournament.${code}`;
+                    if (!i18n.exists(tournamentKey)) console.warn(`No tournament name set for key "${code}"!`);
+                    return (
+                        <tr key={`tournament-${i}-${code}`}>
+                            <td className="Tournament">
+                                {(i18n.exists(tournamentKey) && t(tournamentKey)) || code}
+                            </td>
+                            <td>{parse(formatSchedule(schedule, t))}</td>
+                        </tr>
+                    )
+                })}</tbody>
         </table>
     );
 }
-
-/**
- * Gets the tournament name configured by `sumoSchedLookup.tournament.<code>`
- * in the translation configurations.
- * @param {string} code the tournament code
- * @returns the configured name; if the code is not a valid one, return the code as-is
- */
-const getTournamentName = (code, t) => t(`sumoSchedLookup.tournament.${code}`);
 
 /**
  * Formats the schedule of a tournament for display.

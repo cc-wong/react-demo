@@ -30,7 +30,7 @@ describe('Verify screen', () => {
         await act(async () => renderComponent());
         await waitFor(() => {
             expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
-            expect(screen.getByRole('combobox', { name: 'year' })).toBeInTheDocument();
+            expect(getYearDropdown()).toBeInTheDocument();
             expect(screen.getByRole('table', { name: 'schedule' })).toBeInTheDocument();
         });
     })
@@ -327,7 +327,7 @@ describe('API call timeout', () => {
         expect(document.querySelector('#errorMessage')).toBeInTheDocument();
 
         mockApiCalls(initSuccessfulAPICallResult(testData.sixRecords));
-        await act(async () => fireEvent.click(screen.getByRole('button', { name: buttonText })));
+        await act(async () => utils.fireClickButtonEvent(buttonText));
         await waitFor(() => assertErrorMessageNotExist());
         assertScreen(2025, 6);
 
@@ -404,12 +404,16 @@ const mockApiCalls = (...results) => results.forEach((result) =>
 const renderComponent = () => render(<I18nextProvider i18n={i18n}><SumoScheduleLookup /></I18nextProvider>);
 
 /**
+ * Gets the Year dropdown box.
+ * @returns the `HTMLElement` for the Year dropdown box
+ */
+const getYearDropdown = () => utils.getDropdownBoxElement('year');
+
+/**
  * Fires an event for changing the value of the Year dropdown.
- * 
  * @param {number} year the new dropdown value
  */
-const fireChangeYearDropdownValueEvent = (year) =>
-    fireEvent.change(screen.getByRole('combobox', { name: 'year' }), { target: { value: year } });
+const fireChangeYearDropdownValueEvent = (year) => utils.fireChangeDropdownValueEvent(getYearDropdown(), year);
 
 /**
  * Asserts the calls to the API.
@@ -447,7 +451,7 @@ const assertScreenWithError = (expectedYear, messageHeader, messageBody) => {
 const assertScreen = (expectedYear, recordCount) => {
     screen.getAllByRole('option').forEach((option) =>
         expect(option.selected).toBe(option.value === expectedYear.toString()));
-    expect(screen.getAllByRole('row').length).toBe(recordCount + 1);
+    utils.assertTableRowCount(recordCount, true);
 }
 
 /**

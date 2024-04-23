@@ -126,27 +126,27 @@
             "en": [
                 {
                     "tournament": "January (Hatsu)",
-                    "schedule": "January 12 (Sunday) to January 26 (Sunday)"
+                    "schedule": "January 12 (Sunday)<wbr> to<br> January 26 (Sunday)"
                 },
                 {
                     "tournament": "March (Haru/Spring)",
-                    "schedule": "March 9 (Sunday) to March 23 (Sunday)"
+                    "schedule": "March 9 (Sunday)<wbr> to<br> March 23 (Sunday)"
                 },
                 {
                     "tournament": "May (Natsu/Summer)",
-                    "schedule": "May 11 (Sunday) to May 25 (Sunday)"
+                    "schedule": "May 11 (Sunday)<wbr> to<br> May 25 (Sunday)"
                 },
                 {
                     "tournament": "July (Nagoya)",
-                    "schedule": "July 13 (Sunday) to July 27 (Sunday)"
+                    "schedule": "July 13 (Sunday)<wbr> to<br> July 27 (Sunday)"
                 },
                 {
                     "tournament": "September (Aki/Autumn)",
-                    "schedule": "September 14 (Sunday) to September 28 (Sunday)"
+                    "schedule": "September 14 (Sunday)<wbr> to<br> September 28 (Sunday)"
                 },
                 {
                     "tournament": "November (Kyushu)",
-                    "schedule": "November 9 (Sunday) to November 23 (Sunday)"
+                    "schedule": "November 9 (Sunday)<wbr> to<br> November 23 (Sunday)"
                 }
             ],
             "zh": [
@@ -250,11 +250,11 @@
             "en": [
                 {
                     "tournament": "January (Hatsu)",
-                    "schedule": "January 12 (Sunday) to January 26 (Sunday)"
+                    "schedule": "January 12 (Sunday)<wbr> to<br> January 26 (Sunday)"
                 },
                 {
                     "tournament": "SPRING",
-                    "schedule": "March 9 (Sunday) to March 23 (Sunday)"
+                    "schedule": "March 9 (Sunday)<wbr> to<br> March 23 (Sunday)"
                 }
             ],
             "zh": [

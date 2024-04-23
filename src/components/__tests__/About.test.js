@@ -22,8 +22,7 @@ describe('Verify screen content', () => {
 
         render(<About />);
         expect(document.querySelector('#about')).toBeInTheDocument();
-
-        expect(screen.getAllByRole('row')).toHaveLength(2);
+        testUtils.assertTableRowCount(2);
         testUtils.assertTableCells([
             [versionLabel, ':', 'v1.0.0'],
             [authorLabel, ':', 'Cecilia Wong']

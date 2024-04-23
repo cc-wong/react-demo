@@ -1,4 +1,4 @@
-import { render, screen, cleanup, fireEvent } from '@testing-library/react';
+import { render, screen, cleanup } from '@testing-library/react';
 import * as utils from '../../../testUtils';
 
 import YearDropdown from '../YearDropdown';
@@ -73,9 +73,7 @@ describe('Actions on the dropdown box', () => {
         const mockOnChangeEvent = jest.fn();
         render(<YearDropdown onChangeEvent={mockOnChangeEvent} />);
         const dropdown = getDropdown();
-        fireEvent.change(dropdown, {
-            target: { value: '2029' }
-        });
+        utils.fireChangeDropdownValueEvent(dropdown, '2029');
         expect(mockOnChangeEvent.mock.calls).toHaveLength(1);
     });
 });
@@ -84,4 +82,4 @@ describe('Actions on the dropdown box', () => {
  * Gets the Year dropdown box component.
  * @returns the HTML component for the dropdown box
  */
-const getDropdown = () => screen.getByRole('combobox', { name: 'year' });
+const getDropdown = () => utils.getDropdownBoxElement('year');

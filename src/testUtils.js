@@ -1,6 +1,6 @@
 import { Tournament } from "./types/Tournament";
 import { APICallResult } from "./types/APICallResult";
-import { screen } from "@testing-library/react";
+import { screen, fireEvent } from "@testing-library/react";
 
 /**
  * Initializes a fixture for an environment variable.
@@ -25,18 +25,56 @@ export const environmentFixture = (key) => {
 }
 
 /**
+ * Asserts the number of content (non-header) rows in a table.
+ * @param {number} expected the expected number of rows
+ * @param {boolean} hasHeader whether the table has a header
+ */
+export const assertTableRowCount = (expected, hasHeader = false) =>
+    expect(screen.getAllByRole('row').length).toBe(expected + (hasHeader ? 1 : 0));
+
+/**
  * Asserts the text in the non-header rows of a table, ie. the `<td>` elements.
  * @param {string[][]} expected
  *      the expected text in each row and column; expects an array of `rowCount` x `colCount` items
- * @param {number} rowCount expected row count
+ * @param {number} rowCount expected row count; no content assertion if 0
  * @param {number} colCount expected column count
+ * @param {boolean} checkExact
+ *      whether to check the exact content of the cells; checks for HTML tags, etc. in the text if `true` (default)
  */
-export const assertTableCells = (expected, rowCount, colCount) => {
-    const cells = screen.getAllByRole('cell');
-    expect(cells.length).toBe(rowCount * colCount);
-    expected.forEach((rowContent, r) => cells.slice(r * colCount, r * colCount + colCount)
-        .forEach((cell, c) => expect(cell.innerHTML).toEqual(rowContent.at(c))));
+export const assertTableCells = (expected, rowCount, colCount, checkExact = true) => {
+    const cells = screen.queryAllByRole('cell');
+    expect(cells).toHaveLength(rowCount * colCount);
+    if (rowCount > 0)
+        expected.forEach((rowContent, r) => cells.slice(r * colCount, r * colCount + colCount)
+            .forEach((cell, c) => {
+                if (checkExact) {
+                    expect(cell.innerHTML).toEqual(rowContent.at(c));
+                } else {
+                    expect(cell).toHaveTextContent(rowContent.at(c));
+                }
+            }));
 }
+
+/**
+ * Fires a click event on a button with a given label.
+ * @param {string} text the button label
+ */
+export const fireClickButtonEvent = (label) => fireEvent.click(screen.getByRole('button', { name: label }));
+
+/**
+ * Gets a dropdown box element (`<select>`) by the name attribute.
+ * @param {string} name the name attribute value for matching
+ * @returns the `HTMLElement` for the dropdown box
+ */
+export const getDropdownBoxElement = (name) => screen.getByRole('combobox', { name: name });
+
+/**
+ * Fires a change event on a given dropdown box.
+ * @param {HTMLElement} dropdown the dropdown box element
+ * @param {*} value the `value` attribute of the selected item
+ */
+export const fireChangeDropdownValueEvent = (dropdown, value) =>
+    fireEvent.change(dropdown, { target: { value: value } });
 
 /**
  * Regex escape function.
@@ -83,8 +121,7 @@ export const spyOnFetch = () => jest.spyOn(global, 'fetch');
  * Mocks global function `fetch()` to return a successful response.
  * @param {*} jsonBody the JSON response body
  */
-export const mockFetchSuccessfulResponse = (jsonBody) =>
-    mockFunctionToReturnValue(spyOnFetch(), mockFetch(true, 200, 'OK', jsonBody));
+export const mockFetchSuccessfulResponse = (jsonBody) => mockFetch(true, 200, 'OK', jsonBody);
 
 /**
  * Mocks global function `fetch()` to return an unsuccessful response.
@@ -93,7 +130,13 @@ export const mockFetchSuccessfulResponse = (jsonBody) =>
  * @param {*} jsonBody the JSON response body
  */
 export const mockFetchUnsuccessfulResponse = (statusCode, statusText, jsonBody) =>
-    mockFunctionToReturnValue(spyOnFetch(), mockFetch(false, statusCode, statusText, jsonBody));
+    mockFetch(false, statusCode, statusText, jsonBody);
+
+/**
+ * Mocks global function `fetch()` to throw an error.
+ * @param {Error} error the error to throw
+ */
+export const mockFetchThrowError = (error) => spyOnFetch().mockRejectedValueOnce(error);
 
 /**
  * Mocks global function `fetch()` to return a response.

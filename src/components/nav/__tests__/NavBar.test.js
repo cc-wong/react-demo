@@ -9,8 +9,23 @@ afterEach(() => cleanup());
 
 describe('Verify navigation bar content', () => {
   test('Logo exists.', () => expect(renderComponent()).toHaveTextContent('React Demo'));
+
   test('Language selector exists.', () => expect(renderComponent()
     .querySelector('button', { name: 'LanguageSelectorButton' })).toBeInTheDocument());
+
+  test('Menu exists.', () => {
+    renderComponent();
+    const expecteds = [
+      { text: 'Sumo Schedule Lookup', href: '/' },
+      { text: 'About', href: '/about' }
+    ];
+    const links = screen.queryAllByRole('link');
+    expect(links).toHaveLength(expecteds.length);
+    links.forEach((link, i) => {
+      expect(link).toHaveTextContent(expecteds.at(i).text);
+      expect(link).toHaveAttribute('href', expecteds.at(i).href);
+    });
+  });
 })
 
 /**

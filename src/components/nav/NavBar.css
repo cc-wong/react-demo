@@ -34,8 +34,7 @@
 }
 
 .NavMenu ul {
-    display: none;  /* Temporarily hide until next phase(s). */
-    /* display: flex; */
+    display: flex;
     list-style-type: none;
     justify-content: space-between;
     gap: 20px;
@@ -45,34 +44,60 @@
     font-weight: 500;
 }
 
+.NavMenu a {
+    color: white;
+    text-decoration: none;
+}
+
+.NavMenu a:hover {
+    color: yellow;
+    text-decoration: underline;
+}
+
 @media screen and (max-width: 850px) {
-    /* Temporarily hide until next phase(s). */
-    /* .NavHamburger {
+    .NavHamburger {
         display: flex;
         align-items: center;
-    } */
+    }
+
+    .NavHamburger button {
+        padding: 4px 2px;
+        width: 20px;
+        background-color: black;
+        color: white;
+        border: 0;
+    }
+
+    .NavHamburger svg {
+        width: 16px;
+        height: 16px;
+    }
 
     .NavMenu {
         position: absolute;
         left: 0;
         top: 45px;
         background-color: gray;
-        color: white;
         width: 0px;
         height: calc(100vh - 45px);
-        margin-top: 0;
-        margin-left: -25px;
-        padding-top: 5px;
-        transition: all 0.3s ease-in;
+        opacity: 0;
+        transition: all 0.5s cubic-bezier(.62, .04, .3, 1.56);
+        transition-delay: 0.1s;
         overflow: hidden;
     }
 
     .NavMenu.active {
         width: 220px;
+        opacity: 1;
     }
 
     .NavMenu ul {
-        display: flex;
         flex-direction: column;
+        padding: 20px;
+        width: 220px;
+    }
+
+    .NavMenu a:hover {
+        color: blue;
     }
 }

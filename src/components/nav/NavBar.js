@@ -13,13 +13,19 @@ import './NavBar.css';
 export default function NavBar() {
     const [showMenu, setShowMenu] = useState(false);
 
+    /**
+     * Event handler for showing or hiding the offcanvas menu which is available
+     * when the browser width is less than a specified value.
+     */
     const handleShowMenu = () => setShowMenu(!showMenu);
 
     return (
         <header className='header'>
             <nav className='nav'>
-                <div className='NavHamburger' onClick={handleShowMenu}>
-                    <FaBars name="NavHamburger" />
+                <div className='NavHamburger'>
+                    <button id='navHamburger' onClick={handleShowMenu}>
+                        <FaBars name="NavHamburger" />
+                    </button>
                 </div>
                 <div className='NavContainer'>
                     {appLogo()}

@@ -20,7 +20,7 @@
 .LanguageSelectorLabel {
     display: flex;
     font-weight: 600;
-    @media screen and (max-width: 500px) {
+    @media screen and (max-width: 850px) {
         display: none;
     }
 }

@@ -144,6 +144,30 @@ describe('Integration tests - Sumo Tournament Schedule Lookup', () => {
 
 })
 
+describe('Integration tests - About', () => {
+  test('Open About page - English.', async () => testAbout('en', 'About', 'Version', 'Author'));
+  test('Open About page - Chinese.', async () => testAbout('zh', 'About', '版本', '作者'));
+  test('Open About page - Japanese.', async () => testAbout('ja', 'About', 'バージョン番号', '著者'));
+  /**
+   * Runs a test case on the About page.
+   * @param {string} language the language code
+   * @param {string} aboutLinkText the expected text of the About link
+   * @param {string} versionLabel the expected label of the Version field
+   * @param {string} authorLabel the expected label of the Author field
+   */
+  const testAbout = async (language, aboutLinkText, versionLabel, authorLabel) => {
+    i18n.changeLanguage(language);
+    mockSuccessfulAPICall([]);
+
+    await act(() => renderComponent());
+    await act(() => fireEvent.click(screen.getByRole('link', { name: aboutLinkText })));
+    await waitFor(() => {
+      expect(screen.getByRole('table')).toHaveTextContent(
+        new RegExp(`^.*${versionLabel}.*:.*v\\d+\\.\\d+\\.\\d+.*${authorLabel}.*:.*Cecilia Wong.*$`))
+    });
+  }
+})
+
 /**
  * Renders the component for testing.
  */

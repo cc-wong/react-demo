@@ -17,10 +17,16 @@
     text-decoration: underline;
 }
 
+.LanguageSelectorButton svg {
+    width: 16px;
+    height: 16px;
+}
+
 .LanguageSelectorLabel {
     display: flex;
     font-weight: 600;
-    @media screen and (max-width: 850px) {
+
+    @media screen and (max-width: 1000px) {
         display: none;
     }
 }

@@ -17,31 +17,40 @@ describe('Verify navigation bar content', () => {
   test('Language selector exists.', () => expect(renderComponent()
     .querySelector('button', { name: 'LanguageSelectorButton' })).toBeInTheDocument());
 
-  test('Menu exists.', () => {
-    renderComponent();
-    const expecteds = [
-      { text: expectedVals.navLinkText.sumoSchedule['en'], href: '/' },
-      { text: expectedVals.navLinkText.about['en'], href: '/about' }
-    ];
-    const links = screen.queryAllByRole('link');
-    expect(links).toHaveLength(expecteds.length);
-    links.forEach((link, i) => {
-      expect(link).toHaveTextContent(expecteds.at(i).text);
-      expect(link).toHaveAttribute('href', expecteds.at(i).href);
-    });
-  });
+  describe('Verify menu', () => {
+    test('Menu items - English.', () => testMenuItems('en'));
+    test('Menu items - Chinese.', () => testMenuItems('zh'));
+    test('Menu items - Japanese.', () => testMenuItems('ja'));
+    /**
+     * Runs a test case on the menu items.
+     * @param {string} language the language code
+     */
+    const testMenuItems = (language) => {
+      i18n.changeLanguage(language);
+      renderComponent();
+      const expecteds = [
+        { text: expectedVals.navLinkText.sumoSchedule[language], href: '/' },
+        { text: expectedVals.navLinkText.about[language], href: '/about' }
+      ];
+      const links = screen.queryAllByRole('link');
+      expect(links).toHaveLength(expecteds.length);
+      links.forEach((link, i) => {
+        expect(link).toHaveTextContent(expecteds.at(i).text);
+        expect(link).toHaveAttribute('href', expecteds.at(i).href);
+      });
+    }
+    test('Expand and close hamburger menu.', async () => {
+      renderComponent();
+      const hamburgerIcon = document.querySelector('#navHamburger');
+      expect(hamburgerIcon).toBeInTheDocument();
+      expect(getNavMenuContainer()).toHaveAttribute('class', 'NavMenu');
 
-  test('Expand and close hamburger menu.', async () => {
-    renderComponent();
-    const hamburgerIcon = document.querySelector('#navHamburger');
-    expect(hamburgerIcon).toBeInTheDocument();
-    expect(getNavMenuContainer()).toHaveAttribute('class', 'NavMenu');
+      act(() => fireClickButtonEvent(hamburgerIcon));
+      await waitFor(() => expect(getNavMenuContainer()).toHaveAttribute('class', 'NavMenu active'));
 
-    act(() => fireClickButtonEvent(hamburgerIcon));
-    await waitFor(() => expect(getNavMenuContainer()).toHaveAttribute('class', 'NavMenu active'));
-
-    act(() => fireClickButtonEvent(hamburgerIcon));
-    await waitFor(() => expect(getNavMenuContainer()).toHaveAttribute('class', 'NavMenu'));
+      act(() => fireClickButtonEvent(hamburgerIcon));
+      await waitFor(() => expect(getNavMenuContainer()).toHaveAttribute('class', 'NavMenu'));
+    })
   })
 })
 

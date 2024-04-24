@@ -172,9 +172,9 @@ describe('Integration tests - About', () => {
 /**
  * Fires a click event on a navigation link.
  * @param {string} page indicates the link's corresponding page
- * @param {string} language the language code (temporarily hard-coded to use the English text)
+ * @param {string} language the language code
  */
-const clickNavLink = (page, language) => utils.fireClickLinkEvent(expectedVals.navLinkText[page]['en']);
+const clickNavLink = (page, language) => utils.fireClickLinkEvent(expectedVals.navLinkText[page][language]);
 /**
  * Fires a click event on the navigation link to the About page.
  * @param {string} language the language code

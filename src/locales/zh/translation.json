@@ -1,4 +1,10 @@
 {
+    "navBar": {
+        "navLink": {
+            "sumoSchedule": "大相撲場地時間表",
+            "about": "關於"
+        }
+    },
     "loading": "載入中...",
     "error": {
         "heading": "發生錯誤",

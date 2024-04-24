@@ -1,4 +1,10 @@
 {
+    "navBar": {
+        "navLink": {
+            "sumoSchedule": "Sumo Schedule Lookup",
+            "about": "About"
+        }
+    },
     "loading": "Loading...",
     "error": {
         "heading": "ERROR",

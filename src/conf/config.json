@@ -12,12 +12,12 @@
         {
             "code": "sumoSchedule",
             "path": "/",
-            "navLinkName": "Sumo Schedule Lookup"
+            "navLinkName": "navBar.navLink.sumoSchedule"
         },
         {
             "code": "about",
             "path": "/about",
-            "navLinkName": "About"
+            "navLinkName": "navBar.navLink.about"
         }
     ],
     "about": [

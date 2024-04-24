@@ -3,6 +3,7 @@ import './NavBar.css';
 import { useState } from 'react';
 import { FaBars } from 'react-icons/fa';
 import { NavLink } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import LanguageSelector from './LanguageSelector';
 
@@ -21,6 +22,7 @@ export default function NavBar() {
      */
     const handleShowMenu = () => setShowMenu(!showMenu);
 
+    const { t } = useTranslation();
     return (
         <header className='header'>
             <nav className='nav'>
@@ -35,7 +37,7 @@ export default function NavBar() {
                         <ul>
                             {config.routes.map((route) =>
                             (<li key={`navLink-${route.code}`}>
-                                <NavLink to={route.path}>{route.navLinkName}</NavLink>
+                                <NavLink to={route.path}>{t(route.navLinkName)}</NavLink>
                             </li>))}
                         </ul>
                     </div>

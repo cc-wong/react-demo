@@ -1,4 +1,10 @@
 {
+    "navBar": {
+        "navLink": {
+            "sumoSchedule": "大相撲本場所日程",
+            "about": "このアプリについて"
+        }
+    },
     "loading": "ロード中...",
     "error": {
         "heading": "エラー",

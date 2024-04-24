@@ -77,6 +77,25 @@ export const fireChangeDropdownValueEvent = (dropdown, value) =>
     fireEvent.change(dropdown, { target: { value: value } });
 
 /**
+ * Fires a click event on a given link.
+ * @param {string} text the link text
+ */
+export const fireClickLinkEvent = (text) => fireEvent.click(screen.getByRole('link', { name: text }));
+/**
+ * Gets a table element from the page.
+ * @param {name} name
+ *      the name attribute of the table element
+ * @returns the table element with matching name attribute; if `name` is not provided,
+ *      it is assumed that the page has only one table, which will be returned;
+ *      returns `null` if the table is not found
+ */
+export const getTable = (name = null) => {
+    var args = {};
+    if (name) args.name = name;
+    return screen.queryByRole('table', args);
+}
+
+/**
  * Regex escape function.
  * 
  * @param {string} text the text to escape regex for

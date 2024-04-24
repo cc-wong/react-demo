@@ -142,31 +142,84 @@ describe('Integration tests - Sumo Tournament Schedule Lookup', () => {
     });
   });
 
+  test('Click navigation link - English.', async () => testClickLink('en'));
+  test('Click navigation link - Chinese.', async () => testClickLink('zh'));
+  test('Click navigation link - Japanese.', async () => testClickLink('ja'));
+  /**
+   * Runs a test case on clicking the navigation link to the Sumo Schedule Lookup page.
+   * @param {string} language the language code
+   */
+  const testClickLink = async (language) => {
+    i18n.changeLanguage(language);
+    mockSuccessfulAPICall([]);
+    mockSuccessfulAPICall(testData.year2024);
+
+    await act(() => renderComponent());
+    await act(() => clickNavLinkAbout(language));
+    await waitFor(() => expect(utils.getTable('schedule')).not.toBeInTheDocument());
+    await act(() => clickNavLinkSumo(language));
+    await waitFor(() => expect(utils.getTable('schedule')).toBeInTheDocument());
+  }
 })
 
 describe('Integration tests - About', () => {
-  test('Open About page - English.', async () => testAbout('en', 'About', 'Version', 'Author'));
-  test('Open About page - Chinese.', async () => testAbout('zh', 'About', '版本', '作者'));
-  test('Open About page - Japanese.', async () => testAbout('ja', 'About', 'バージョン番号', '著者'));
+  test('Open About page - English.', async () => testAbout('en', 'Version', 'Author'));
+  test('Open About page - Chinese.', async () => testAbout('zh', '版本', '作者'));
+  test('Open About page - Japanese.', async () => testAbout('ja', 'バージョン番号', '著者'));
   /**
    * Runs a test case on the About page.
    * @param {string} language the language code
-   * @param {string} aboutLinkText the expected text of the About link
    * @param {string} versionLabel the expected label of the Version field
    * @param {string} authorLabel the expected label of the Author field
    */
-  const testAbout = async (language, aboutLinkText, versionLabel, authorLabel) => {
+  const testAbout = async (language, versionLabel, authorLabel) => {
     i18n.changeLanguage(language);
     mockSuccessfulAPICall([]);
 
     await act(() => renderComponent());
-    await act(() => fireEvent.click(screen.getByRole('link', { name: aboutLinkText })));
-    await waitFor(() => {
-      expect(screen.getByRole('table')).toHaveTextContent(
-        new RegExp(`^.*${versionLabel}.*:.*v\\d+\\.\\d+\\.\\d+.*${authorLabel}.*:.*Cecilia Wong.*$`))
-    });
+    await act(() => clickNavLinkAbout(language));
+    await waitFor(() => expect(utils.getTable()).toHaveTextContent(
+      new RegExp(`^.*${versionLabel}.*:.*v\\d+\\.\\d+\\.\\d+.*${authorLabel}.*:.*Cecilia Wong.*$`)));
   }
 })
+
+/**
+ * Expected text of the navigation links by language.
+ */
+const navLinkText = {
+  sumoSchedule: {
+    /**
+     * Sumo Schedule Lookup
+     * 大相撲場地時間表查詢
+     * 大相撲本場所日程検索
+     */
+    en: 'Sumo Schedule Lookup',
+    zh: 'Sumo Schedule Lookup',
+    ja: 'Sumo Schedule Lookup'
+  },
+  about: {
+    en: 'About',
+    zh: 'About',
+    ja: 'About'
+  }
+}
+/**
+ * Fires a click event on a navigation link.
+ * @param {string} page indicates the link's corresponding page
+ * @param {string} language the language code
+ */
+const clickNavLink = (page, language) => utils.fireClickLinkEvent(navLinkText[page][language]);
+// fireEvent.click(screen.getByRole('link', { name: navLinkText[page][language] }));
+/**
+ * Fires a click event on the navigation link to the About page.
+ * @param {string} language the language code
+ */
+const clickNavLinkAbout = (language) => clickNavLink('about', language);
+/**
+ * Fires a click event on the navigation link to the Sumo Schedule Lookup page.
+ * @param {string} language the language code
+ */
+const clickNavLinkSumo = (language) => clickNavLink('sumoSchedule', language);
 
 /**
  * Renders the component for testing.

@@ -178,7 +178,7 @@ describe('Integration tests - About', () => {
 
     await act(() => renderComponent());
     await act(() => clickNavLinkAbout(language));
-    await waitFor(() => expect(utils.getTable()).toHaveTextContent(
+    await waitFor(() => expect(utils.getTable('about')).toHaveTextContent(
       new RegExp(`^.*${versionLabel}.*:.*v\\d+\\.\\d+\\.\\d+.*${authorLabel}.*:.*Cecilia Wong.*$`)));
   }
 })

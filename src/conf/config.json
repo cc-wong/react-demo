@@ -8,6 +8,18 @@
     "yearDropdown": {
         "maxYearsFromCurrent": 10
     },
+    "routes": [
+        {
+            "code": "sumoSchedule",
+            "path": "/",
+            "navLinkName": "Sumo Schedule Lookup"
+        },
+        {
+            "code": "about",
+            "path": "/about",
+            "navLinkName": "About"
+        }
+    ],
     "about": [
         {
             "label": "appVersion",

@@ -1,23 +1,31 @@
 import './App.css';
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+import NavBar from './components/nav/NavBar';
 import SumoScheduleLookup from './components/SumoScheduleLookup';
 import About from './components/About';
-import NavBar from './components/nav/NavBar';
-import * as envUtils from './utils/EnvironmentUtils';
+
+import { getAppVersionNumber } from './utils/EnvironmentUtils';
+
+import config from './conf/config.json';
 
 /**
  * The app's main component.
  */
 export default function App() {
-  console.info(`App version: ${envUtils.getAppVersionNumber()}`);
+  console.info(`App version: ${getAppVersionNumber()}`);
+  const elements = {
+    sumoSchedule: (<SumoScheduleLookup />),
+    about: (<About />)
+  };
   return (
     <Router>
       <NavBar />
       <main className='MainContent'>
         <Routes>
-          <Route path="/" element={<SumoScheduleLookup />} />
-          <Route path="/about" element={<About />} />
+          {config.routes.map((route) =>
+            (<Route key={`route-${route.code}`} path={route.path} element={elements[route.code]} />))}
         </Routes>
       </main>
     </Router>

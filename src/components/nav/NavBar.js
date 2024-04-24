@@ -1,10 +1,12 @@
+import './NavBar.css';
+
 import { useState } from 'react';
 import { FaBars } from 'react-icons/fa';
 import { NavLink } from 'react-router-dom';
 
 import LanguageSelector from './LanguageSelector';
 
-import './NavBar.css';
+import config from '../../conf/config.json';
 
 /**
  * Renders the navigation bar at the top of the page.
@@ -31,8 +33,10 @@ export default function NavBar() {
                     {appLogo()}
                     <div className={`NavMenu${showMenu ? ' active' : ''}`} id="navMenu">
                         <ul>
-                            <li><NavLink to="/">Sumo Schedule Lookup</NavLink></li>
-                            <li><NavLink to="/about">About</NavLink></li>
+                            {config.routes.map((route) =>
+                            (<li key={`navLink-${route.code}`}>
+                                <NavLink to={route.path}>{route.navLinkName}</NavLink>
+                            </li>))}
                         </ul>
                     </div>
                 </div>

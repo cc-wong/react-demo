@@ -1,0 +1,14 @@
+{
+    "navLinkText": {
+        "sumoSchedule": {
+            "en": "Sumo Schedule Lookup",
+            "zh": "大相撲場地時間表查詢",
+            "ja": "大相撲本場所日程検索"
+        },
+        "about": {
+            "en": "About",
+            "zh": "About",
+            "ja": "About"
+        }
+    }
+}

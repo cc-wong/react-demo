@@ -29,7 +29,7 @@ export default function NavBar() {
                 </div>
                 <div className='NavContainer'>
                     {appLogo()}
-                    <div className={`NavMenu ${showMenu ? 'active' : ''}`}>
+                    <div className={`NavMenu${showMenu ? ' active' : ''}`} id="navMenu">
                         <ul>
                             <li><NavLink to="/">Sumo Schedule Lookup</NavLink></li>
                             <li><NavLink to="/about">About</NavLink></li>

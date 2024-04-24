@@ -4,6 +4,7 @@ import * as utils from './testUtils';
 import App from './App';
 
 import testData from './App.test.json'
+import expectdVals from './testData-expecteds.json';
 
 import i18n from './i18n';
 import { I18nextProvider } from 'react-i18next';
@@ -184,32 +185,11 @@ describe('Integration tests - About', () => {
 })
 
 /**
- * Expected text of the navigation links by language.
- */
-const navLinkText = {
-  sumoSchedule: {
-    /**
-     * Sumo Schedule Lookup
-     * 大相撲場地時間表查詢
-     * 大相撲本場所日程検索
-     */
-    en: 'Sumo Schedule Lookup',
-    zh: 'Sumo Schedule Lookup',
-    ja: 'Sumo Schedule Lookup'
-  },
-  about: {
-    en: 'About',
-    zh: 'About',
-    ja: 'About'
-  }
-}
-/**
  * Fires a click event on a navigation link.
  * @param {string} page indicates the link's corresponding page
- * @param {string} language the language code
+ * @param {string} language the language code (temporarily hard-coded to use the English text)
  */
-const clickNavLink = (page, language) => utils.fireClickLinkEvent(navLinkText[page][language]);
-// fireEvent.click(screen.getByRole('link', { name: navLinkText[page][language] }));
+const clickNavLink = (page, language) => utils.fireClickLinkEvent(expectdVals.navLinkText[page]['en']);
 /**
  * Fires a click event on the navigation link to the About page.
  * @param {string} language the language code

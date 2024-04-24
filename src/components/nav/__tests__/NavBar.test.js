@@ -1,9 +1,13 @@
-import { render, screen, cleanup } from '@testing-library/react';
+import { render, screen, cleanup, waitFor } from '@testing-library/react';
+import expectedVals from '../../../testData-expecteds.json';
+
 import NavBar from '../NavBar';
 
 import i18n from '../../../i18n';
 import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter } from 'react-router-dom';
+import { fireClickButtonEvent } from '../../../testUtils';
+import { act } from 'react-dom/test-utils';
 
 afterEach(() => cleanup());
 
@@ -16,8 +20,8 @@ describe('Verify navigation bar content', () => {
   test('Menu exists.', () => {
     renderComponent();
     const expecteds = [
-      { text: 'Sumo Schedule Lookup', href: '/' },
-      { text: 'About', href: '/about' }
+      { text: expectedVals.navLinkText.sumoSchedule['en'], href: '/' },
+      { text: expectedVals.navLinkText.about['en'], href: '/about' }
     ];
     const links = screen.queryAllByRole('link');
     expect(links).toHaveLength(expecteds.length);
@@ -26,7 +30,26 @@ describe('Verify navigation bar content', () => {
       expect(link).toHaveAttribute('href', expecteds.at(i).href);
     });
   });
+
+  test('Expand and close hamburger menu.', async () => {
+    renderComponent();
+    const hamburgerIcon = document.querySelector('#navHamburger');
+    expect(hamburgerIcon).toBeInTheDocument();
+    expect(getNavMenuContainer()).toHaveAttribute('class', 'NavMenu');
+
+    act(() => fireClickButtonEvent(hamburgerIcon));
+    await waitFor(() => expect(getNavMenuContainer()).toHaveAttribute('class', 'NavMenu active'));
+
+    act(() => fireClickButtonEvent(hamburgerIcon));
+    await waitFor(() => expect(getNavMenuContainer()).toHaveAttribute('class', 'NavMenu'));
+  })
 })
+
+/**
+ * Returns the container for the navigation menu items.
+ * @returns the `<div>` element container
+ */
+const getNavMenuContainer = () => document.querySelector('#navMenu');
 
 /**
  * Renders the component for testing.

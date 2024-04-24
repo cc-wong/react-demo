@@ -56,10 +56,16 @@ export const assertTableCells = (expected, rowCount, colCount, checkExact = true
 }
 
 /**
- * Fires a click event on a button with a given label.
- * @param {string} text the button label
+ * Fires a click event on a button.
+ * @param {string|HTMLElement} target the button label or the HTML element representing the button
  */
-export const fireClickButtonEvent = (label) => fireEvent.click(screen.getByRole('button', { name: label }));
+export const fireClickButtonEvent = (target) => {
+    let button;
+    if (typeof target === 'string' || target instanceof String)
+        button = screen.getByRole('button', { name: target })
+    else button = target;
+    fireEvent.click(button);
+};
 
 /**
  * Gets a dropdown box element (`<select>`) by the name attribute.

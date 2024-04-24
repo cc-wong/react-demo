@@ -30,7 +30,7 @@ describe('Verify screen', () => {
         mockApiCalls(initSuccessfulAPICallResult(testData.sixRecords));
         await act(async () => renderComponent());
         await waitFor(() => {
-            expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
+            expect(utils.getHeading(1)).toBeInTheDocument();
             expect(getYearDropdown()).toBeInTheDocument();
             expect(screen.getByRole('table', { name: 'schedule' })).toBeInTheDocument();
         });
@@ -49,10 +49,7 @@ describe('Verify screen', () => {
         mockApiCalls(initSuccessfulAPICallResult(testData.sixRecords));
         i18n.changeLanguage(languageCode);
         await act(async () => renderComponent());
-        await waitFor(() => {
-            const heading = screen.getByRole('heading', { level: 1 });
-            expect(heading).toHaveTextContent(expected);
-        });
+        await waitFor(() => expect(utils.getHeading(1)).toHaveTextContent(expected));
     }
 })
 

@@ -23,6 +23,8 @@
     align-items: center;
     font-weight: bold;
     font-size: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: white;
 }
 
 .NavContainer {
@@ -40,6 +42,14 @@
     gap: 20px;
 }
 
+.NavMenu ul.Menu-zh {
+    font-family: "PingFang HK", "PingFang TC", "Noto Sans HK", "Microsoft YaHei", sans-serif;
+}
+
+.NavMenu ul.Menu-ja {
+    font-family: "Hiragino Sans", "Noto Sans JP", "MS PGothic", "MS Gothic", sans-serif;
+}
+
 .NavMenu ul li {
     font-weight: 500;
 }
@@ -47,6 +57,13 @@
 .NavMenu a {
     color: white;
     text-decoration: none;
+}
+
+.NavMenu a.active {
+    pointer-events: none;
+    cursor: default;
+    font-weight: bold;
+    color: rgb(238, 186, 255);
 }
 
 .NavMenu a:hover {
@@ -75,20 +92,17 @@
 
     .NavMenu {
         position: absolute;
-        left: 0;
+        left: -260px;
         top: 45px;
-        background-color: gray;
-        width: 0px;
+        background-color: rgb(81, 81, 81);
+        width: 260px;
         height: calc(100vh - 45px);
-        opacity: 0;
-        transition: all 0.5s cubic-bezier(.62, .04, .3, 1.56);
-        transition-delay: 0.1s;
+        transition: all 0.3s ease-out;
         overflow: hidden;
     }
 
     .NavMenu.active {
-        width: 220px;
-        opacity: 1;
+        left: 0;
     }
 
     .NavMenu ul {
@@ -98,6 +112,6 @@
     }
 
     .NavMenu a:hover {
-        color: blue;
+        color: aquamarine;
     }
 }

@@ -17,12 +17,17 @@ export default function NavBar() {
     const [showMenu, setShowMenu] = useState(false);
 
     /**
-     * Event handler for showing or hiding the offcanvas menu which is available
+     * Event handler for showing or hiding the sidebar menu which is available
      * when the browser width is less than a specified value.
      */
     const handleShowMenu = () => setShowMenu(!showMenu);
 
-    const { t } = useTranslation();
+    /**
+     * Event handler for hiding the sidebar menu.
+     */
+    const handleCloseMenu = () => setShowMenu(false);
+
+    const { t, i18n } = useTranslation();
     return (
         <header className='header'>
             <nav className='nav'>
@@ -34,10 +39,12 @@ export default function NavBar() {
                 <div className='NavContainer'>
                     {appLogo()}
                     <div className={`NavMenu${showMenu ? ' active' : ''}`} id="navMenu">
-                        <ul>
+                        <ul className={`Menu-${i18n.language}`}>
                             {config.routes.map((route) =>
                             (<li key={`navLink-${route.code}`}>
-                                <NavLink to={route.path}>{t(route.navLinkName)}</NavLink>
+                                <NavLink to={route.path} onClick={handleCloseMenu}>
+                                    {t(route.navLinkName)}
+                                </NavLink>
                             </li>))}
                         </ul>
                     </div>

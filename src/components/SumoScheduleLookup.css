@@ -6,18 +6,23 @@
     font-size: calc(10px + 1vmin);
     color: black;
 }
+
 .SumoScheduleLookup h1 {
     text-align: center;
 }
+
 .SumoScheduleLookup .title-en {
     font-family: georgia, times, serif;
 }
+
 .SumoScheduleLookup .title-zh {
-    font-family: "PingFang HK", "Noto Sans HK", sans-serif;
+    font-family: "PingFang HK", "PingFang TC", "Noto Sans HK", "Microsoft YaHei", sans-serif;
 }
+
 .SumoScheduleLookup .title-ja {
-    font-family: "Hiragino Sans", "Noto Sans JP", sans-serif;
+    font-family: "Hiragino Sans", "Noto Sans JP", "MS PGothic", "MS Gothic", sans-serif;
 }
+
 .SumoScheduleLookup form {
     padding: 8px;
 }

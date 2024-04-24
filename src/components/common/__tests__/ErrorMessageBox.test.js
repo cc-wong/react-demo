@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react"
 import * as utils from '../../../testUtils';
 import { APICallResult } from "../../../types/APICallResult";
+import expecteds from '../../../testData-expecteds.json';
 
 import i18n from "../../../i18n";
 import { I18nextProvider } from 'react-i18next';
@@ -20,15 +21,14 @@ describe('ErrorMessageBox component', () => {
     });
 
     describe('Box displayed - Unsuccessful API response', () => {
-        test('Language = English.', () => runTest('en', 'System error!'));
-        test('Language = Chinese.', () => runTest('zh', '系統發生錯誤！'));
-        test('Language = Japanese.', () => runTest('ja', 'システムエラーが発生しました!'));
+        test('Language = English.', () => runTest('en'));
+        test('Language = Chinese.', () => runTest('zh'));
+        test('Language = Japanese.', () => runTest('ja'));
         /**
          * Runs a test case on displaying the error message box for unsuccessful API response.
          * @param {string} language the language code
-         * @param {string} headerText the expected message header text
          */
-        const runTest = (language, headerText) => {
+        const runTest = (language) => {
             const error = {
                 header: 'error.message.UnsuccessfulResponse.header',
                 body: 'error.message.UnsuccessfulResponse.body',
@@ -39,21 +39,21 @@ describe('ErrorMessageBox component', () => {
                 },
                 displayRefresh: false
             };
-            testBoxDisplayed(language, error, headerText, '500 INTERNAL SERVER ERROR - Test reason.');
+            testBoxDisplayed(language, error, expecteds.errorMessage.unsuccessfulAPIResponse.header[language],
+                '500 INTERNAL SERVER ERROR - Test reason.');
             expect(screen.queryByRole('button')).not.toBeInTheDocument();
         }
     })
 
     describe('Box displayed - Error thrown on API call', () => {
-        test('Language = English.', () => runTest('en', 'System error!'));
-        test('Language = Chinese.', () => runTest('zh', '系統發生錯誤！'));
-        test('Language = Japanese.', () => runTest('ja', 'システムエラーが発生しました!'));
+        test('Language = English.', () => runTest('en'));
+        test('Language = Chinese.', () => runTest('zh'));
+        test('Language = Japanese.', () => runTest('ja'));
         /**
          * Runs a test case on displaying the error message box for error thrown by the API call.
          * @param {string} language the language code
-         * @param {string} headerText the expected message header text
          */
-        const runTest = (language, headerText) => {
+        const runTest = (language) => {
             const error = {
                 header: 'error.message.ErrorThrown.header',
                 body: 'error.message.ErrorThrown.body',
@@ -62,7 +62,8 @@ describe('ErrorMessageBox component', () => {
                 },
                 displayRefresh: false
             };
-            testBoxDisplayed(language, error, headerText, 'TypeError: TEST');
+            testBoxDisplayed(language, error,
+                expecteds.errorMessage.apiErrorThrown.header[language], 'TypeError: TEST');
             expect(screen.queryByRole('button')).not.toBeInTheDocument();
         }
     })
@@ -78,27 +79,17 @@ describe('ErrorMessageBox component', () => {
             displayRefresh: true
         };
 
-        /**
-         * Expected reload button label by language.
-         */
-        const reloadButtonLabel = {
-            'en': 'RELOAD',
-            'zh': '重載',
-            'ja': '再読込'
-        }
-
-        test('Language = English.', () => testDisplayed('en', 'Timeout error!', 'Please try again.'));
-        test('Language = Chinese.', () => testDisplayed('zh', '發生逾時錯誤！', '請重新嘗試。'));
-        test('Language = Japanese.', () => testDisplayed('ja', 'タイムアウトが発生しました!', 'もう一度お試しください。'));
+        test('Language = English.', () => testDisplayed('en'));
+        test('Language = Chinese.', () => testDisplayed('zh'));
+        test('Language = Japanese.', () => testDisplayed('ja'));
         /**
          * Runs a test case on displaying the error message box for API timeout.
          * @param {*} language the language code
-         * @param {string} headerText the expected message header text
-         * @param {string} bodyText the expected message body text
          */
-        const testDisplayed = (language, headerText, bodyText) => {
-            testBoxDisplayed(language, error, headerText, bodyText);
-            expect(screen.getByRole('button')).toHaveTextContent(reloadButtonLabel[language]);
+        const testDisplayed = (language) => {
+            const texts = expecteds.errorMessage.apiTimeout;
+            testBoxDisplayed(language, error, texts.header[language], texts.body[language]);
+            expect(screen.getByRole('button')).toHaveTextContent(texts.reloadButtonLabel[language]);
         }
 
         test('Click "RELOAD" button - English.', () => testClickReload('en'));
@@ -111,7 +102,7 @@ describe('ErrorMessageBox component', () => {
         const testClickReload = (language) => {
             i18n.changeLanguage(language);
             render(<ErrorMessageBox error={error} reloadEvent={mockReloadEvent} />);
-            utils.fireClickButtonEvent(reloadButtonLabel[language]);
+            utils.fireClickButtonEvent(expecteds.errorMessage.apiTimeout.reloadButtonLabel[language]);
             expect(mockReloadEvent.mock.calls).toHaveLength(1);
         }
     })

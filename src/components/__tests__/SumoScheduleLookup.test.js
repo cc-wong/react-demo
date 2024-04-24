@@ -1,10 +1,11 @@
-import { render, screen, cleanup, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, cleanup, waitFor } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 import * as utils from '../../testUtils';
 
 import SumoScheduleLookup from '../SumoScheduleLookup';
 
 import testData from './SumoScheduleLookup.test.json';
+import expecteds from '../../testData-expecteds.json';
 import { APICallResult } from '../../types/APICallResult';
 
 import i18n from '../../i18n';
@@ -196,19 +197,10 @@ describe('API unsuccessful response', () => {
      * @param {number} expectedYear the expected selected value in the Year dropdown box
      * @param {string} language the language code; default `en` if not provided
      */
-    const assertUnsuccessfulAPIResponse = (statusCode, statusText, message, expectedYear, language = 'en') => {
-        var [header, body] = ['System error!', `${statusCode} ${statusText} - ${message}`];
-        switch (language) {
-            case 'zh':
-                [header, body] = ['系統發生錯誤！', `${statusCode} ${statusText} - ${message}`];
-                break;
-            case 'ja':
-                [header, body] = ['システムエラーが発生しました!', `${statusCode} ${statusText} - ${message}`];
-                break;
-            default:
-        }
-        assertScreenWithError(expectedYear, header, body);
-    }
+    const assertUnsuccessfulAPIResponse = (statusCode, statusText, message, expectedYear, language = 'en') =>
+        assertScreenWithError(expectedYear,
+            expecteds.errorMessage.unsuccessfulAPIResponse.header[language],
+            `${statusCode} ${statusText} - ${message}`);
 })
 
 describe('API call throws error', () => {
@@ -277,28 +269,14 @@ describe('API call throws error', () => {
      * @param {string} errorBody the expected error message body
      * @param {string} language the language code; default `en` if not provided
      */
-    const assertAPICallErrorThrown = (year, errorBody, language = 'en') => {
-        var [header, body] = ['System error!', errorBody];
-        switch (language) {
-            case 'zh':
-                [header, body] = ['系統發生錯誤！', errorBody];
-                break;
-            case 'ja':
-                [header, body] = ['システムエラーが発生しました!', errorBody];
-                break;
-            default:
-        }
-        assertScreenWithError(year, header, body);
-    }
+    const assertAPICallErrorThrown = (year, errorBody, language = 'en') =>
+        assertScreenWithError(year, expecteds.errorMessage.apiErrorThrown.header[language], errorBody);
 });
 
 describe('API call timeout', () => {
-    test('On initial rendering - English.', async () =>
-        testAPICallTimeout('en', 'Timeout error!', 'Please try again.'));
-    test('On initial rendering - Chinese.', async () =>
-        testAPICallTimeout('zh', '發生逾時錯誤！', '請重新嘗試。'));
-    test('On initial rendering - Japanese.', async () =>
-        testAPICallTimeout('ja', 'タイムアウトが発生しました!', 'もう一度お試しください。'));
+    test('On initial rendering - English.', async () => testAPICallTimeout('en'));
+    test('On initial rendering - Chinese.', async () => testAPICallTimeout('zh'));
+    test('On initial rendering - Japanese.', async () => testAPICallTimeout('ja'));
 
     test('Failure on initial rendering, success on year value change.', async () => {
         await testAPICallTimeout('en');
@@ -314,20 +292,20 @@ describe('API call timeout', () => {
         assertApiCall(2, [2025, 2030]);
     });
 
-    test('Click reload button - English.', async () => await testReload('en', 'RELOAD'));
-    test('Click reload button - Chinese.', async () => await testReload('zh', '重載'));
-    test('Click reload button - Japanese.', async () => await testReload('ja', '再読込'));
+    test('Click reload button - English.', async () => await testReload('en'));
+    test('Click reload button - Chinese.', async () => await testReload('zh'));
+    test('Click reload button - Japanese.', async () => await testReload('ja'));
     /**
      * Runs a test case on clicking the reload button in the error message box.
      * @param {string} language the language code
-     * @param {string} buttonText the expected reload button text
      */
-    const testReload = async (language, buttonText) => {
+    const testReload = async (language) => {
         await testAPICallTimeout(language);
         expect(document.querySelector('#errorMessage')).toBeInTheDocument();
 
         mockApiCalls(initSuccessfulAPICallResult(testData.sixRecords));
-        await act(async () => utils.fireClickButtonEvent(buttonText));
+        await act(async () =>
+            utils.fireClickButtonEvent(expecteds.errorMessage.apiTimeout.reloadButtonLabel[language]));
         await waitFor(() => assertErrorMessageNotExist());
         assertScreen(2025, 6);
 
@@ -336,12 +314,9 @@ describe('API call timeout', () => {
 
     /**
      * Runs a test case on API call timeout.
-     * @param {string} errorHeader
-     *      the expected error message header; message text assertion is skipped if not provided
-     * @param {string} errorBody
-     *      the expected error message body; message text assertion is skipped if not provided
+     * @param {string} language the language code
      */
-    const testAPICallTimeout = async (language, errorHeader = null, errorBody = null) => {
+    const testAPICallTimeout = async (language) => {
         i18n.changeLanguage(language);
         mockApiCallWithDelay(60, APICallResult.InitForTimeout());
 
@@ -353,7 +328,8 @@ describe('API call timeout', () => {
         });
 
         await act(() => utils.advanceTimersBySeconds(61));
-        errorHeader && errorBody && assertScreenWithError(2025, errorHeader, errorBody);
+        assertScreenWithError(2025, expecteds.errorMessage.apiTimeout.header[language],
+            expecteds.errorMessage.apiTimeout.body[language]);
     }
 });
 

@@ -4,7 +4,7 @@ import * as utils from './testUtils';
 import App from './App';
 
 import testData from './App.test.json'
-import expectdVals from './testData-expecteds.json';
+import expectedVals from './testData-expecteds.json';
 
 import i18n from './i18n';
 import { I18nextProvider } from 'react-i18next';
@@ -21,7 +21,7 @@ describe('Integration tests - Sumo Tournament Schedule Lookup', () => {
     await testDataLoadSuccess('en');
 
     mockSuccessfulAPICall(testData.input.year2024);
-    await act(() => utils.fireClickButtonEvent('Language: EN'));
+    act(() => utils.fireClickButtonEvent('Language: EN'));
     await act(() => fireEvent.click(screen.getByRole('menuitem', { name: '日本語' })));
     await waitFor(() => assertTableContent(testData.expected.year2024.ja));
   });
@@ -41,21 +41,15 @@ describe('Integration tests - Sumo Tournament Schedule Lookup', () => {
     });
   }
 
-  test('Page load - Unsuccessful response - English.', async () =>
-    testAPIUnsuccessfulResponse('en', 'System error!', '400 BAD REQUEST - Test Unsuccessful Response.'));
-  test('Page load - Unsuccessful response - Chinese.', async () =>
-    testAPIUnsuccessfulResponse('zh', '系統發生錯誤！', '400 BAD REQUEST - Test Unsuccessful Response.'));
-  test('Page load - Unsuccessful response - Japanese.', async () =>
-    testAPIUnsuccessfulResponse('ja', 'システムエラーが発生しました!', '400 BAD REQUEST - Test Unsuccessful Response.'));
-
+  test('Page load - Unsuccessful response - English.', async () => testAPIUnsuccessfulResponse('en'));
+  test('Page load - Unsuccessful response - Chinese.', async () => testAPIUnsuccessfulResponse('zh'));
+  test('Page load - Unsuccessful response - Japanese.', async () => testAPIUnsuccessfulResponse('ja'));
   /**
    * Runs a test case where the API call returns an response with status code 400 (BAD REQUEST)
    * and failure message "Test Unsuccessful Response.".
    * @param {string} language the language code
-   * @param {string} errorHeader the expected error message header
-   * @param {string} errorBody the expected error message body
    */
-  const testAPIUnsuccessfulResponse = async (language, errorHeader, errorBody) => {
+  const testAPIUnsuccessfulResponse = async (language) => {
     i18n.changeLanguage(language);
     utils.mockFetchUnsuccessfulResponse(400, 'BAD REQUEST', {
       code: 400,
@@ -64,63 +58,55 @@ describe('Integration tests - Sumo Tournament Schedule Lookup', () => {
     await act(() => renderComponent());
     await waitFor(() => {
       assertDropdownValue(2024);
-      assertErrorMessage(errorHeader, errorBody);
+      assertErrorMessage(expectedVals.errorMessage.unsuccessfulAPIResponse.header[language],
+        '400 BAD REQUEST - Test Unsuccessful Response.');
       assertTableContent();
     });
   }
 
-  test('Page load - API call throws error - English.', async () =>
-    testAPICallErrorThrown('en', 'System error!', 'Error: Arbitrary error.'));
-  test('Page load - API call throws error - Chinese.', async () =>
-    testAPICallErrorThrown('zh', '系統發生錯誤！', 'Error: Arbitrary error.'));
-  test('Page load - API call throws error - Japanese.', async () =>
-    testAPICallErrorThrown('ja', 'システムエラーが発生しました!', 'Error: Arbitrary error.'));
-
+  test('Page load - API call throws error - English.', async () => testAPICallErrorThrown('en'));
+  test('Page load - API call throws error - Chinese.', async () => testAPICallErrorThrown('zh'));
+  test('Page load - API call throws error - Japanese.', async () => testAPICallErrorThrown('ja'));
   /**
    * Runs a test case where the API call throws an `Error` with message "Arbitrary error.".
    * @param {string} language the language code
-   * @param {string} errorHeader the expected error message header
-   * @param {string} errorBody the expected error message body
    */
-  const testAPICallErrorThrown = async (language, errorHeader, errorBody) => {
+  const testAPICallErrorThrown = async (language) => {
     i18n.changeLanguage(language);
     utils.mockFetchThrowError(new Error('Arbitrary error.'));
     await act(() => renderComponent());
     await waitFor(() => {
       assertDropdownValue(2024);
-      assertErrorMessage(errorHeader, errorBody);
+      assertErrorMessage(expectedVals.errorMessage.apiErrorThrown.header[language], 'Error: Arbitrary error.');
       assertTableContent();
     });
   }
 
-  test('Page load - API call timeout - English.', async () =>
-    testAPICallTimeout('en', 'Loading...', 'Timeout error!', 'Please try again.'));
-  test('Page load - API call timeout - Chinese.', async () =>
-    testAPICallTimeout('zh', '載入中...', '發生逾時錯誤！', '請重新嘗試。'));
-  test('Page load - API call timeout - Japanese.', async () =>
-    testAPICallTimeout('ja', 'ロード中...', 'タイムアウトが発生しました!', 'もう一度お試しください。'));
-
+  test('Page load - API call timeout - English.', async () => testAPICallTimeout('en'));
+  test('Page load - API call timeout - Chinese.', async () => testAPICallTimeout('zh'));
+  test('Page load - API call timeout - Japanese.', async () => testAPICallTimeout('ja'));
   /**
    * Runs a test case where the API call times out.
    * @param {string} language the language code
-   * @param {string} loadingText the expected loading text
-   * @param {string} errorHeader the expected error message header
-   * @param {string} errorBody the expected error message body
    */
-  const testAPICallTimeout = async (language, loadingText, errorHeader, errorBody) => {
+  const testAPICallTimeout = async (language) => {
     i18n.changeLanguage(language);
     var timeoutError = new Error('API call timed out!');
     timeoutError.name = 'APITimeoutError';
     utils.mockFunctionWithDelay(utils.spyOnFetch(), 60, timeoutError);
 
+    const loadingTextPattern = `>${expectedVals.loading[language]}<`;
+
     await act(() => renderComponent());
-    expect(document.querySelector('#loadingText')).toHaveTextContent(loadingText);
+    console.log(document.body.innerHTML);
+    expect(document.body.innerHTML).toMatch(loadingTextPattern);
 
     await act(() => utils.advanceTimersBySeconds(61));
     await waitFor(() => {
       assertDropdownValue(2024);
-      assertErrorMessage(errorHeader, errorBody);
-      expect(document.querySelector('#loadingText')).toBeNull();
+      assertErrorMessage(expectedVals.errorMessage.apiTimeout.header[language],
+        expectedVals.errorMessage.apiTimeout.body[language]);
+      expect(document.body.innerHTML).not.toMatch(loadingTextPattern);
       assertTableContent();
     });
   }
@@ -164,23 +150,22 @@ describe('Integration tests - Sumo Tournament Schedule Lookup', () => {
 })
 
 describe('Integration tests - About', () => {
-  test('Open About page - English.', async () => testAbout('en', 'Version', 'Author'));
-  test('Open About page - Chinese.', async () => testAbout('zh', '版本', '作者'));
-  test('Open About page - Japanese.', async () => testAbout('ja', 'バージョン番号', '著者'));
+  test('Open About page - English.', async () => testAbout('en'));
+  test('Open About page - Chinese.', async () => testAbout('zh'));
+  test('Open About page - Japanese.', async () => testAbout('ja'));
   /**
    * Runs a test case on the About page.
    * @param {string} language the language code
-   * @param {string} versionLabel the expected label of the Version field
-   * @param {string} authorLabel the expected label of the Author field
    */
-  const testAbout = async (language, versionLabel, authorLabel) => {
+  const testAbout = async (language) => {
     i18n.changeLanguage(language);
     mockSuccessfulAPICall([]);
 
     await act(() => renderComponent());
     await act(() => clickNavLinkAbout(language));
     await waitFor(() => expect(utils.getTable('about')).toHaveTextContent(
-      new RegExp(`^.*${versionLabel}.*:.*v\\d+\\.\\d+\\.\\d+.*${authorLabel}.*:.*Cecilia Wong.*$`)));
+      new RegExp(`^.*${expectedVals.about.fieldLabel.version[language]}.*:.*v\\d+\\.\\d+\\.\\d+.*` +
+        `${expectedVals.about.fieldLabel.author[language]}.*:.*Cecilia Wong.*$`)));
   }
 })
 
@@ -189,7 +174,7 @@ describe('Integration tests - About', () => {
  * @param {string} page indicates the link's corresponding page
  * @param {string} language the language code (temporarily hard-coded to use the English text)
  */
-const clickNavLink = (page, language) => utils.fireClickLinkEvent(expectdVals.navLinkText[page]['en']);
+const clickNavLink = (page, language) => utils.fireClickLinkEvent(expectedVals.navLinkText[page]['en']);
 /**
  * Fires a click event on the navigation link to the About page.
  * @param {string} language the language code

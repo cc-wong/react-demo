@@ -1,5 +1,6 @@
 import { render } from "@testing-library/react";
 import i18n from '../../../i18n';
+import expecteds from '../../../testData-expecteds.json';
 
 import LoadingText from "../LoadingText";
 
@@ -9,17 +10,16 @@ test('Text not displayed.', () => {
 });
 
 describe('Text displayed', () => {
-    test('Language - English.', () => runTest('en', 'Loading...'));
-    test('Language - Chinese.', () => runTest('zh', '載入中...'));
-    test('Language - Japanese.', () => runTest('ja', 'ロード中...'));
+    test('Language - English.', () => runTest('en'));
+    test('Language - Chinese.', () => runTest('zh'));
+    test('Language - Japanese.', () => runTest('ja'));
     /**
      * Runs a test case where the loading text is expected to be displayed.
      * @param {string} language the language code
-     * @param {string} text the expected text
      */
-    const runTest = (language, text) => {
+    const runTest = (language) => {
         i18n.changeLanguage(language);
         render(<LoadingText isLoading={true} />);
-        expect(document.querySelector('#loadingText').innerHTML).toEqual(text);
+        expect(document.querySelector('#loadingText').innerHTML).toEqual(expecteds.loading[language]);
     }
 })

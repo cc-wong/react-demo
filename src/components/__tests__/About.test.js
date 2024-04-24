@@ -1,22 +1,21 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render } from "@testing-library/react";
 import * as testUtils from '../../testUtils';
 import i18n from '../../i18n';
+import expecteds from '../../testData-expecteds.json';
 
 import About from '../About';
 
 afterEach(() => cleanup());
 
 describe('Verify screen content', () => {
-    test('Language = English.', () => runTest('en', 'Version', 'Author'));
-    test('Language = Chinese.', () => runTest('zh', '版本', '作者'));
-    test('Language = Japanese.', () => runTest('ja', 'バージョン番号', '著者'));
+    test('Language = English.', () => runTest('en'));
+    test('Language = Chinese.', () => runTest('zh'));
+    test('Language = Japanese.', () => runTest('ja'));
     /**
      * Runs a test case on the screen content.
      * @param {string} language language code
-     * @param {string} versionLabel expected label text for the Version field
-     * @param {string} authorLabel expected label text for the Author field
      */
-    const runTest = (language, versionLabel, authorLabel) => {
+    const runTest = (language) => {
         i18n.changeLanguage(language);
         testUtils.environmentFixture('REACT_APP_VERSION').mock("1.0.0");
 
@@ -24,8 +23,8 @@ describe('Verify screen content', () => {
         expect(document.querySelector('#about')).toBeInTheDocument();
         testUtils.assertTableRowCount(2);
         testUtils.assertTableCells([
-            [versionLabel, ':', 'v1.0.0'],
-            [authorLabel, ':', 'Cecilia Wong']
+            [expecteds.about.fieldLabel.version[language], ':', 'v1.0.0'],
+            [expecteds.about.fieldLabel.author[language], ':', 'Cecilia Wong']
         ], 2, 3);
     }
 });

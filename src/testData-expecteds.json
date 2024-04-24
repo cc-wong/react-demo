@@ -10,5 +10,57 @@
             "zh": "About",
             "ja": "About"
         }
+    },
+    "loading": {
+        "en": "Loading...",
+        "zh": "載入中...",
+        "ja": "ロード中..."
+    },
+    "errorMessage": {
+        "unsuccessfulAPIResponse": {
+            "header": {
+                "en": "System error!",
+                "zh": "系統發生錯誤！",
+                "ja": "システムエラーが発生しました!"
+            }
+        },
+        "apiErrorThrown": {
+            "header": {
+                "en": "System error!",
+                "zh": "系統發生錯誤！",
+                "ja": "システムエラーが発生しました!"
+            }
+        },
+        "apiTimeout": {
+            "header": {
+                "en": "Timeout error!",
+                "zh": "發生逾時錯誤！",
+                "ja": "タイムアウトが発生しました!"
+            },
+            "body": {
+                "en": "Please try again.",
+                "zh": "請重新嘗試。",
+                "ja": "もう一度お試しください。"
+            },
+            "reloadButtonLabel": {
+                "en": "RELOAD",
+                "zh": "重載",
+                "ja": "再読込"
+            }
+        }
+    },
+    "about": {
+        "fieldLabel": {
+            "version": {
+                "en": "Version",
+                "zh": "版本",
+                "ja": "バージョン番号"
+            },
+            "author": {
+                "en": "Author",
+                "zh": "作者",
+                "ja": "著者"
+            }
+        }
     }
 }

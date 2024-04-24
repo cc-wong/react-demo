@@ -21,6 +21,8 @@ describe('Verify screen content', () => {
 
         render(<About />);
         expect(document.querySelector('#about')).toBeInTheDocument();
+        expect(testUtils.getHeading(1, expecteds.about.title[language])).toBeInTheDocument();
+        expect(testUtils.getHeading(1))
         testUtils.assertTableRowCount(2);
         testUtils.assertTableCells([
             [expecteds.about.fieldLabel.version[language], ':', 'v1.0.0'],

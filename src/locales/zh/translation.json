@@ -25,6 +25,7 @@
         "reload": "重載"
     },
     "about": {
+        "title": "關於此程式",
         "label": {
             "appVersion": "版本",
             "author": "作者"

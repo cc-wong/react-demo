@@ -25,6 +25,7 @@
         "reload": "RELOAD"
     },
     "about": {
+        "title": "About This App",
         "label": {
             "appVersion": "Version",
             "author": "Author"

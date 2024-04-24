@@ -102,6 +102,19 @@ export const getTable = (name = null) => {
 }
 
 /**
+ * Gets the heading in a page.
+ * @param {number} level the expected heading level, eg. 1 for `<h1>`
+ * @param {string} text
+ *      the expected heading text; if not provided, it will be assumed that there is only one heading
+ * @returns the HTML element for the heading
+ */
+export const getHeading = (level, text = null) => {
+    var args = { level: level };
+    if (text) args.name = text;
+    return screen.getByRole('heading', args);
+}
+
+/**
  * Regex escape function.
  * 
  * @param {string} text the text to escape regex for

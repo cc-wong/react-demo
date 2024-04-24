@@ -15,6 +15,7 @@ export default function About() {
     const { t } = useTranslation();
     return (
         <div className="About" id="about">
+            <h1>{t('about.title')}</h1>
             <table name="about" aria-label="about">
                 <tbody>
                     {config.about.map(({ label, text }, i) => {

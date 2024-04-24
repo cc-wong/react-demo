@@ -50,6 +50,11 @@
         }
     },
     "about": {
+        "title": {
+            "en": "About This App",
+            "zh": "關於此程式",
+            "ja": "このアプリについて"
+        },
         "fieldLabel": {
             "version": {
                 "en": "Version",

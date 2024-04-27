@@ -1,6 +1,6 @@
 {
-  "short_name": "Honbasho Schedule",
-  "name": "Sumo Tournament Schedule Lookup",
+  "short_name": "React Demo",
+  "name": "React Webapp Demo",
   "icons": [
     {
       "src": "favicon.ico",

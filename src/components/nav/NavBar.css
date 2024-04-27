@@ -39,7 +39,6 @@
     display: flex;
     list-style-type: none;
     justify-content: space-between;
-    gap: 20px;
 }
 
 .NavMenu ul.Menu-zh {
@@ -52,11 +51,15 @@
 
 .NavMenu ul li {
     font-weight: 500;
+    font-size: 16px;
 }
 
 .NavMenu a {
     color: white;
     text-decoration: none;
+    padding: 12px 10px;
+    display: inline-block;
+    text-align: center;
 }
 
 .NavMenu a.active {
@@ -67,7 +70,8 @@
 }
 
 .NavMenu a:hover {
-    color: yellow;
+    color: black;
+    background-color: yellow;
     text-decoration: underline;
 }
 
@@ -107,11 +111,15 @@
 
     .NavMenu ul {
         flex-direction: column;
-        padding: 20px;
+        padding: 0px 0px;
         width: 220px;
     }
 
-    .NavMenu a:hover {
-        color: aquamarine;
+    .NavMenu a {
+        color: white;
+        text-decoration: none;
+        padding: 12px 20px;
+        width: 260px;
+        text-align: left;
     }
 }

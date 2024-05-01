@@ -98,7 +98,6 @@ describe('Integration tests - Sumo Tournament Schedule Lookup', () => {
     const loadingTextPattern = `>${expectedVals.loading[language]}<`;
 
     await act(() => renderComponent());
-    console.log(document.body.innerHTML);
     expect(document.body.innerHTML).toMatch(loadingTextPattern);
 
     await act(() => utils.advanceTimersBySeconds(61));
